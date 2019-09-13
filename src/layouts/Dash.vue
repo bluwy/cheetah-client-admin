@@ -57,8 +57,6 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <the-app-bar></the-app-bar>
-    <the-side-bar></the-side-bar>
     <v-content>
       <transition mode="out-in">
         <router-view></router-view>
