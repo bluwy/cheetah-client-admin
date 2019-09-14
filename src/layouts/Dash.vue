@@ -39,14 +39,15 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list>
+      <v-list nav>
         <v-list-item
           v-for="item in sideNavItems"
           :key="item.title"
-          link
           :to="item.link"
           class="nav-list__item--inactive"
           active-class="nav-list__item--active"
+          color="primary"
+          link
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -134,6 +135,5 @@ export default {
 
 .nav-list__item--active {
   opacity: 1;
-  color: #ff8a8a;
 }
 </style>

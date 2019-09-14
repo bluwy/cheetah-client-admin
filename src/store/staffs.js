@@ -10,7 +10,18 @@ export default {
         id: 1,
         username: 'Bob',
         fullName: 'Robert Thompson Long Name'
+      },
+      {
+        id: 2,
+        username: 'Stone',
+        fullName: 'Stockholm Hershey Bar Guy'
       }
     ]
-  })
+  }),
+  actions: {
+    queryStaffs ({ state }, { staffUsername }) {
+      // Todo: Query
+      return state.staffs.map(v => ({ text: v.username, value: v.id }))
+    }
+  }
 }

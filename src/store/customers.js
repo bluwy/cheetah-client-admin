@@ -13,12 +13,27 @@ export default {
       {
         id: 1,
         code: 'AA',
-        name: 'Hello',
-        address: 'World',
+        name: 'ABC Inc.',
+        address: 'Earth',
         phoneNumber: '911',
         email: 'a@b.c',
         pic: 'Bob'
+      },
+      {
+        id: 2,
+        code: 'BB',
+        name: 'Demo Gmbh',
+        address: 'Mars',
+        phoneNumber: '810',
+        email: 'd@m.o',
+        pic: 'Stone'
       }
     ]
-  })
+  }),
+  actions: {
+    queryCustomers ({ state }, { customerName }) {
+      // Todo: Query
+      return state.customers.map(v => ({ text: v.name, value: v.id }))
+    }
+  }
 }
