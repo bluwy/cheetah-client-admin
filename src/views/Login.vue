@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-layout>
-      <v-flex></v-flex>
-    </v-layout>
+    <v-row>
+      <v-col></v-col>
+    </v-row>
   </v-container>
 </template>
 
