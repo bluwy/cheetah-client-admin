@@ -13,33 +13,24 @@
       </v-row>
     </section>
     <section>
-      <v-data-table
-        :headers="jobHeaders"
-        :items="jobs"
-        :server-items-length="10"
-      ></v-data-table>
+      <table-job></table-job>
     </section>
   </v-container>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import DialogCreateJob from '@/components/DialogCreateJob.vue'
+import TableJob from '@/components/TableJob.vue'
 
 export default {
   name: 'Jobs',
   components: {
-    DialogCreateJob
+    DialogCreateJob,
+    TableJob
   },
   data: () => ({
     createJobDialog: false
-  }),
-  computed: {
-    ...mapState('jobs', [
-      'jobHeaders',
-      'jobs'
-    ])
-  }
+  })
 }
 </script>
 

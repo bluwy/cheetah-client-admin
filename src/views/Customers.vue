@@ -19,33 +19,24 @@
       </v-row>
     </section>
     <section>
-      <v-data-table
-        :headers="customerHeaders"
-        :items="customers"
-        :server-items-length="10"
-      ></v-data-table>
+      <table-customer></table-customer>
     </section>
   </v-container>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import DialogCreateCustomer from '@/components/DialogCreateCustomer.vue'
+import TableCustomer from '@/components/TableCustomer.vue'
 
 export default {
   name: 'Customers',
   components: {
-    DialogCreateCustomer
+    DialogCreateCustomer,
+    TableCustomer
   },
   data: () => ({
     createCustomerDialog: false
-  }),
-  computed: {
-    ...mapState('customers', [
-      'customerHeaders',
-      'customers'
-    ])
-  }
+  })
 }
 </script>
 

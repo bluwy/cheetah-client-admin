@@ -13,33 +13,24 @@
       </v-row>
     </section>
     <section>
-      <v-data-table
-        :headers="staffHeaders"
-        :items="staffs"
-        :server-items-length="10"
-      ></v-data-table>
+      <table-staff></table-staff>
     </section>
   </v-container>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import DialogCreateStaff from '@/components/DialogCreateStaff.vue'
+import TableStaff from '@/components/TableStaff.vue'
 
 export default {
   name: 'Staffs',
   components: {
-    DialogCreateStaff
+    DialogCreateStaff,
+    TableStaff
   },
   data: () => ({
     createStaffDialog: false
-  }),
-  computed: {
-    ...mapState('staffs', [
-      'staffHeaders',
-      'staffs'
-    ])
-  }
+  })
 }
 </script>
 
