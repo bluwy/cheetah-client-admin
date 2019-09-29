@@ -2,31 +2,25 @@
   <v-data-table
     :headers="headers"
     :items="admins"
+    :loading="!!loadingCount"
   ></v-data-table>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 
 export default {
   name: 'TableAdmin',
   apollo: {
     admins: {
-      query: gql`
-        query GetAdmins {
-          admins(limit: 100) {
-            id
-            username
-            fullName
-          }
-        }
-      `
+      query: ADMIN_GET_ALL,
+      loadingKey: 'loadingCount'
     }
   },
   data: () => ({
+    loadingCount: 0,
     headers: [
-      { text: 'Username', value: 'username' },
-      { text: 'Full Name', value: 'fullName' }
+      { text: 'Username', value: 'username' }
     ],
     admins: []
   })

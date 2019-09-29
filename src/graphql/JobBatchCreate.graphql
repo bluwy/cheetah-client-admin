@@ -1,0 +1,6 @@
+mutation CreateJobBatch($customerId: ID!, $staffIds: [ID!], $tasks: [TaskInput!]) {
+  createJobBatch(customerId: $customerId, staffIds: $staffIds, tasks: $tasks) {
+    success
+    message
+  }
+}

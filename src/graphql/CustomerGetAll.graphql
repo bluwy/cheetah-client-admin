@@ -1,0 +1,25 @@
+query GetCustomers(
+  $temp: Boolean,
+  $sortBy: CustomerSortBy,
+  $sortDesc: Boolean,
+  $limit: Int,
+  $offset: Int
+) {
+  customers(
+    temp: $temp,
+    sortBy: $sortBy,
+    sortDesc: $sortDesc,
+    limit: $limit,
+    offset: $offset
+  ) {
+    id
+    code
+    name
+    address
+    phoneNumber
+    email
+    personInCharge {
+      username
+    }
+  }
+}

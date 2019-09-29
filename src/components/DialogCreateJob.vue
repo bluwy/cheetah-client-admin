@@ -10,10 +10,10 @@
           <v-container fluid>
             <v-row>
               <v-col class="py-0" cols=12 md="6">
-                <input-customer v-model.number="customer"></input-customer>
+                <input-customer v-model.number="job.customerId"></input-customer>
               </v-col>
               <v-col class="py-0" cols=12 md="6">
-                <input-staff v-model="staffs" multiple></input-staff>
+                <input-staff v-model="job.staffIds" multiple></input-staff>
               </v-col>
             </v-row>
             <v-list>
@@ -22,20 +22,20 @@
                   <v-list-item-title>Tasks</v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon small @click.stop="tasks.push({ type: '', remarks: '' })">
+                  <v-btn icon small @click.stop="job.tasks.push({ type: '', remarks: '' })">
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
               <v-list-item
-                v-for="(task, i) in tasks"
+                v-for="(task, i) in job.tasks"
                 :key="i"
               >
                 <input-task
                   :task-type.sync="task.type"
                   :task-remarks="task.remarks"
                   icon-type="remove"
-                  @click:icon="tasks.splice(i, 1)"
+                  @click:icon="job.tasks.splice(i, 1)"
                 ></input-task>
               </v-list-item>
             </v-list>
@@ -47,13 +47,13 @@
             v-model="cancelDialog"
             header="Are you sure?"
             message="You cannot undo this action."
-            @yes="confirmCancel"
+            @yes="cancel(true)"
           >
             <template #activator>
-              <v-btn outlined color="error" @click.stop="cancel">Cancel</v-btn>
+              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="create">Create</v-btn>
+          <v-btn color="primary" @click="create()">Create</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
+import { storeDeleteQuery } from '@/utils/apollo'
 import DialogYesNo from './DialogYesNo.vue'
 import InputCustomer from './InputCustomer.vue'
 import InputStaff from './InputStaff.vue'
@@ -81,34 +83,56 @@ export default {
   },
   data: () => ({
     valid: false,
-    customer: null,
-    staffs: [],
-    tasks: [],
+    job: {
+      customerId: null,
+      staffIds: [],
+      tasks: []
+    },
     cancelDialog: false
   }),
   computed: {
     isDirty () {
-      return !!(this.customer || this.staffs.length || this.tasks.length)
+      const j = this.job
+      return !!(j.customerId || j.staffIds.length || j.tasks.length)
     }
   },
   methods: {
-    cancel () {
-      if (this.isDirty) {
+    cancel (force) {
+      if (!force && this.isDirty) {
         this.cancelDialog = true
       } else {
-        this.confirmCancel()
+        this.$refs.form.reset()
+        this.$emit('input', false)
       }
-    },
-    confirmCancel () {
-      this.customer = null
-      this.staffs = []
-      this.tasks = []
-
-      this.$emit('input', false)
     },
     create () {
       if (this.$refs.form.validate()) {
-        // Create job
+        const cacheJob = { ...this.job }
+
+        this.cancel(true)
+
+        this.$apollo.mutate({
+          mutation: JOB_BATCH_CREATE,
+          variables: cacheJob,
+          update: (store, { data: createJobBatch }) => {
+            if (createJobBatch.success) {
+              storeDeleteQuery(store, /^jobs/)
+              console.log(store)
+              this.$emit('create')
+            } else {
+              throw new Error(createJobBatch.message)
+            }
+          }
+        })
+          .then((data) => {
+            console.log(data)
+            this.cancel(true)
+          })
+          .catch((e) => {
+            console.log(e)
+            this.job = cacheJob
+            this.$emit('input', true)
+          })
       }
     }
   }

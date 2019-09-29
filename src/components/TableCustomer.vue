@@ -6,44 +6,31 @@
     :page.sync="page"
     :sort-by.sync="sortBy"
     :sort-desc.sync="sortDesc"
-    :options.sync="options"
-    :loading="loading"
+    :loading="!!loadingCount"
     must-sort
   ></v-data-table>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import { snakeCase } from 'lodash-es'
 
 export default {
   name: 'TableCustomer',
   apollo: {
     customers: {
-      query: gql`
-        query GetCustomers($temp: Boolean, $sortBy: CustomerSortBy, $sortDesc: Boolean, $limit: Int, $offset: Int) {
-          customers(temp: $temp, sortBy: $sortBy, sortDesc: $sortDesc, limit: $limit, offset: $offset) {
-            id
-            code
-            name
-            address
-            phoneNumber
-            email
-            personInCharge {
-              username
-            }
-          }
-        }
-      `,
+      query: CUSTOMER_GET_ALL,
       variables () {
         return {
           temp: this.temp,
-          sortBy: snakeCase(this.sortBy).toUpperCase(),
+          sortBy: this.customerSortBy,
           sortDesc: this.sortDesc,
           limit: this.queryLimit,
           offset: this.pageOffset
         }
-      }
+      },
+      loadingKey: 'loadingCount'
+
     }
   },
   props: {
@@ -57,33 +44,33 @@ export default {
     }
   },
   data: () => ({
-    loading: false,
+    loadingCount: 0,
     headers: [
       { text: 'Code', value: 'code' },
       { text: 'Name', value: 'name' },
       { text: 'Address', value: 'address' },
       { text: 'Phone', value: 'phoneNumber' },
       { text: 'Email', value: 'email' },
-      { text: 'PIC', value: 'personInCharge.username' },
+      { text: 'PIC', value: 'personInCharge.username', sortable: false },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    options: {},
     page: 1,
     sortBy: 'id',
     sortDesc: false,
     customers: []
   }),
-  watch: {
-    options: {
-      deep: true,
-      handler (val) {
-        console.log(val)
-      }
-    }
-  },
   computed: {
     pageOffset () {
       return this.queryLimit * (this.page - 1)
+    },
+    customerSortBy () {
+      return snakeCase(this.sortBy).toUpperCase()
+    }
+  },
+  methods: {
+    refetch () {
+      console.log(this.$apollo.queries)
+      this.$apollo.queries.customers.refetch()
     }
   }
 }

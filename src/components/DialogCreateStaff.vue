@@ -9,20 +9,20 @@
       <v-card-text>
         <v-container fluid>
           <v-text-field
-            v-model="username"
-            :rules="usernameRules"
+            v-model="staff.username"
+            :rules="rule.username"
             label="Username"
             spellcheck="false"
           ></v-text-field>
           <v-text-field
-            v-model="fullName"
-            :rules="fullNameRules"
+            v-model="staff.fullName"
+            :rules="rule.fullName"
             label="Full Name"
             spellcheck="false"
           ></v-text-field>
           <v-text-field
-            v-model="password"
-            :rules="passwordRules"
+            v-model="staff.password"
+            :rules="rule.password"
             :type="passwordShow ? 'text' : 'password'"
             :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
             label="Password"
@@ -37,13 +37,13 @@
           v-model="cancelDialog"
           header="Are you sure?"
           message="You cannot undo this action."
-          @yes="confirmCancel"
+          @yes="cancel(true)"
         >
           <template #activator>
-            <v-btn outlined color="error" @click.stop="cancel">Cancel</v-btn>
+            <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
           </template>
         </dialog-yes-no>
-        <v-btn color="primary" @click="create">Create</v-btn>
+        <v-btn color="primary" @click="create()">Create</v-btn>
       </v-card-actions>
     </v-card>
     </v-form>
@@ -51,8 +51,10 @@
 </template>
 
 <script>
-import DialogYesNo from './DialogYesNo.vue'
 import { required, minLength, maxLength } from '@/utils/inputRules'
+import DialogYesNo from './DialogYesNo.vue'
+import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
+import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
 export default {
   name: 'DialogCreateStaff',
@@ -66,38 +68,66 @@ export default {
   },
   data: () => ({
     valid: false,
-    username: '',
-    usernameRules: [required, maxLength(16)],
-    fullName: '',
-    fullNameRules: [required, maxLength(128)],
-    password: '',
-    passwordRules: [required, minLength(8)],
+    staff: {
+      username: '',
+      fullName: '',
+      password: ''
+    },
+    rule: {
+      username: [required, maxLength(16)],
+      fullName: [required, maxLength(128)],
+      password: [required, minLength(8)]
+    },
     passwordShow: false,
+    loading: false,
     cancelDialog: false
   }),
   computed: {
     isDirty () {
-      return !!(this.username || this.fullName || this.password)
+      const s = this.staff
+      return !!(s.username || s.fullName || s.password)
     }
   },
   methods: {
-    cancel () {
-      if (this.isDirty) {
+    cancel (force) {
+      if (!force && this.isDirty) {
         this.cancelDialog = true
       } else {
-        this.confirmCancel()
+        this.$refs.form.reset()
+        this.$emit('input', false)
       }
-    },
-    confirmCancel () {
-      this.username = ''
-      this.fullName = ''
-      this.password = ''
-
-      this.$emit('input', false)
     },
     create () {
       if (this.$refs.form.validate()) {
-        // Create staff
+        const cacheStaff = { ...this.staff }
+
+        this.cancel(true)
+
+        this.$apollo.mutate({
+          mutation: STAFF_CREATE,
+          variables: cacheStaff,
+          update: (store, { data: { createStaff } }) => {
+            if (createStaff.success) {
+              const data = store.readQuery({ query: STAFF_GET_ALL })
+
+              if (data.staffs) {
+                data.staffs.push(createStaff.staff)
+
+                store.writeQuery({ query: STAFF_GET_ALL, data })
+              }
+            } else {
+              throw new Error(createStaff.message)
+            }
+          }
+        })
+          .then((data) => {
+            console.log(data)
+          })
+          .catch((e) => {
+            console.log(e)
+            this.staff = cacheStaff
+            this.$emit('input', true)
+          })
       }
     }
   }

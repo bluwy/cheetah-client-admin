@@ -1,0 +1,19 @@
+mutation StaffCreate(
+  $username: String!,
+  $fullName: String!,
+  $password: String!
+) {
+  createStaff(
+    username: $username,
+    fullName: $fullName,
+    password: $password
+  ) {
+    message
+    success
+    staff {
+      id
+      username
+      fullName
+    }
+  }
+}

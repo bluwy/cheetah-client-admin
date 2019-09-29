@@ -14,11 +14,13 @@
               </v-col>
               <v-col cols="12" md="8">
                 <v-text-field
-                  v-model="code"
+                  v-model="customer.code"
+                  :rules="rule.code"
                   label="Code"
                 ></v-text-field>
                 <v-text-field
-                  v-model="name"
+                  v-model="customer.name"
+                  :rules="rule.name"
                   label="Name"
                 ></v-text-field>
               </v-col>
@@ -29,15 +31,16 @@
               </v-col>
               <v-col cols="12" md="8">
                 <v-text-field
-                  v-model="address"
+                  v-model="customer.address"
                   label="Address"
                 ></v-text-field>
                 <v-text-field
-                  v-model="phoneNumber"
+                  v-model="customer.phoneNumber"
                   label="Phone Number"
                 ></v-text-field>
                 <v-text-field
-                  v-model="email"
+                  v-model="customer.email"
+                  :rules="rule.email"
                   label="Email"
                 ></v-text-field>
               </v-col>
@@ -47,7 +50,7 @@
                 <v-subheader>Person in charge</v-subheader>
               </v-col>
               <v-col cols="12" md="8">
-                <input-staff v-model="staff"></input-staff>
+                <input-staff v-model.number="customer.picStaffId"></input-staff>
               </v-col>
             </v-row>
           </v-container>
@@ -58,13 +61,13 @@
             v-model="cancelDialog"
             header="Are you sure?"
             message="You cannot undo this action."
-            @yes="confirmCancel"
+            @yes="cancel(true)"
           >
             <template #activator>
-              <v-btn outlined color="error" @click.stop="cancel">Cancel</v-btn>
+              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="create">Create</v-btn>
+          <v-btn color="primary" @click="create()">Create</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -72,6 +75,9 @@
 </template>
 
 <script>
+import CUSTOMER_CREATE from '@/graphql/CustomerCreate.graphql'
+import { storeDeleteQuery } from '@/utils/apollo'
+import { required, email } from '@/utils/inputRules'
 import DialogYesNo from './DialogYesNo.vue'
 import InputStaff from './InputStaff'
 
@@ -88,40 +94,64 @@ export default {
   },
   data: () => ({
     valid: false,
-    code: '',
-    name: '',
-    address: '',
-    phoneNumber: '',
-    email: '',
-    staff: null,
+    customer: {
+      code: '',
+      name: '',
+      address: '',
+      phoneNumber: '',
+      email: '',
+      picStaffId: null
+    },
+    rule: {
+      code: [required],
+      name: [required],
+      email: [email]
+    },
     cancelDialog: false
   }),
   computed: {
     isDirty () {
-      return !!(this.code || this.name || this.address || this.phoneNumber || this.email || this.staff)
+      const c = this.customer
+      return !!(c.code || c.name || c.address || c.phoneNumber || c.email || c.picStaffId)
     }
   },
   methods: {
-    cancel () {
-      if (this.isDirty) {
+    cancel (force) {
+      if (!force && this.isDirty) {
         this.cancelDialog = true
       } else {
-        this.confirmCancel()
+        this.$refs.form.reset()
+        this.$emit('input', false)
       }
-    },
-    confirmCancel () {
-      this.code = ''
-      this.name = ''
-      this.address = ''
-      this.phoneNumber = ''
-      this.email = ''
-      this.staff = null
-
-      this.$emit('input', false)
     },
     create () {
       if (this.$refs.form.validate()) {
-        // Create staff
+        const cacheCustomer = { ...this.customer }
+
+        this.cancel(true)
+
+        this.$apollo.mutate({
+          mutation: CUSTOMER_CREATE,
+          variables: cacheCustomer,
+          update: (store, { data: { createCustomer } }) => {
+            if (createCustomer.success) {
+              storeDeleteQuery(store, /^customers/)
+              console.log(store)
+              this.$emit('create')
+            } else {
+              throw new Error(createCustomer.message)
+            }
+          }
+        })
+          .then((data) => {
+            console.log(data)
+            this.cancel(true)
+          })
+          .catch((e) => {
+            console.log(e)
+            this.customer = cacheCustomer
+            this.$emit('input', true)
+          })
       }
     }
   }

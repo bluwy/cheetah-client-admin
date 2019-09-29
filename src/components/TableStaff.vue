@@ -2,28 +2,23 @@
   <v-data-table
     :headers="headers"
     :items="staffs"
+    :loading="!!loadingCount"
   ></v-data-table>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
 export default {
   name: 'TableStaff',
   apollo: {
     staffs: {
-      query: gql`
-        query GetStaffs {
-          staffs(limit: 100) {
-            id
-            username
-            fullName
-          }
-        }
-      `
+      query: STAFF_GET_ALL,
+      loadingKey: 'loadingCount'
     }
   },
   data: () => ({
+    loadingCount: 0,
     headers: [
       { text: 'Username', value: 'username' },
       { text: 'Full Name', value: 'fullName' }

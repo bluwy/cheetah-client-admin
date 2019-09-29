@@ -4,7 +4,10 @@
       <v-row>
         <v-spacer></v-spacer>
         <v-col cols="auto">
-          <dialog-create-job v-model="createJobDialog"></dialog-create-job>
+          <dialog-create-job
+            v-model="createJobDialog"
+            @create="$refs.table.refetch()"
+          ></dialog-create-job>
           <v-btn color="primary" @click.stop="createJobDialog = true">
             <v-icon left>mdi-plus-circle</v-icon>
             Create
@@ -13,7 +16,7 @@
       </v-row>
     </section>
     <section>
-      <table-job></table-job>
+      <table-job ref="table"></table-job>
     </section>
   </v-container>
 </template>

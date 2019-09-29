@@ -6,38 +6,29 @@
     :page.sync="page"
     :sort-by.sync="sortBy"
     :sort-desc.sync="sortDesc"
-    :options.sync="options"
-    :loading="loading"
+    :loading="!!loadingCount"
     must-sort
   ></v-data-table>
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 import { snakeCase } from 'lodash-es'
 
 export default {
   name: 'TableJob',
   apollo: {
     jobs: {
-      query: gql`
-        query GetJobs($sortBy: JobSortBy, $sortDesc: Boolean, $limit: Int, $offset: Int) {
-          jobs(sortBy: $sortBy, sortDesc: $sortDesc, limit: $limit, offset: $offset) {
-            customer {
-              name
-            }
-            dateIssued
-          }
-        }
-      `,
+      query: JOB_GET_ALL,
       variables () {
         return {
-          sortBy: snakeCase(this.sortBy).toUpperCase(),
+          sortBy: this.jobSortBy,
           sortDesc: this.sortDesc,
           limit: this.queryLimit,
           offset: this.pageOffset
         }
-      }
+      },
+      loadingKey: 'loadingCount'
     }
   },
   props: {
@@ -47,29 +38,29 @@ export default {
     }
   },
   data: () => ({
-    loading: false,
+    loadingCount: 0,
     headers: [
-      { text: 'Customer', value: 'customer.name' },
+      { text: 'Customer', value: 'customer.name', sortable: false },
       { text: 'Date Issued', value: 'dateIssued' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    options: {},
     page: 1,
     sortBy: 'id',
     sortDesc: false,
     jobs: []
   }),
-  watch: {
-    options: {
-      deep: true,
-      handler (val) {
-        console.log(val)
-      }
-    }
-  },
   computed: {
     pageOffset () {
       return this.queryLimit * (this.page - 1)
+    },
+    jobSortBy () {
+      return snakeCase(this.sortBy).toUpperCase()
+    }
+  },
+  methods: {
+    refetch () {
+      console.log(this.$apollo.queries)
+      this.$apollo.queries.jobs.refetch()
     }
   }
 }

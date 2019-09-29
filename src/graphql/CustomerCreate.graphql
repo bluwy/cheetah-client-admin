@@ -1,0 +1,20 @@
+mutation CreateCustomer(
+  $code: String!,
+  $name: String!,
+  $address: String,
+  $phoneNumber: String,
+  $email: String,
+  $picStaffId: ID
+) {
+  createCustomer(
+    code: $code,
+    name: $name,
+    address: $address,
+    phoneNumber: $phoneNumber,
+    email: $email,
+    picStaffId: $picStaffId
+  ) {
+    message
+    success
+  }
+}

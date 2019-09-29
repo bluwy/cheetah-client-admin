@@ -1,0 +1,8 @@
+query StaffGetAll {
+  # No pagination needed, so extend limit to 20
+  staffs(limit: 20) {
+    id
+    username
+    fullName
+  }
+}

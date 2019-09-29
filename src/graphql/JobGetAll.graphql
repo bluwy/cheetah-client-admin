@@ -1,0 +1,18 @@
+query GetJobs(
+  $sortBy: JobSortBy,
+  $sortDesc: Boolean,
+  $limit: Int,
+  $offset: Int
+) {
+  jobs(
+    sortBy: $sortBy,
+    sortDesc: $sortDesc,
+    limit: $limit,
+    offset: $offset
+  ) {
+    customer {
+      name
+    }
+    dateIssued
+  }
+}
