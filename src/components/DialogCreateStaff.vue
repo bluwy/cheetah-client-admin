@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { required, minLength, maxLength } from '@/utils/inputRules'
+import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from './DialogYesNo.vue'
 import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
@@ -74,9 +74,9 @@ export default {
       password: ''
     },
     rule: {
-      username: [required, maxLength(16)],
-      fullName: [required, maxLength(128)],
-      password: [required, minLength(8)]
+      username: [required, maxStrLength(16)],
+      fullName: [required, maxStrLength(128)],
+      password: [required, minStrLength(8)]
     },
     passwordShow: false,
     loading: false,

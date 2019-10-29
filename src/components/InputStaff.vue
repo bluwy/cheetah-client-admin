@@ -6,6 +6,7 @@
     :items="mapStaffs"
     :multiple="multiple"
     :placeholder="placeholder"
+    :rules="rules"
     editable
     solo
     flat
@@ -38,6 +39,9 @@ export default {
   props: {
     value: {
       type: [String, Array]
+    },
+    rules: {
+      type: Array
     },
     multiple: {
       type: Boolean

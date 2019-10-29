@@ -10,10 +10,10 @@
           <v-container fluid>
             <v-row>
               <v-col class="py-0" cols=12 md="6">
-                <input-customer v-model="job.customerId"></input-customer>
+                <input-customer v-model="job.customerId" :rules="rule.customerId"></input-customer>
               </v-col>
               <v-col class="py-0" cols=12 md="6">
-                <input-staff v-model="job.staffIds" multiple></input-staff>
+                <input-staff v-model="job.staffIds" multiple :rules="rule.staffIds"></input-staff>
               </v-col>
             </v-row>
             <v-list>
@@ -63,6 +63,7 @@
 <script>
 import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
 import { storeDeleteQuery } from '@/utils/apollo'
+import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from './DialogYesNo.vue'
 import InputCustomer from './InputCustomer.vue'
 import InputStaff from './InputStaff.vue'
@@ -87,6 +88,11 @@ export default {
       customerId: null,
       staffIds: [],
       tasks: []
+    },
+    rule: {
+      customerId: [required],
+      staffIds: [required, minArrLength(1)],
+      tasks: [required, minArrLength(1)]
     },
     cancelDialog: false
   }),
@@ -114,7 +120,7 @@ export default {
         this.$apollo.mutate({
           mutation: JOB_BATCH_CREATE,
           variables: cacheJob,
-          update: (store, { data: createJobBatch }) => {
+          update: (store, { data: { createJobBatch } }) => {
             if (createJobBatch.success) {
               storeDeleteQuery(store, /^jobs/)
               console.log(store)
