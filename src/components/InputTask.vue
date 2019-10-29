@@ -46,10 +46,22 @@ export default {
   },
   data: () => ({
     taskTypes: [
-      'Service',
-      'Complaint',
-      'Deliver',
-      'Others'
+      {
+        text: 'Service',
+        value: 'SERVICE'
+      },
+      {
+        text: 'Complaint',
+        value: 'COMPLAINT'
+      },
+      {
+        text: 'Deliver',
+        value: 'DELIVER'
+      },
+      {
+        text: 'Others',
+        value: 'OTHERS'
+      }
     ]
   })
 }
