@@ -2,10 +2,10 @@
   <v-overflow-btn
     :value="value"
     :search-input.sync="query"
-    :loading="isQuerying"
-    :items="customers"
+    :loading="!!loadingCount"
+    :items="mapCustomers"
     :multiple="multiple"
-    placeholder="Select customer"
+    :placeholder="placeholder"
     editable
     solo
     flat
@@ -18,21 +18,29 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { debounce } from 'lodash-es'
+import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 
 export default {
   name: 'InputCustomer',
+  apollo: {
+    customers: {
+      query: CUSTOMER_GET_ALL,
+      variables () {
+        return {
+          query: this.query || '',
+          limit: this.maxQueryResult
+        }
+      },
+      debounce: 500,
+      loadingKey: 'loadingCount'
+    }
+  },
   props: {
     value: {
-      type: [Number, Array]
+      type: [String, Array]
     },
     multiple: {
       type: Boolean
-    },
-    queryWait: {
-      type: Number,
-      default: 500
     },
     maxQueryResult: {
       type: Number,
@@ -40,24 +48,17 @@ export default {
     }
   },
   data: () => ({
+    loadingCount: 0,
     query: '',
-    isQuerying: false,
     customers: []
   }),
-  created () {
-    this.debQueryCustomers = debounce(async (val) => {
-      this.customers = await this.queryCustomers({ customerName: val })
-    }, this.queryWait)
-  },
-  watch: {
-    query (val) {
-      this.debQueryCustomers(val)
+  computed: {
+    placeholder () {
+      return 'Select customer' + (this.multiple ? '(s)' : '')
+    },
+    mapCustomers () {
+      return this.customers.map(v => ({ text: v.name, value: v.id }))
     }
-  },
-  methods: {
-    ...mapActions('customers', [
-      'queryCustomers'
-    ])
   }
 }
 </script>

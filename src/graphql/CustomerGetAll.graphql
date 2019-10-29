@@ -1,5 +1,6 @@
 query GetCustomers(
   $temp: Boolean,
+  $query: String,
   $sortBy: CustomerSortBy,
   $sortDesc: Boolean,
   $limit: Int,
@@ -7,6 +8,7 @@ query GetCustomers(
 ) {
   customers(
     temp: $temp,
+    query: $query,
     sortBy: $sortBy,
     sortDesc: $sortDesc,
     limit: $limit,

@@ -50,7 +50,7 @@
                 <v-subheader>Person in charge</v-subheader>
               </v-col>
               <v-col cols="12" md="8">
-                <input-staff v-model.number="customer.picStaffId"></input-staff>
+                <input-staff v-model="customer.picStaffId"></input-staff>
               </v-col>
             </v-row>
           </v-container>

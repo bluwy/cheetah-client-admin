@@ -1,6 +1,9 @@
-query StaffGetAll {
+query StaffGetAll(
+  $query: String,
+  $limit: Int = 20
+) {
   # No pagination needed, so extend limit to 20
-  staffs(limit: 20) {
+  staffs(query: $query, limit: $limit) {
     id
     username
     fullName

@@ -10,7 +10,7 @@
           <v-container fluid>
             <v-row>
               <v-col class="py-0" cols=12 md="6">
-                <input-customer v-model.number="job.customerId"></input-customer>
+                <input-customer v-model="job.customerId"></input-customer>
               </v-col>
               <v-col class="py-0" cols=12 md="6">
                 <input-staff v-model="job.staffIds" multiple></input-staff>

@@ -2,10 +2,10 @@
   <v-overflow-btn
     :value="value"
     :search-input.sync="query"
-    :loading="isQuerying"
-    :items="staffs"
+    :loading="!!loadingCount"
+    :items="mapStaffs"
     :multiple="multiple"
-    placeholder="Select staff"
+    :placeholder="placeholder"
     editable
     solo
     flat
@@ -18,46 +18,47 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { debounce } from 'lodash-es'
+import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
 export default {
   name: 'InputStaff',
+  apollo: {
+    staffs: {
+      query: STAFF_GET_ALL,
+      variables () {
+        return {
+          query: this.query || '',
+          limit: this.maxQueryResult
+        }
+      },
+      debounce: 500,
+      loadingKey: 'loadingCount'
+    }
+  },
   props: {
     value: {
-      type: [Number, Array]
+      type: [String, Array]
     },
     multiple: {
       type: Boolean
     },
-    queryWait: {
-      type: Number,
-      default: 500
-    },
     maxQueryResult: {
       type: Number,
-      default: 10
+      default: 5
     }
   },
   data: () => ({
+    loadingCount: 0,
     query: '',
-    isQuerying: false,
     staffs: []
   }),
-  created () {
-    this.debQueryStaffs = debounce(async (val) => {
-      this.staffs = await this.queryStaffs({ staffUsername: val })
-    }, this.queryWait)
-  },
-  watch: {
-    query (val) {
-      this.debQueryStaffs(val)
+  computed: {
+    placeholder () {
+      return 'Select staff' + (this.multiple ? '(s)' : '')
+    },
+    mapStaffs () {
+      return this.staffs.map(v => ({ text: v.username, value: v.id }))
     }
-  },
-  methods: {
-    ...mapActions('staffs', [
-      'queryStaffs'
-    ])
   }
 }
 </script>
