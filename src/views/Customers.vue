@@ -10,10 +10,10 @@
           </v-btn>
         </v-col>
         <v-col cols="auto">
-          <dialog-create-customer
+          <dialog-customer-create
             v-model="createCustomerDialog"
             @create="$refs.table.refetch()"
-          ></dialog-create-customer>
+          ></dialog-customer-create>
           <v-btn color="primary" @click.stop="createCustomerDialog = true">
             <v-icon left>mdi-plus-circle</v-icon>
             Create
@@ -28,13 +28,13 @@
 </template>
 
 <script>
-import DialogCreateCustomer from '@/components/DialogCreateCustomer.vue'
+import DialogCustomerCreate from '@/components/DialogCustomerCreate.vue'
 import TableCustomer from '@/components/TableCustomer.vue'
 
 export default {
   name: 'Customers',
   components: {
-    DialogCreateCustomer,
+    DialogCustomerCreate,
     TableCustomer
   },
   data: () => ({

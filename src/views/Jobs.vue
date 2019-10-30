@@ -4,10 +4,10 @@
       <v-row>
         <v-spacer></v-spacer>
         <v-col cols="auto">
-          <dialog-create-job
+          <dialog-job-create
             v-model="createJobDialog"
             @create="$refs.table.refetch()"
-          ></dialog-create-job>
+          ></dialog-job-create>
           <v-btn color="primary" @click.stop="createJobDialog = true">
             <v-icon left>mdi-plus-circle</v-icon>
             Create
@@ -22,13 +22,13 @@
 </template>
 
 <script>
-import DialogCreateJob from '@/components/DialogCreateJob.vue'
+import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import TableJob from '@/components/TableJob.vue'
 
 export default {
   name: 'Jobs',
   components: {
-    DialogCreateJob,
+    DialogJobCreate,
     TableJob
   },
   data: () => ({

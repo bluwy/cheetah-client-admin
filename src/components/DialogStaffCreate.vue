@@ -57,7 +57,7 @@ import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
 export default {
-  name: 'DialogCreateStaff',
+  name: 'DialogStaffCreate',
   components: {
     DialogYesNo
   },

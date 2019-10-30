@@ -82,7 +82,7 @@ import DialogYesNo from './DialogYesNo.vue'
 import InputStaff from './InputStaff'
 
 export default {
-  name: 'DialogCreateCustomer',
+  name: 'DialogCustomerCreate',
   components: {
     DialogYesNo,
     InputStaff

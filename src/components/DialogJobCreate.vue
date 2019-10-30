@@ -70,7 +70,7 @@ import InputStaff from './InputStaff.vue'
 import InputTask from './InputTask.vue'
 
 export default {
-  name: 'DialogCreateJob',
+  name: 'DialogJobCreate',
   components: {
     DialogYesNo,
     InputCustomer,
