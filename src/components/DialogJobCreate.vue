@@ -69,6 +69,12 @@ import InputCustomer from './InputCustomer.vue'
 import InputStaff from './InputStaff.vue'
 import InputTask from './InputTask.vue'
 
+const formJobFactory = () => ({
+  customerId: null,
+  staffIds: [],
+  tasks: []
+})
+
 export default {
   name: 'DialogJobCreate',
   components: {
@@ -84,11 +90,7 @@ export default {
   },
   data: () => ({
     valid: false,
-    job: {
-      customerId: null,
-      staffIds: [],
-      tasks: []
-    },
+    job: formJobFactory(),
     rule: {
       customerId: [required],
       staffIds: [required, minArrLength(1)],
@@ -107,9 +109,13 @@ export default {
       if (!force && this.isDirty) {
         this.cancelDialog = true
       } else {
-        this.$refs.form.reset()
+        this.reset()
         this.$emit('input', false)
       }
+    },
+    reset () {
+      this.$refs.form.reset()
+      this.job = formJobFactory()
     },
     create () {
       if (this.$refs.form.validate()) {

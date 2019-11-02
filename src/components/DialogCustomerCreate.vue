@@ -81,6 +81,15 @@ import { required, email } from '@/utils/inputRules'
 import DialogYesNo from './DialogYesNo.vue'
 import InputStaff from './InputStaff'
 
+const formCustomerFactory = () => ({
+  code: '',
+  name: '',
+  address: '',
+  phoneNumber: '',
+  email: '',
+  picStaffId: null
+})
+
 export default {
   name: 'DialogCustomerCreate',
   components: {
@@ -94,14 +103,7 @@ export default {
   },
   data: () => ({
     valid: false,
-    customer: {
-      code: '',
-      name: '',
-      address: '',
-      phoneNumber: '',
-      email: '',
-      picStaffId: null
-    },
+    customer: formCustomerFactory(),
     rule: {
       code: [required],
       name: [required],
@@ -120,9 +122,13 @@ export default {
       if (!force && this.isDirty) {
         this.cancelDialog = true
       } else {
-        this.$refs.form.reset()
+        this.reset()
         this.$emit('input', false)
       }
+    },
+    reset () {
+      this.$refs.form.reset()
+      this.customer = formCustomerFactory()
     },
     create () {
       if (this.$refs.form.validate()) {

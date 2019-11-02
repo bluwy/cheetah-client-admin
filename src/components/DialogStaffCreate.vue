@@ -56,6 +56,12 @@ import DialogYesNo from './DialogYesNo.vue'
 import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
+const formStaffFactory = () => ({
+  username: '',
+  fullName: '',
+  password: ''
+})
+
 export default {
   name: 'DialogStaffCreate',
   components: {
@@ -68,11 +74,7 @@ export default {
   },
   data: () => ({
     valid: false,
-    staff: {
-      username: '',
-      fullName: '',
-      password: ''
-    },
+    staff: formStaffFactory(),
     rule: {
       username: [required, maxStrLength(16)],
       fullName: [required, maxStrLength(128)],
@@ -93,9 +95,13 @@ export default {
       if (!force && this.isDirty) {
         this.cancelDialog = true
       } else {
-        this.$refs.form.reset()
+        this.reset()
         this.$emit('input', false)
       }
+    },
+    reset () {
+      this.$refs.form.reset()
+      this.staff = formStaffFactory()
     },
     create () {
       if (this.$refs.form.validate()) {
