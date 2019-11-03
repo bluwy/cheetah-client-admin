@@ -1,0 +1,19 @@
+mutation StaffUpdate(
+  $id: ID!,
+  $username: String,
+  $fullName: String
+) {
+  updateStaff(
+    id: $id,
+    username: $username,
+    fullName: $fullName
+  ) {
+    success
+    message
+    staff {
+      id
+      username
+      fullName
+    }
+  }
+}

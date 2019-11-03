@@ -1,0 +1,169 @@
+<template>
+  <v-dialog :value="value" persistent width="400">
+    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
+      <slot :name="slot" v-bind="scope"></slot>
+    </template>
+    <v-form v-model="valid" ref="form" lazy-validation>
+      <v-card>
+        <v-card-title>Edit Staff</v-card-title>
+        <v-card-text>
+          <v-container fluid>
+            <v-text-field
+              v-model="currentStaff.username"
+              :rules="rule.username"
+              label="Username"
+              spellcheck="false"
+            ></v-text-field>
+            <v-text-field
+              v-model="currentStaff.fullName"
+              :rules="rule.fullName"
+              label="Full Name"
+              spellcheck="false"
+            ></v-text-field>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <dialog-yes-no
+            v-model="cancelDialog"
+            header="Are you sure?"
+            message="You cannot undo this action."
+            @yes="cancel(true)"
+          >
+            <template #activator>
+              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
+            </template>
+          </dialog-yes-no>
+          <v-btn color="primary" @click="edit()">Edit</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-form>
+  </v-dialog>
+</template>
+
+<script>
+import { isEqual } from 'lodash-es'
+import { required, maxStrLength } from '@/utils/inputRules'
+import DialogYesNo from './DialogYesNo.vue'
+import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
+import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
+import STAFF_GET from '@/graphql/StaffGet.graphql'
+
+const formStaffFactory = () => ({
+  username: '',
+  fullName: ''
+})
+
+export default {
+  name: 'DialogStaffEdit',
+  apollo: {
+    staff: {
+      query: STAFF_GET,
+      variables () {
+        return {
+          id: this.staffId
+        }
+      },
+      skip () {
+        return !this.value
+      }
+    }
+  },
+  components: {
+    DialogYesNo
+  },
+  props: {
+    value: {
+      type: Boolean
+    },
+    staffId: {
+      type: String,
+      required: true
+    }
+  },
+  data: () => ({
+    valid: false,
+    // Staff from server
+    staff: formStaffFactory(),
+    // Staff to be edited by form
+    currentStaff: formStaffFactory(),
+    rule: {
+      username: [required, maxStrLength(16)],
+      fullName: [required, maxStrLength(128)]
+    },
+    loading: false,
+    cancelDialog: false
+  }),
+  computed: {
+    isDirty () {
+      return !isEqual(this.staff, this.currentStaff)
+    }
+  },
+  watch: {
+    staff (val) {
+      // When staffId change, clone new staff to enable dirty comparison
+      this.currentStaff = { ...val }
+    }
+  },
+  methods: {
+    cancel (force) {
+      if (!force && this.isDirty) {
+        this.cancelDialog = true
+      } else {
+        this.reset()
+        this.$emit('input', false)
+      }
+    },
+    reset () {
+      this.currentStaff = { ...this.staff }
+      this.$refs.form.resetValidation()
+    },
+    edit () {
+      if (this.$refs.form.validate() && this.isDirty) {
+        const cacheStaffId = this.staffId
+        const cacheStaff = { ...this.currentStaff }
+
+        this.cancel(true)
+
+        this.$apollo.mutate({
+          mutation: STAFF_UPDATE,
+          variables: {
+            id: cacheStaffId,
+            username: cacheStaff.username,
+            fullName: cacheStaff.fullName
+          },
+          update: (store, { data: { updateStaff } }) => {
+            if (updateStaff.success) {
+              const data = store.readQuery({ query: STAFF_GET_ALL })
+
+              if (data.staffs) {
+                const idx = data.staffs.indexOf(v => v.id === cacheStaffId)
+
+                if (idx !== -1) {
+                  data.staffs[idx] = updateStaff.staff
+
+                  store.writeQuery({ query: STAFF_GET_ALL, data })
+                }
+              }
+            } else {
+              throw new Error(updateStaff.message)
+            }
+          }
+        })
+          .then((data) => {
+            console.log(data)
+            this.cancel(true)
+          })
+          .catch((e) => {
+            console.log(e)
+            this.currentStaff = cacheStaff
+            this.$emit('input', true)
+          })
+      }
+    }
+  }
+}
+</script>
+
+<style>
+</style>
