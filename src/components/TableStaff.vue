@@ -17,6 +17,7 @@
           </template>
         </dialog-staff-create>
         <dialog-staff-edit v-model="dialogEdit" :staffId="targetStaffId"></dialog-staff-edit>
+        <dialog-staff-password-reset v-model="dialogPasswordReset" :staffId="targetStaffId"></dialog-staff-password-reset>
         <dialog-staff-remove v-model="dialogRemove" :staffId="targetStaffId"></dialog-staff-remove>
       </v-toolbar>
     </template>
@@ -24,7 +25,7 @@
       <v-btn icon small @click.stop="openDialogEdit(item.id)">
         <v-icon small>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn icon small>
+      <v-btn icon small @click.stop="openDialogPasswordReset(item.id)">
         <v-icon small>mdi-lock</v-icon>
       </v-btn>
       <v-btn icon small @click.stop="openDialogRemove(item.id)">
@@ -37,6 +38,7 @@
 <script>
 import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
 import DialogStaffEdit from './DialogStaffEdit.vue'
+import DialogStaffPasswordReset from './DialogStaffPasswordReset.vue'
 import DialogStaffRemove from './DialogStaffRemove.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
@@ -51,6 +53,7 @@ export default {
   components: {
     DialogStaffCreate,
     DialogStaffEdit,
+    DialogStaffPasswordReset,
     DialogStaffRemove
   },
   data: () => ({
@@ -63,6 +66,7 @@ export default {
     staffs: [],
     dialogCreate: false,
     dialogEdit: false,
+    dialogPasswordReset: false,
     dialogRemove: false,
     targetStaffId: '0'
   }),
@@ -70,6 +74,10 @@ export default {
     openDialogEdit (staffId) {
       this.targetStaffId = staffId
       this.dialogEdit = true
+    },
+    openDialogPasswordReset (staffId) {
+      this.targetStaffId = staffId
+      this.dialogPasswordReset = true
     },
     openDialogRemove (staffId) {
       this.targetStaffId = staffId
