@@ -61,13 +61,13 @@
 </template>
 
 <script>
-import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
 import { storeDeleteQuery } from '@/utils/apollo'
 import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from './DialogYesNo.vue'
 import InputCustomer from './InputCustomer.vue'
 import InputStaff from './InputStaff.vue'
 import InputTask from './InputTask.vue'
+import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
 
 const formJobFactory = () => ({
   customerId: null,

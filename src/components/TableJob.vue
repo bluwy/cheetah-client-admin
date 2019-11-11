@@ -8,12 +8,28 @@
     :sort-desc.sync="sortDesc"
     :loading="!!loadingCount"
     must-sort
-  ></v-data-table>
+  >
+    <template #top>
+      <v-toolbar flat>
+        <v-toolbar-title>Jobs</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <dialog-job-create v-model="dialogCreate" @create="refetch()">
+          <template #activator>
+            <v-btn color="primary" @click.stop="dialogCreate = true">
+              <v-icon left>mdi-plus-circle</v-icon>
+              Create
+            </v-btn>
+          </template>
+        </dialog-job-create>
+      </v-toolbar>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
-import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 import { snakeCase } from 'lodash-es'
+import DialogJobCreate from '@/components/DialogJobCreate.vue'
+import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 
 export default {
   name: 'TableJob',
@@ -31,6 +47,9 @@ export default {
       loadingKey: 'loadingCount'
     }
   },
+  components: {
+    DialogJobCreate
+  },
   props: {
     queryLimit: {
       type: Number,
@@ -47,7 +66,8 @@ export default {
     page: 1,
     sortBy: 'id',
     sortDesc: false,
-    jobs: []
+    jobs: [],
+    dialogCreate: false
   }),
   computed: {
     pageOffset () {

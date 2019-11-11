@@ -4,9 +4,21 @@
     :items="staffs"
     :loading="!!loadingCount"
   >
-    <template #header>
-      <dialog-staff-edit v-model="dialogEdit" :staffId="targetStaffId"></dialog-staff-edit>
-      <dialog-staff-remove v-model="dialogRemove" :staffId="targetStaffId"></dialog-staff-remove>
+    <template #top>
+      <v-toolbar flat>
+        <v-toolbar-title>Staffs</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <dialog-staff-create v-model="dialogCreate">
+          <template #activator>
+            <v-btn color="primary" @click.stop="dialogCreate = true">
+              <v-icon left>mdi-plus-circle</v-icon>
+              Create
+            </v-btn>
+          </template>
+        </dialog-staff-create>
+        <dialog-staff-edit v-model="dialogEdit" :staffId="targetStaffId"></dialog-staff-edit>
+        <dialog-staff-remove v-model="dialogRemove" :staffId="targetStaffId"></dialog-staff-remove>
+      </v-toolbar>
     </template>
     <template #item.action="{ item }">
       <v-btn icon small @click.stop="openDialogEdit(item.id)">
@@ -23,6 +35,7 @@
 </template>
 
 <script>
+import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
 import DialogStaffEdit from './DialogStaffEdit.vue'
 import DialogStaffRemove from './DialogStaffRemove.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
@@ -36,6 +49,7 @@ export default {
     }
   },
   components: {
+    DialogStaffCreate,
     DialogStaffEdit,
     DialogStaffRemove
   },
@@ -47,6 +61,7 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     staffs: [],
+    dialogCreate: false,
     dialogEdit: false,
     dialogRemove: false,
     targetStaffId: '0'

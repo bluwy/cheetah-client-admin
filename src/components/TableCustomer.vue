@@ -8,12 +8,28 @@
     :sort-desc.sync="sortDesc"
     :loading="!!loadingCount"
     must-sort
-  ></v-data-table>
+  >
+    <template #top>
+      <v-toolbar flat>
+        <v-toolbar-title>Customers</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <dialog-customer-create v-model="dialogCreate" @create="refetch()">
+          <template #activator>
+            <v-btn color="primary" @click.stop="dialogCreate = true">
+              <v-icon left>mdi-plus-circle</v-icon>
+              Create
+            </v-btn>
+          </template>
+        </dialog-customer-create>
+      </v-toolbar>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
-import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import { snakeCase } from 'lodash-es'
+import DialogCustomerCreate from '@/components/DialogCustomerCreate.vue'
+import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 
 export default {
   name: 'TableCustomer',
@@ -30,8 +46,10 @@ export default {
         }
       },
       loadingKey: 'loadingCount'
-
     }
+  },
+  components: {
+    DialogCustomerCreate
   },
   props: {
     temp: {
@@ -57,7 +75,8 @@ export default {
     page: 1,
     sortBy: 'id',
     sortDesc: false,
-    customers: []
+    customers: [],
+    dialogCreate: false
   }),
   computed: {
     pageOffset () {
