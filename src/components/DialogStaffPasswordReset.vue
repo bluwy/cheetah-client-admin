@@ -31,7 +31,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="resetPassword()">Edit</v-btn>
+          <v-btn color="primary" @click="resetPassword()">Reset</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
