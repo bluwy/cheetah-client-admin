@@ -13,6 +13,9 @@
       <v-toolbar flat>
         <v-toolbar-title>Customers</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn class="mr-3" icon @click="refetch()">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
         <dialog-customer-create v-model="dialogCreate" @create="refetch()">
           <template #activator>
             <v-btn color="primary" @click.stop="dialogCreate = true">
@@ -26,12 +29,22 @@
       </v-toolbar>
     </template>
     <template #item.action="{ item }">
-      <v-btn icon small @click.stop="openDialogEdit(item.id)">
-        <v-icon small>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn icon small @click.stop="openDialogRemove(item.id)">
-        <v-icon small>mdi-delete</v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <span>Edit customer</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on" @click.stop="openDialogEdit(item.id)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+      <v-tooltip top>
+        <span>Remove customer</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on" @click.stop="openDialogRemove(item.id)">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
   </v-data-table>
 </template>

@@ -8,6 +8,9 @@
       <v-toolbar flat>
         <v-toolbar-title>Staffs</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn class="mr-3" icon @click="refetch()">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
         <dialog-staff-create v-model="dialogCreate">
           <template #activator>
             <v-btn color="primary" @click.stop="dialogCreate = true">
@@ -22,15 +25,30 @@
       </v-toolbar>
     </template>
     <template #item.action="{ item }">
-      <v-btn icon small @click.stop="openDialogEdit(item.id)">
-        <v-icon small>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn icon small @click.stop="openDialogPasswordReset(item.id)">
-        <v-icon small>mdi-lock</v-icon>
-      </v-btn>
-      <v-btn icon small @click.stop="openDialogRemove(item.id)">
-        <v-icon small>mdi-delete</v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <span>Edit staff</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on" @click.stop="openDialogEdit(item.id)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+      <v-tooltip top>
+        <span>Reset password</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on" @click.stop="openDialogPasswordReset(item.id)">
+            <v-icon small>mdi-lock</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+      <v-tooltip top>
+        <span>Remove staff</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on" @click.stop="openDialogRemove(item.id)">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
   </v-data-table>
 </template>
@@ -71,6 +89,9 @@ export default {
     targetStaffId: '0'
   }),
   methods: {
+    refetch () {
+      this.$apollo.queries.staffs.refetch()
+    },
     openDialogEdit (staffId) {
       this.targetStaffId = staffId
       this.dialogEdit = true
