@@ -1,0 +1,24 @@
+mutation CustomerUpdate(
+  $id: ID!,
+  $code: String,
+  $name: String,
+  $email: String,
+  $address: String,
+  $phoneNumber: String,
+  $picStaffId: ID,
+  $temp: Boolean
+) {
+  updateCustomer(
+    id: $id,
+    code: $code,
+    name: $name,
+    email: $email,
+    address: $address,
+    phoneNumber: $phoneNumber,
+    picStaffId: $picStaffId,
+    temp: $temp
+  ) {
+    success
+    message
+  }
+}

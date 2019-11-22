@@ -1,7 +1,7 @@
 <template>
   <dialog-yes-no
     :value="value"
-    header="Remove staff?"
+    header="Remove customer?"
     message="You cannot undo this action."
     @no="close"
     @yes="remove"
@@ -9,12 +9,12 @@
 </template>
 
 <script>
+import { storeDeleteQuery } from '@/utils/apollo'
 import DialogYesNo from './DialogYesNo.vue'
-import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
-import STAFF_REMOVE from '@/graphql/StaffRemove.graphql'
+import CUSTOMER_REMOVE from '@/graphql/CustomerRemove.graphql'
 
 export default {
-  name: 'DialogStaffRemove',
+  name: 'DialogCustomerRemove',
   components: {
     DialogYesNo
   },
@@ -22,7 +22,7 @@ export default {
     value: {
       type: Boolean
     },
-    staffId: {
+    customerId: {
       type: String
     }
   },
@@ -31,26 +31,22 @@ export default {
       this.$emit('input', false)
     },
     remove () {
-      const cacheStaffId = this.staffId
+      const cacheCustomerId = this.customerId
 
       this.close()
 
       this.$apollo.mutate({
-        mutation: STAFF_REMOVE,
+        mutation: CUSTOMER_REMOVE,
         variables: {
-          id: cacheStaffId
+          id: cacheCustomerId
         },
-        update: (store, { data: { removeStaff } }) => {
-          if (removeStaff.success) {
-            const data = store.readQuery({ query: STAFF_GET_ALL })
-
-            if (data.staffs) {
-              data.staffs = data.staffs.filter(v => v.id !== cacheStaffId)
-
-              store.writeQuery({ query: STAFF_GET_ALL, data })
-            }
+        update: (store, { data: { removeCustomer } }) => {
+          if (removeCustomer.success) {
+            storeDeleteQuery(store, /^customers/)
+            console.log(store)
+            this.$emit('remove')
           } else {
-            throw new Error(removeStaff.message)
+            throw new Error(removeCustomer.message)
           }
         }
       })

@@ -21,6 +21,7 @@ query GetCustomers(
     phoneNumber
     email
     personInCharge {
+      id
       username
     }
   }

@@ -21,7 +21,17 @@
             </v-btn>
           </template>
         </dialog-customer-create>
+        <dialog-customer-edit v-model="dialogEdit" :customerId="targetCustomerId" @edit="refetch()"></dialog-customer-edit>
+        <dialog-customer-remove v-model="dialogRemove" :customerId="targetCustomerId" @remove="refetch()"></dialog-customer-remove>
       </v-toolbar>
+    </template>
+    <template #item.action="{ item }">
+      <v-btn icon small @click.stop="openDialogEdit(item.id)">
+        <v-icon small>mdi-pencil</v-icon>
+      </v-btn>
+      <v-btn icon small @click.stop="openDialogRemove(item.id)">
+        <v-icon small>mdi-delete</v-icon>
+      </v-btn>
     </template>
   </v-data-table>
 </template>
@@ -29,6 +39,8 @@
 <script>
 import { snakeCase } from 'lodash-es'
 import DialogCustomerCreate from '@/components/DialogCustomerCreate.vue'
+import DialogCustomerEdit from '@/components/DialogCustomerEdit.vue'
+import DialogCustomerRemove from '@/components/DialogCustomerRemove.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 
 export default {
@@ -49,7 +61,9 @@ export default {
     }
   },
   components: {
-    DialogCustomerCreate
+    DialogCustomerCreate,
+    DialogCustomerEdit,
+    DialogCustomerRemove
   },
   props: {
     temp: {
@@ -76,7 +90,10 @@ export default {
     sortBy: 'id',
     sortDesc: false,
     customers: [],
-    dialogCreate: false
+    dialogCreate: false,
+    dialogEdit: false,
+    dialogRemove: false,
+    targetCustomerId: '0'
   }),
   computed: {
     pageOffset () {
@@ -90,6 +107,14 @@ export default {
     refetch () {
       console.log(this.$apollo.queries)
       this.$apollo.queries.customers.refetch()
+    },
+    openDialogEdit (customerId) {
+      this.targetCustomerId = customerId
+      this.dialogEdit = true
+    },
+    openDialogRemove (customerId) {
+      this.targetCustomerId = customerId
+      this.dialogRemove = true
     }
   }
 }
