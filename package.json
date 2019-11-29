@@ -11,6 +11,7 @@
   "dependencies": {
     "apollo-boost": "^0.4.4",
     "core-js": "^3.3.2",
+    "date-fns": "^2.8.1",
     "graphql": "^14.5.8",
     "lodash-es": "^4.17.15",
     "vue": "^2.6.10",
