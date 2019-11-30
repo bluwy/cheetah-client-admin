@@ -1,0 +1,18 @@
+mutation AssignmentAdd(
+  $jobId: ID!,
+  $staffIds: [ID!],
+  $checkIn: Date,
+  $checkOut: Date,
+  $needsFollowUp: Boolean
+) {
+  addAssignment(
+    jobId: $jobId,
+    staffIds: $staffIds,
+    checkIn: $checkIn,
+    checkOut: $checkOut,
+    needsFollowUp: $needsFollowUp
+  ) {
+    success
+    message
+  }
+}

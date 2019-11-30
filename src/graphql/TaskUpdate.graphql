@@ -1,0 +1,16 @@
+mutation TaskUpdate(
+  $jobId: ID!,
+  $assignmentId: ID!,
+  $taskId: ID!,
+  $task: TaskInput
+) {
+  updateTask(
+    jobId: $jobId,
+    assignmentId: $assignmentId,
+    taskId: $taskId,
+    task: $task
+  ) {
+    success
+    message
+  }
+}

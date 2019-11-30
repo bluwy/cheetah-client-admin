@@ -1,0 +1,20 @@
+mutation AssignmentUpdate(
+  $jobId: ID!,
+  $assignmentId: ID!,
+  $staffIds: [ID!],
+  $checkIn: Date,
+  $checkOut: Date,
+  $needsFollowUp: Boolean
+) {
+  updateAssignment(
+    jobId: $jobId,
+    assignmentId: $assignmentId,
+    staffIds: $staffIds,
+    checkIn: $checkIn,
+    checkOut: $checkOut,
+    needsFollowUp: $needsFollowUp
+  ) {
+    success
+    message
+  }
+}

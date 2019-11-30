@@ -10,7 +10,9 @@ query GetJobs(
     limit: $limit,
     offset: $offset
   ) {
+    id
     customer {
+      id
       name
     }
     dateIssued

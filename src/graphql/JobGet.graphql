@@ -1,0 +1,30 @@
+query JobGet($id: ID!) {
+  job(id: $id) {
+    id
+    dateIssued
+    customer {
+      id
+      name
+    }
+    assignments {
+      id
+      staffs {
+        id
+        username
+      }
+      checkIn
+      checkOut
+      tasks {
+        id
+        type
+        remarks
+      }
+      actions {
+        id
+        type
+        remarks
+      }
+      needsFollowUp
+    }
+  }
+}

@@ -1,0 +1,6 @@
+mutation JobUpdate($jobId: ID!, $customerId: ID!) {
+  updateJob(jobId: $jobId, customerId: $customerId) {
+    success
+    message
+  }
+}

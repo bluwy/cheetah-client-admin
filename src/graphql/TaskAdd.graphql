@@ -1,0 +1,14 @@
+mutation TaskAdd(
+  $jobId: ID!,
+  $assignmentId: ID!,
+  $tasks: [TaskInput!]
+) {
+  addTasks(
+    jobId: $jobId,
+    assignmentId: $assignmentId,
+    tasks: $tasks
+  ) {
+    success
+    message
+  }
+}
