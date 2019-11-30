@@ -21,14 +21,46 @@
             </v-btn>
           </template>
         </dialog-job-create>
+        <dialog-job-details v-model="dialogDetails" :jobId="targetJobId"></dialog-job-details>
       </v-toolbar>
+    </template>
+    <template #item.dateIssued="{ item }">
+      {{ formatIssueDate(item.dateIssued) }}
+    </template>
+    <template #item.action="{ item }">
+      <v-tooltip top>
+        <span>Details</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on" @click="openDialogDetails(item.id)">
+            <v-icon small>mdi-information</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+      <v-tooltip top>
+        <span>Add assignment</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on">
+            <v-icon small>mdi-file-plus</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+      <v-tooltip top>
+        <span>Remove job</span>
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
   </v-data-table>
 </template>
 
 <script>
+import { format } from 'date-fns'
 import { snakeCase } from 'lodash-es'
 import DialogJobCreate from '@/components/DialogJobCreate.vue'
+import DialogJobDetails from '@/components/DialogJobDetails.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 
 export default {
@@ -48,7 +80,8 @@ export default {
     }
   },
   components: {
-    DialogJobCreate
+    DialogJobCreate,
+    DialogJobDetails
   },
   props: {
     queryLimit: {
@@ -67,7 +100,9 @@ export default {
     sortBy: 'id',
     sortDesc: false,
     jobs: [],
-    dialogCreate: false
+    dialogCreate: false,
+    dialogDetails: false,
+    targetJobId: '0'
   }),
   computed: {
     pageOffset () {
@@ -81,6 +116,13 @@ export default {
     refetch () {
       console.log(this.$apollo.queries)
       this.$apollo.queries.jobs.refetch()
+    },
+    formatIssueDate (issueDate) {
+      return format(issueDate, 'd MMM yyyy')
+    },
+    openDialogDetails (jobId) {
+      this.targetJobId = jobId
+      this.dialogDetails = true
     }
   }
 }
