@@ -1,12 +1,20 @@
 <template>
-  <v-timeline-item right fill-dot small>
+  <v-timeline-item right fill-dot small :color="themeColor">
     <div class="py-1">{{ formatCheckTime }}</div>
-    <v-card class="assignment-card" outlined style="background-color: rgba(0, 0, 0, .02)">
+    <v-card
+      class="assignment-card"
+      outlined
+      :style="{
+        'background-color': themeColorHex + '12',
+        'border-color': themeColorHex
+      }"
+    >
       <v-card-text>
         <v-chip
           v-for="(staff, i) in staffs"
           :key="i"
           class="mr-2"
+          :color="themeColor"
         >
           {{ staff.username }}
         </v-chip>
@@ -16,7 +24,7 @@
         <ul class="assignment-card__list">
           <li v-show="!tasks || !tasks.length" key="empty">No tasks</li>
           <li v-for="(task, i) in tasks" :key="i">
-            <v-chip small label class="mr-2">{{ task.type }}</v-chip>
+            <v-chip small label class="mr-2" :color="themeColor">{{ task.type }}</v-chip>
             <span>{{ task.remarks }}</span>
           </li>
         </ul>
@@ -26,7 +34,7 @@
         <ul class="assignment-card__list">
           <li v-show="!actions || !actions.length" key="empty">No actions</li>
           <li v-for="(action, i) in actions" :key="i">
-            <v-chip small label class="mr-2">{{ action.type }}</v-chip>
+            <v-chip small label class="mr-2" :color="themeColor">{{ action.type }}</v-chip>
             <span>{{ action.remarks }}</span>
           </li>
         </ul>
@@ -61,9 +69,29 @@ export default {
       type: Array,
       default: () => [],
       validator: val => val.every(action => 'type' in action && 'remarks' in action)
+    },
+    needsFollowUp: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
+    themeColor () {
+      if (this.checkIn == null) {
+        // Haven't started
+        return 'primary'
+      } else if (this.checkOut == null) {
+        // In progress
+        return 'warning'
+      } else if (this.needsFollowUp) {
+        return 'error'
+      } else {
+        return 'success'
+      }
+    },
+    themeColorHex () {
+      return this.$vuetify.theme.themes.light[this.themeColor]
+    },
     formatCheckTime () {
       if (this.checkIn == null) {
         return 'Not started'
