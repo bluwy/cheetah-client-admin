@@ -3,6 +3,7 @@
     :append-icon="iconType === 'add' ? 'mdi-plus' : 'mdi-close'"
     class="align-center"
     hide-details
+    color="primary"
     @click:append="$emit('click:icon', $event)"
   >
     <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
