@@ -13,7 +13,7 @@
       <v-toolbar flat>
         <v-toolbar-title>Customers</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn class="mr-3" icon @click="refetch()">
+        <v-btn class="mr-3" icon color="primary" @click="refetch()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
         <dialog-customer-create v-model="dialogCreate" @create="refetch()">

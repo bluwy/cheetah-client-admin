@@ -13,6 +13,9 @@
       <v-toolbar flat>
         <v-toolbar-title>Jobs</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn class="mr-3" icon color="primary" @click="refetch()">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
         <dialog-job-create v-model="dialogCreate" @create="refetch()">
           <template #activator>
             <v-btn color="primary" @click.stop="dialogCreate = true">

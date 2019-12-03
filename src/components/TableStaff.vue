@@ -8,7 +8,7 @@
       <v-toolbar flat>
         <v-toolbar-title>Staffs</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn class="mr-3" icon @click="refetch()">
+        <v-btn class="mr-3" icon color="primary" @click="refetch()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
         <dialog-staff-create v-model="dialogCreate">
