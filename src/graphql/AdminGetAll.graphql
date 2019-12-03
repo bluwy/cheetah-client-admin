@@ -3,5 +3,6 @@ query AdminGetAll {
   admins(limit: 20) {
     id
     username
+    privilege
   }
 }

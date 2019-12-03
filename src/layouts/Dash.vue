@@ -92,6 +92,11 @@ export default {
         title: 'Staffs',
         icon: 'mdi-worker',
         link: '/staffs'
+      },
+      {
+        title: 'Admins',
+        icon: 'mdi-shield-account',
+        link: '/admins'
       }
     ],
     username: 'John Bob',

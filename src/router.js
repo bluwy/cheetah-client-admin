@@ -1,17 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import BoxLayout from './layouts/Box.vue'
-import DashLayout from './layouts/Dash.vue'
+import BoxLayout from '@/layouts/Box.vue'
+import DashLayout from '@/layouts/Dash.vue'
 
-import Login from './views/Login.vue'
+import Login from '@/views/Login.vue'
 
-import Dashboard from './views/Dashboard.vue'
-import Jobs from './views/Jobs.vue'
-import Customers from './views/Customers.vue'
-import Staffs from './views/Staffs.vue'
+import Dashboard from '@/views/Dashboard.vue'
+import Jobs from '@/views/Jobs.vue'
+import Customers from '@/views/Customers.vue'
+import Staffs from '@/views/Staffs.vue'
+import Admins from '@/views/Admins.vue'
 
-import Null from './views/Null.vue'
+import Null from '@/views/Null.vue'
 
 Vue.use(Router)
 
@@ -43,6 +44,11 @@ export default new Router({
           path: 'staffs',
           name: 'staffs',
           component: Staffs
+        },
+        {
+          path: 'admins',
+          name: 'admins',
+          component: Admins
         }
       ]
     },
