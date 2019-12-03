@@ -23,6 +23,7 @@
         </dialog-job-create>
         <dialog-job-details v-model="dialogDetails" :jobId="targetJobId"></dialog-job-details>
         <dialog-assignment-add v-model="dialogAssignmentAdd" :jobId="targetJobId"></dialog-assignment-add>
+        <dialog-job-remove v-model="dialogRemove" :jobId="targetJobId" @remove="refetch()"></dialog-job-remove>
       </v-toolbar>
     </template>
     <template #item.dateIssued="{ item }">
@@ -48,7 +49,7 @@
       <v-tooltip top>
         <span>Remove job</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on">
+          <v-btn icon small v-on="on" @click="openDialogRemove(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -63,6 +64,7 @@ import { snakeCase } from 'lodash-es'
 import DialogAssignmentAdd from '@/components/DialogAssignmentAdd.vue'
 import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import DialogJobDetails from '@/components/DialogJobDetails.vue'
+import DialogJobRemove from '@/components/DialogJobRemove.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 
 export default {
@@ -84,7 +86,8 @@ export default {
   components: {
     DialogAssignmentAdd,
     DialogJobCreate,
-    DialogJobDetails
+    DialogJobDetails,
+    DialogJobRemove
   },
   props: {
     queryLimit: {
@@ -106,6 +109,7 @@ export default {
     dialogCreate: false,
     dialogDetails: false,
     dialogAssignmentAdd: false,
+    dialogRemove: false,
     targetJobId: '0'
   }),
   computed: {
@@ -139,6 +143,10 @@ export default {
     openDialogAssignmentAdd (jobId) {
       this.targetJobId = jobId
       this.dialogAssignmentAdd = true
+    },
+    openDialogRemove (jobId) {
+      this.targetJobId = jobId
+      this.dialogRemove = true
     }
   }
 }
