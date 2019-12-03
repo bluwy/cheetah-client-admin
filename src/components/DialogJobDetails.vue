@@ -19,7 +19,7 @@
         <v-card-subtitle>Issued {{ issueDate }}</v-card-subtitle>
         <v-card-text>
           <div class="subtitle-1">Assignments</div>
-          <timeline-assignment :assignments="job.assignments"></timeline-assignment>
+          <timeline-assignment :assignments="job.assignments" :jobId="jobId"></timeline-assignment>
         </v-card-text>
       </v-container>
     </v-card>

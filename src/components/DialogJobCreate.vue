@@ -16,29 +16,7 @@
                 <input-staff v-model="job.staffIds" multiple :rules="rule.staffIds"></input-staff>
               </v-col>
             </v-row>
-            <v-list>
-              <v-list-item key="header">
-                <v-list-item-content>
-                  <v-list-item-title>Tasks</v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-btn icon small @click.stop="job.tasks.push({ type: '', remarks: '' })">
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-              <v-list-item
-                v-for="(task, i) in job.tasks"
-                :key="i"
-              >
-                <input-task
-                  :task-type.sync="task.type"
-                  :task-remarks="task.remarks"
-                  icon-type="remove"
-                  @click:icon="job.tasks.splice(i, 1)"
-                ></input-task>
-              </v-list-item>
-            </v-list>
+            <input-list-task :tasks="job.tasks"></input-list-task>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -66,7 +44,7 @@ import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from './DialogYesNo.vue'
 import InputCustomer from './InputCustomer.vue'
 import InputStaff from './InputStaff.vue'
-import InputTask from './InputTask.vue'
+import InputListTask from './InputListTask.vue'
 import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
 
 const formJobFactory = () => ({
@@ -81,7 +59,7 @@ export default {
     DialogYesNo,
     InputCustomer,
     InputStaff,
-    InputTask
+    InputListTask
   },
   props: {
     value: {

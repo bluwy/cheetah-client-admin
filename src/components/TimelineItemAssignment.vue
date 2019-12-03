@@ -99,17 +99,17 @@ export default {
 
       const text = [
         format(this.checkIn, 'd MMM yyyy'),
-        format(this.checkIn, 'HHmm'),
+        format(this.checkIn, 'HH:mm'),
         '-'
       ]
 
       if (this.checkOut == null) {
         text.push('now')
       } else {
-        text.push([
+        text.push(
           isSameDay(this.checkIn, this.checkOut) ? '' : format(this.checkOut, 'd MMM yyyy'),
-          format(this.checkOut, 'HHmm')
-        ])
+          format(this.checkOut, 'HH:mm')
+        )
       }
 
       return text.filter(v => !!v).join(' ')
@@ -119,16 +119,6 @@ export default {
 </script>
 
 <style scoped>
-/* Make timeline divider thinner */
-.v-timeline-item >>> .v-timeline-item__divider {
-  min-width: 24px;
-}
-
-.v-timeline-item >>> .v-timeline-item__body {
-  max-width: calc(100% - 24px);
-  padding-left: 16px;
-}
-
 /* Remove arrow from timeline */
 .assignment-card::before, .assignment-card::after {
   display: none;

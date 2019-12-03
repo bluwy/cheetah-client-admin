@@ -16,5 +16,11 @@ query GetJobs(
       name
     }
     dateIssued
+    assignments {
+      id
+      checkIn
+      checkOut
+      needsFollowUp
+    }
   }
 }

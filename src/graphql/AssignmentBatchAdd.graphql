@@ -1,0 +1,34 @@
+mutation AssignmentBatchAdd(
+  $jobId: ID!,
+  $staffIds: [ID!],
+  $tasks: [TaskInput!]
+) {
+  addAssignmentBatch(
+    jobId: $jobId,
+    staffIds: $staffIds,
+    tasks: $tasks
+  ) {
+    success
+    message
+    assignment {
+      id
+      staffs {
+        id
+        username
+      }
+      checkIn
+      checkOut
+      tasks {
+        id
+        type
+        remarks
+      }
+      actions {
+        id
+        type
+        remarks
+      }
+      needsFollowUp
+    }
+  }
+}

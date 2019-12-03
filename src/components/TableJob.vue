@@ -22,6 +22,7 @@
           </template>
         </dialog-job-create>
         <dialog-job-details v-model="dialogDetails" :jobId="targetJobId"></dialog-job-details>
+        <dialog-assignment-add v-model="dialogAssignmentAdd" :jobId="targetJobId"></dialog-assignment-add>
       </v-toolbar>
     </template>
     <template #item.dateIssued="{ item }">
@@ -39,7 +40,7 @@
       <v-tooltip top>
         <span>Add assignment</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on">
+          <v-btn icon small :disabled="!canAddAssignment(item)" v-on="on" @click="openDialogAssignmentAdd(item.id)">
             <v-icon small>mdi-file-plus</v-icon>
           </v-btn>
         </template>
@@ -59,6 +60,7 @@
 <script>
 import { format } from 'date-fns'
 import { snakeCase } from 'lodash-es'
+import DialogAssignmentAdd from '@/components/DialogAssignmentAdd.vue'
 import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import DialogJobDetails from '@/components/DialogJobDetails.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
@@ -80,6 +82,7 @@ export default {
     }
   },
   components: {
+    DialogAssignmentAdd,
     DialogJobCreate,
     DialogJobDetails
   },
@@ -102,6 +105,7 @@ export default {
     jobs: [],
     dialogCreate: false,
     dialogDetails: false,
+    dialogAssignmentAdd: false,
     targetJobId: '0'
   }),
   computed: {
@@ -120,9 +124,21 @@ export default {
     formatIssueDate (issueDate) {
       return format(issueDate, 'd MMM yyyy')
     },
+    canAddAssignment (job) {
+      if (!job.assignments || !job.assignments.length) {
+        return true
+      } else {
+        const last = job.assignments[job.assignments.length - 1]
+        return last.checkIn != null && last.checkOut != null && last.needsFollowUp
+      }
+    },
     openDialogDetails (jobId) {
       this.targetJobId = jobId
       this.dialogDetails = true
+    },
+    openDialogAssignmentAdd (jobId) {
+      this.targetJobId = jobId
+      this.dialogAssignmentAdd = true
     }
   }
 }
