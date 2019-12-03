@@ -11,6 +11,14 @@
         <v-btn class="mr-3" icon color="primary" @click="refetch()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
+        <dialog-admin-create v-model="dialogCreate" @create="refetch()">
+          <template #activator>
+            <v-btn color="primary" @click.stop="dialogCreate = true">
+              <v-icon left>mdi-plus-circle</v-icon>
+              Create
+            </v-btn>
+          </template>
+        </dialog-admin-create>
       </v-toolbar>
     </template>
     <template #item.privilege="{ item }">
@@ -32,6 +40,7 @@
 </template>
 
 <script>
+import DialogAdminCreate from '@/components/DialogAdminCreate.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 
 export default {
@@ -42,6 +51,9 @@ export default {
       loadingKey: 'loadingCount'
     }
   },
+  components: {
+    DialogAdminCreate
+  },
   data: () => ({
     loadingCount: 0,
     headers: [
@@ -49,7 +61,8 @@ export default {
       { text: 'Privilege', value: 'privilege' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    admins: []
+    admins: [],
+    dialogCreate: false
   }),
   methods: {
     refetch () {

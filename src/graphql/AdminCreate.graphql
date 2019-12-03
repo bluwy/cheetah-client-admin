@@ -1,0 +1,19 @@
+mutation AdminCreate(
+  $username: String!,
+  $password: String!,
+  $privilege: AdminPrivilege
+) {
+  createAdmin(
+    username: $username,
+    password: $password,
+    privilege: $privilege
+  ) {
+    success
+    message
+    admin {
+      id
+      username
+      privilege
+    }
+  }
+}

@@ -81,7 +81,6 @@ export default {
       password: [required, minStrLength(8)]
     },
     passwordShow: false,
-    loading: false,
     cancelDialog: false
   }),
   computed: {
