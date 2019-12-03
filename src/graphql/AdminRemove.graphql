@@ -1,0 +1,6 @@
+mutation AdminRemove($id: ID!) {
+  removeAdmin(id: $id) {
+    success
+    message
+  }
+}

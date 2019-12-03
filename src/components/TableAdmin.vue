@@ -19,6 +19,7 @@
             </v-btn>
           </template>
         </dialog-admin-create>
+        <dialog-admin-remove v-model="dialogRemove" :adminId="targetAdminId"></dialog-admin-remove>
       </v-toolbar>
     </template>
     <template #item.privilege="{ item }">
@@ -26,11 +27,11 @@
         {{ item.privilege }}
       </v-chip>
     </template>
-    <template #item.action>
+    <template #item.action="{ item }">
       <v-tooltip top>
         <span>Remove admin</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on">
+          <v-btn icon small v-on="on" @click.stop="openDialogRemove(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -41,6 +42,7 @@
 
 <script>
 import DialogAdminCreate from '@/components/DialogAdminCreate.vue'
+import DialogAdminRemove from '@/components/DialogAdminRemove.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 
 export default {
@@ -52,7 +54,8 @@ export default {
     }
   },
   components: {
-    DialogAdminCreate
+    DialogAdminCreate,
+    DialogAdminRemove
   },
   data: () => ({
     loadingCount: 0,
@@ -62,11 +65,17 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     admins: [],
-    dialogCreate: false
+    dialogCreate: false,
+    dialogRemove: false,
+    targetAdminId: '0'
   }),
   methods: {
     refetch () {
       this.$apollo.queries.admins.refetch()
+    },
+    openDialogRemove (adminId) {
+      this.targetAdminId = adminId
+      this.dialogRemove = true
     }
   }
 }
