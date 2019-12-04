@@ -20,15 +20,12 @@
             label="Full Name"
             spellcheck="false"
           ></v-text-field>
-          <v-text-field
+          <input-password
             v-model="staff.password"
             :rules="rule.password"
-            :type="passwordShow ? 'text' : 'password'"
-            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
             label="Password"
             spellcheck="false"
-            @click:append="passwordShow = !passwordShow"
-          ></v-text-field>
+          ></input-password>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -53,6 +50,7 @@
 <script>
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputPassword from '@/components/InputPassword.vue'
 import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
@@ -65,7 +63,8 @@ const formStaffFactory = () => ({
 export default {
   name: 'DialogStaffCreate',
   components: {
-    DialogYesNo
+    DialogYesNo,
+    InputPassword
   },
   props: {
     value: {
@@ -80,7 +79,6 @@ export default {
       fullName: [required, maxStrLength(128)],
       password: [required, minStrLength(8)]
     },
-    passwordShow: false,
     cancelDialog: false
   }),
   computed: {

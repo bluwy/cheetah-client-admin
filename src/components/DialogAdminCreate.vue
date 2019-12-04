@@ -14,15 +14,12 @@
               label="Username"
               spellcheck="false"
             ></v-text-field>
-            <v-text-field
+            <input-password
               v-model="admin.password"
               :rules="rule.password"
-              :type="passwordShow ? 'text' : 'password'"
-              :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
               label="Password"
               spellcheck="false"
-              @click:append="passwordShow = !passwordShow"
-            ></v-text-field>
+            ></input-password>
             <v-radio-group
               v-model="admin.privilege"
               :rules="rule.privilege"
@@ -58,6 +55,7 @@
 <script>
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputPassword from '@/components/InputPassword.vue'
 import ADMIN_CREATE from '@/graphql/AdminCreate.graphql'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 
@@ -70,7 +68,8 @@ const formAdminFactory = () => ({
 export default {
   name: 'DialogAdminCreate',
   components: {
-    DialogYesNo
+    DialogYesNo,
+    InputPassword
   },
   props: {
     value: {
@@ -85,7 +84,6 @@ export default {
       password: [required, minStrLength(8)],
       privilege: [required]
     },
-    passwordShow: false,
     cancelDialog: false
   }),
   computed: {

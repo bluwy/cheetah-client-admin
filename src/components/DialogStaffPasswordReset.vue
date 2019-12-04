@@ -8,15 +8,12 @@
         <v-card-title>Reset Staff Password</v-card-title>
         <v-card-text>
           <v-container fluid>
-            <v-text-field
+            <input-password
               v-model="password"
               :rules="passwordRule"
-              :type="passwordShow ? 'text' : 'password'"
-              :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
               label="New password"
               spellcheck="false"
-              @click:append="passwordShow = !passwordShow"
-            ></v-text-field>
+            ></input-password>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -41,12 +38,14 @@
 <script>
 import { required, minStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputPassword from '@/components/InputPassword.vue'
 import STAFF_PASSWORD_RESET from '@/graphql/StaffPasswordReset.graphql'
 
 export default {
   name: 'DialogStaffPasswordReset',
   components: {
-    DialogYesNo
+    DialogYesNo,
+    InputPassword
   },
   props: {
     value: {
@@ -61,7 +60,6 @@ export default {
     valid: false,
     password: '',
     passwordRule: [required, minStrLength(8)],
-    passwordShow: false,
     dialogCancel: false
   }),
   computed: {
