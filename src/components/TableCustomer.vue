@@ -32,7 +32,7 @@
       <v-tooltip top>
         <span>Edit customer</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click.stop="openDialogEdit(item.id)">
+          <v-btn icon small color="warning" v-on="on" @click.stop="openDialogEdit(item.id)">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -40,7 +40,7 @@
       <v-tooltip top>
         <span>Remove customer</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click.stop="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogRemove(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>

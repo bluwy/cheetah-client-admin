@@ -36,7 +36,7 @@
       <v-tooltip top>
         <span>Details</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click="openDialogDetails(item.id)">
+          <v-btn icon small color="primary" v-on="on" @click="openDialogDetails(item.id)">
             <v-icon small>mdi-information</v-icon>
           </v-btn>
         </template>
@@ -44,7 +44,7 @@
       <v-tooltip top>
         <span>Add assignment</span>
         <template #activator="{ on }">
-          <v-btn icon small :disabled="!canAddAssignment(item)" v-on="on" @click="openDialogAssignmentAdd(item.id)">
+          <v-btn icon small color="warning" :disabled="!canAddAssignment(item)" v-on="on" @click="openDialogAssignmentAdd(item.id)">
             <v-icon small>mdi-file-plus</v-icon>
           </v-btn>
         </template>
@@ -52,7 +52,7 @@
       <v-tooltip top>
         <span>Remove job</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click="openDialogRemove(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>

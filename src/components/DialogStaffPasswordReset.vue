@@ -40,7 +40,7 @@
 
 <script>
 import { required, minStrLength } from '@/utils/inputRules'
-import DialogYesNo from './DialogYesNo.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
 import STAFF_PASSWORD_RESET from '@/graphql/StaffPasswordReset.graphql'
 
 export default {

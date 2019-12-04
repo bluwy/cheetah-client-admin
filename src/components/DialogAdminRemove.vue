@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import DialogYesNo from './DialogYesNo.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 import ADMIN_REMOVE from '@/graphql/AdminRemove.graphql'
 

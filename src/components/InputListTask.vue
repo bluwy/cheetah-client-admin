@@ -5,7 +5,7 @@
         <v-list-item-title slot="title">Tasks</v-list-item-title>
       </v-list-item-content>
       <v-list-item-action>
-        <v-btn icon small color="primary" @click.stop="tasks.push({ type: '', remarks: '' })">
+        <v-btn icon small color="primary" @click.stop="addEmptyTask()">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-list-item-action>
@@ -33,6 +33,31 @@ export default {
     tasks: {
       type: Array,
       required: true
+    },
+    minOneTask: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    tasks: {
+      handler (val) {
+        if (this.minOneTask && this.tasks.length <= 0) {
+          this.addEmptyTask()
+        }
+      },
+      immediate: true
+    }
+  },
+  computed: {
+    isDirty () {
+      // Every task object is not empty
+      return this.tasks.length && this.tasks.some(task => Object.values(task).some(v => !!v))
+    }
+  },
+  methods: {
+    addEmptyTask () {
+      this.tasks.push({ type: '', remarks: '' })
     }
   }
 }

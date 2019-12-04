@@ -77,8 +77,8 @@
 <script>
 import { storeDeleteQuery } from '@/utils/apollo'
 import { required, email } from '@/utils/inputRules'
-import DialogYesNo from './DialogYesNo.vue'
-import InputStaff from './InputStaff'
+import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputStaff from '@/components/InputStaff'
 import CUSTOMER_CREATE from '@/graphql/CustomerCreate.graphql'
 
 const formCustomerFactory = () => ({

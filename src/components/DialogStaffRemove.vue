@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import DialogYesNo from './DialogYesNo.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_REMOVE from '@/graphql/StaffRemove.graphql'
 

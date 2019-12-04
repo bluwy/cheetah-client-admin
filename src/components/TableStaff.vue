@@ -3,6 +3,7 @@
     :headers="headers"
     :items="staffs"
     :loading="!!loadingCount"
+    hide-default-footer
   >
     <template #top>
       <v-toolbar flat>
@@ -28,7 +29,7 @@
       <v-tooltip top>
         <span>Edit staff</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click.stop="openDialogEdit(item.id)">
+          <v-btn icon small color="warning" v-on="on" @click.stop="openDialogEdit(item.id)">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -36,7 +37,7 @@
       <v-tooltip top>
         <span>Reset password</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click.stop="openDialogPasswordReset(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogPasswordReset(item.id)">
             <v-icon small>mdi-lock</v-icon>
           </v-btn>
         </template>
@@ -44,7 +45,7 @@
       <v-tooltip top>
         <span>Remove staff</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click.stop="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogRemove(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -55,9 +56,9 @@
 
 <script>
 import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
-import DialogStaffEdit from './DialogStaffEdit.vue'
-import DialogStaffPasswordReset from './DialogStaffPasswordReset.vue'
-import DialogStaffRemove from './DialogStaffRemove.vue'
+import DialogStaffEdit from '@/components/DialogStaffEdit.vue'
+import DialogStaffPasswordReset from '@/components/DialogStaffPasswordReset.vue'
+import DialogStaffRemove from '@/components/DialogStaffRemove.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
 export default {

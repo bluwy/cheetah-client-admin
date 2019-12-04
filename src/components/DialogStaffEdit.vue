@@ -44,7 +44,7 @@
 <script>
 import { isEqual } from 'lodash-es'
 import { required, maxStrLength } from '@/utils/inputRules'
-import DialogYesNo from './DialogYesNo.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_GET from '@/graphql/StaffGet.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'

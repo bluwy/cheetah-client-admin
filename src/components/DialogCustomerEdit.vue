@@ -78,8 +78,8 @@
 import { cloneDeep, isEqual } from 'lodash-es'
 import { storeDeleteQuery } from '@/utils/apollo'
 import { required, email } from '@/utils/inputRules'
-import DialogYesNo from './DialogYesNo.vue'
-import InputStaff from './InputStaff'
+import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputStaff from '@/components/InputStaff'
 import CUSTOMER_GET from '@/graphql/CustomerGet.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 

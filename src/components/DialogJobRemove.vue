@@ -10,7 +10,7 @@
 
 <script>
 import { storeDeleteQuery } from '@/utils/apollo'
-import DialogYesNo from './DialogYesNo.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
 import JOB_REMOVE from '@/graphql/JobRemove.graphql'
 
 export default {

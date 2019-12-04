@@ -16,7 +16,7 @@
                 <input-staff v-model="job.staffIds" multiple :rules="rule.staffIds"></input-staff>
               </v-col>
             </v-row>
-            <input-list-task :tasks="job.tasks"></input-list-task>
+            <input-list-task ref="tasksInput" :tasks="job.tasks"></input-list-task>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -41,10 +41,10 @@
 <script>
 import { storeDeleteQuery } from '@/utils/apollo'
 import { required, minArrLength } from '@/utils/inputRules'
-import DialogYesNo from './DialogYesNo.vue'
-import InputCustomer from './InputCustomer.vue'
-import InputStaff from './InputStaff.vue'
-import InputListTask from './InputListTask.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputCustomer from '@/components/InputCustomer.vue'
+import InputStaff from '@/components/InputStaff.vue'
+import InputListTask from '@/components/InputListTask.vue'
 import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
 
 const formJobFactory = () => ({
@@ -79,7 +79,7 @@ export default {
   computed: {
     isDirty () {
       const j = this.job
-      return !!(j.customerId || j.staffIds.length || j.tasks.length)
+      return !!(j.customerId || j.staffIds.length || this.$refs.tasksInput.isDirty)
     }
   },
   methods: {

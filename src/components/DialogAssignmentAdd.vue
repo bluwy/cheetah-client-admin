@@ -9,7 +9,7 @@
         <v-card-text>
           <v-container fluid>
             <input-staff v-model="assignment.staffIds" multiple :rules="rule.staffIds"></input-staff>
-            <input-list-task :tasks="assignment.tasks"></input-list-task>
+            <input-list-task ref="tasksInput" :tasks="assignment.tasks"></input-list-task>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -72,8 +72,7 @@ export default {
   }),
   computed: {
     isDirty () {
-      const a = this.assignment
-      return a.staffIds.length || a.tasks.length
+      return !!(this.assignment.staffIds.length || this.$refs.tasksInput.isDirty)
     }
   },
   methods: {

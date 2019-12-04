@@ -8,8 +8,6 @@
     :placeholder="placeholder"
     :rules="rules"
     editable
-    solo
-    flat
     @input="$emit('input', $event)"
   >
     <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">

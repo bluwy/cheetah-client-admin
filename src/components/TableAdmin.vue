@@ -3,6 +3,7 @@
     :headers="headers"
     :items="admins"
     :loading="!!loadingCount"
+    hide-default-footer
   >
     <template #top>
       <v-toolbar flat>
@@ -23,7 +24,7 @@
       </v-toolbar>
     </template>
     <template #item.privilege="{ item }">
-      <v-chip small>
+      <v-chip small :color="getPrivilegeColor(item.privilege)">
         {{ item.privilege }}
       </v-chip>
     </template>
@@ -31,7 +32,7 @@
       <v-tooltip top>
         <span>Remove admin</span>
         <template #activator="{ on }">
-          <v-btn icon small v-on="on" @click.stop="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogRemove(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -72,6 +73,16 @@ export default {
   methods: {
     refetch () {
       this.$apollo.queries.admins.refetch()
+    },
+    getPrivilegeColor (privilege) {
+      switch (privilege.toLowerCase()) {
+        case 'full':
+          return 'success'
+        case 'basic':
+          return 'warning'
+        default:
+          return ''
+      }
     },
     openDialogRemove (adminId) {
       this.targetAdminId = adminId

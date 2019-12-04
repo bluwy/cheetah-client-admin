@@ -52,7 +52,7 @@
 
 <script>
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
-import DialogYesNo from './DialogYesNo.vue'
+import DialogYesNo from '@/components/DialogYesNo.vue'
 import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
