@@ -5,6 +5,7 @@ import BoxLayout from '@/layouts/Box.vue'
 import DashLayout from '@/layouts/Dash.vue'
 
 import Login from '@/views/Login.vue'
+import Forgot from '@/views/Forgot.vue'
 
 import Dashboard from '@/views/Dashboard.vue'
 import Jobs from '@/views/Jobs.vue'
@@ -60,6 +61,11 @@ export default new Router({
           path: 'login',
           name: 'login',
           component: Login
+        },
+        {
+          path: 'forgot',
+          name: 'forgot',
+          component: Forgot
         }
       ]
     },
