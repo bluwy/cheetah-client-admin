@@ -1,0 +1,7 @@
+query AdminGet($id: ID!) {
+  admin(id: $id) {
+    id
+    username
+    privilege
+  }
+}

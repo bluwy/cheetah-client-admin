@@ -1,0 +1,7 @@
+query AdminCheck($token: String!) {
+  checkAdmin(token: $token) {
+    id
+    role
+    privilege
+  }
+}

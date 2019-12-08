@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="login()">
+  <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="handleLogin()">
     <v-card width="400">
       <v-card-title>Login</v-card-title>
       <v-card-text>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { required } from '@/utils/inputRules'
 import InputPassword from '@/components/InputPassword.vue'
 
@@ -51,9 +52,12 @@ export default {
     messageText: ''
   }),
   methods: {
-    login () {
-      if (this.$refs.form.validate()) {
-        console.log('login')
+    ...mapActions([
+      'login'
+    ]),
+    async handleLogin () {
+      if (this.$refs.form.validate() && await this.login(this.user)) {
+        this.$router.push({ path: '/' })
       }
     }
   }

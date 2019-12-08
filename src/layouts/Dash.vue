@@ -9,23 +9,17 @@
       <v-menu offset-y>
         <template #activator="{ on }">
           <v-btn large text v-on="on">
-            <v-icon large left>mdi-account-circle</v-icon>
-            <span class="ml-3">{{ username }}</span>
+            <v-icon large :left="!!admin.username">mdi-account-circle</v-icon>
+            <span v-if="admin.username" class="ml-3">{{ admin.username }}</span>
           </v-btn>
         </template>
-        <v-list>
-          <v-list-item
-            v-for="item in userMenuItems"
-            :key="item.title"
-            link
-            :to="item.link"
-            @click="item.action || false"
-          >
+        <v-list dense>
+          <v-list-item @click="handleLogout()">
             <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title>Log out</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -67,8 +61,24 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+import ADMIN_GET from '@/graphql/AdminGet.graphql'
+
 export default {
   name: 'Dash',
+  apollo: {
+    admin: {
+      query: ADMIN_GET,
+      variables () {
+        return {
+          id: this.userData.id
+        }
+      },
+      skip () {
+        return !this.userData.id
+      }
+    }
+  },
   data: () => ({
     appTitle: 'Hello Title',
     sideNavOpen: null,
@@ -99,25 +109,23 @@ export default {
         link: '/admins'
       }
     ],
-    username: 'John Bob',
-    userMenuItems: [
-      {
-        title: 'Profile',
-        icon: 'mdi-account',
-        link: '/settings#profile'
-      },
-      {
-        title: 'Settings',
-        icon: 'mdi-settings',
-        link: '/settings'
-      },
-      {
-        title: 'Log out',
-        icon: 'mdi-logout',
-        action: () => {}
+    admin: {}
+  }),
+  computed: {
+    ...mapState([
+      'userData'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'logout'
+    ]),
+    async handleLogout () {
+      if (await this.logout()) {
+        this.$router.push({ path: '/login' })
       }
-    ]
-  })
+    }
+  }
 }
 </script>
 

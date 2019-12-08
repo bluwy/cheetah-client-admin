@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import ApolloClient from 'apollo-boost'
+import { authToken } from '@/utils/localStorage'
 
 Vue.use(VueApollo)
 
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   uri: process.env.VUE_APP_SERVER_URL,
   request: (operation) => {
     operation.setContext({
       headers: {
-        // TODO: Convert this to use localStorage
-        authorization: process.env.VUE_APP_AUTH_JWT || ''
+        authorization: authToken()
       }
     })
   }

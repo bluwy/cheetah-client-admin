@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 
 import BoxLayout from '@/layouts/Box.vue'
 import DashLayout from '@/layouts/Dash.vue'
@@ -17,7 +18,7 @@ import Null from '@/views/Null.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
@@ -25,6 +26,7 @@ export default new Router({
       path: '/',
       redirect: '/dashboard',
       component: DashLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: 'dashboard',
@@ -76,3 +78,19 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some(v => v.meta.requiresAuth)) {
+    await store.dispatch('checkUser')
+
+    if (store.getters.isAuthed) {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    next()
+  }
+})
+
+export default router
