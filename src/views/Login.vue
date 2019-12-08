@@ -28,6 +28,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { getErrorMessages } from '@/utils/apollo'
 import { required } from '@/utils/inputRules'
 import InputPassword from '@/components/InputPassword.vue'
 
@@ -56,8 +57,15 @@ export default {
       'login'
     ]),
     async handleLogin () {
-      if (this.$refs.form.validate() && await this.login(this.user)) {
-        this.$router.push({ path: '/' })
+      if (this.$refs.form.validate()) {
+        try {
+          if (await this.login(this.user)) {
+            this.$router.push({ path: '/' })
+          }
+        } catch (e) {
+          this.messageType = 'error'
+          this.messageText = getErrorMessages(e).join(', ')
+        }
       }
     }
   }

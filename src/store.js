@@ -64,9 +64,8 @@ export default new Vuex.Store({
           throw new Error(loginAdmin.message)
         }
       } catch (e) {
-        console.log(e)
         commit('SET_USER_DATA', { data: null })
-        return false
+        throw e
       }
     },
     logout ({ commit }) {
