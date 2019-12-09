@@ -75,11 +75,12 @@
 </template>
 
 <script>
-import { storeDeleteQuery } from '@/utils/apollo'
+import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import { required, email } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputStaff from '@/components/InputStaff'
 import CUSTOMER_CREATE from '@/graphql/CustomerCreate.graphql'
+import { snackbarPush } from './SnackbarGlobal.vue'
 
 const formCustomerFactory = () => ({
   code: '',
@@ -130,34 +131,34 @@ export default {
       this.$refs.form.reset()
       this.customer = formCustomerFactory()
     },
-    create () {
+    async create () {
       if (this.$refs.form.validate()) {
         const cacheCustomer = { ...this.customer }
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: CUSTOMER_CREATE,
-          variables: cacheCustomer,
-          update: (store, { data: { createCustomer } }) => {
-            if (createCustomer.success) {
-              storeDeleteQuery(store, /^customers/)
-              console.log(store)
-              this.$emit('create')
-            } else {
-              throw new Error(createCustomer.message)
+        try {
+          const { data: { createCustomer } } = await this.$apollo.mutate({
+            mutation: CUSTOMER_CREATE,
+            variables: cacheCustomer,
+            update: (store, { data: { createCustomer } }) => {
+              if (createCustomer.success) {
+                storeDeleteQuery(store, /^customers/)
+                console.log(store)
+                this.$emit('create')
+              } else {
+                throw new Error(createCustomer.message)
+              }
             }
-          }
-        })
-          .then((data) => {
-            console.log(data)
-            this.cancel(true)
           })
-          .catch((e) => {
-            console.log(e)
-            this.customer = cacheCustomer
-            this.$emit('input', true)
-          })
+
+          snackbarPush({ color: 'success', message: createCustomer.message })
+        } catch (e) {
+          this.customer = cacheCustomer
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }

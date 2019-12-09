@@ -9,7 +9,9 @@
 </template>
 
 <script>
+import { getErrorMessages } from '@/utils/apollo'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_REMOVE from '@/graphql/StaffRemove.graphql'
 
@@ -30,37 +32,38 @@ export default {
     close () {
       this.$emit('input', false)
     },
-    remove () {
+    async remove () {
       const cacheStaffId = this.staffId
 
       this.close()
 
-      this.$apollo.mutate({
-        mutation: STAFF_REMOVE,
-        variables: {
-          id: cacheStaffId
-        },
-        update: (store, { data: { removeStaff } }) => {
-          if (removeStaff.success) {
-            const data = store.readQuery({ query: STAFF_GET_ALL })
+      try {
+        const { data: { removeStaff } } = await this.$apollo.mutate({
+          mutation: STAFF_REMOVE,
+          variables: {
+            id: cacheStaffId
+          },
+          update: (store, { data: { removeStaff } }) => {
+            if (removeStaff.success) {
+              const data = store.readQuery({ query: STAFF_GET_ALL })
 
-            if (data.staffs) {
-              data.staffs = data.staffs.filter(v => v.id !== cacheStaffId)
+              if (data.staffs) {
+                data.staffs = data.staffs.filter(v => v.id !== cacheStaffId)
 
-              store.writeQuery({ query: STAFF_GET_ALL, data })
+                store.writeQuery({ query: STAFF_GET_ALL, data })
+              }
+            } else {
+              throw new Error(removeStaff.message)
             }
-          } else {
-            throw new Error(removeStaff.message)
           }
-        }
-      })
-        .then((data) => {
-          console.log(data)
         })
-        .catch((e) => {
-          console.log(e)
-          this.$emit('input', true)
-        })
+
+        snackbarPush({ color: 'success', message: removeStaff.message })
+      } catch (e) {
+        this.$emit('input', true)
+
+        snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+      }
     }
   }
 }

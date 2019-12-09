@@ -9,8 +9,9 @@
 </template>
 
 <script>
-import { storeDeleteQuery } from '@/utils/apollo'
+import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import JOB_REMOVE from '@/graphql/JobRemove.graphql'
 
 export default {
@@ -30,33 +31,34 @@ export default {
     close () {
       this.$emit('input', false)
     },
-    remove () {
+    async remove () {
       const cacheJobId = this.jobId
 
       this.close()
 
-      this.$apollo.mutate({
-        mutation: JOB_REMOVE,
-        variables: {
-          id: cacheJobId
-        },
-        update: (store, { data: { removeJob } }) => {
-          if (removeJob.success) {
-            storeDeleteQuery(store, /^jobs/)
-            console.log(store)
-            this.$emit('remove')
-          } else {
-            throw new Error(removeJob.message)
+      try {
+        const { data: { removeJob } } = await this.$apollo.mutate({
+          mutation: JOB_REMOVE,
+          variables: {
+            id: cacheJobId
+          },
+          update: (store, { data: { removeJob } }) => {
+            if (removeJob.success) {
+              storeDeleteQuery(store, /^jobs/)
+              console.log(store)
+              this.$emit('remove')
+            } else {
+              throw new Error(removeJob.message)
+            }
           }
-        }
-      })
-        .then((data) => {
-          console.log(data)
         })
-        .catch((e) => {
-          console.log(e)
-          this.$emit('input', true)
-        })
+
+        snackbarPush({ color: 'success', message: removeJob.message })
+      } catch (e) {
+        this.$emit('input', true)
+
+        snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+      }
     }
   }
 }

@@ -36,9 +36,11 @@
 </template>
 
 <script>
+import { getErrorMessages } from '@/utils/apollo'
 import { required, minStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_PASSWORD_RESET from '@/graphql/StaffPasswordReset.graphql'
 
 export default {
@@ -80,28 +82,32 @@ export default {
       this.password = ''
       this.$refs.form.resetValidation()
     },
-    resetPassword () {
+    async resetPassword () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cachePassword = this.password
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: STAFF_PASSWORD_RESET,
-          variables: {
-            id: this.staffId,
-            password: cachePassword
+        try {
+          const { data: { resetStaffPassword } } = await this.$apollo.mutate({
+            mutation: STAFF_PASSWORD_RESET,
+            variables: {
+              id: this.staffId,
+              password: cachePassword
+            }
+          })
+
+          if (resetStaffPassword.success) {
+            snackbarPush({ color: 'success', message: resetStaffPassword.message })
+          } else {
+            throw new Error(resetStaffPassword.message)
           }
-        })
-          .then((data) => {
-            console.log(data)
-            this.cancel(true)
-          })
-          .catch((e) => {
-            console.log(e)
-            this.password = cachePassword
-            this.$emit('input', true)
-          })
+        } catch (e) {
+          this.password = cachePassword
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }

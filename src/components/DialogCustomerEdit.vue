@@ -76,10 +76,11 @@
 
 <script>
 import { cloneDeep, isEqual } from 'lodash-es'
-import { storeDeleteQuery } from '@/utils/apollo'
+import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import { required, email } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputStaff from '@/components/InputStaff'
+import { snackbarPush } from './SnackbarGlobal.vue'
 import CUSTOMER_GET from '@/graphql/CustomerGet.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 
@@ -163,39 +164,43 @@ export default {
       this.currentCustomer = cloneDeep(this.customer)
       this.$refs.form.resetValidation()
     },
-    edit () {
+    async edit () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheCustomerId = this.customerId
         const cacheCustomer = cloneDeep(this.currentCustomer)
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: CUSTOMER_UPDATE,
-          variables: {
-            id: cacheCustomerId,
-            code: cacheCustomer.code,
-            name: cacheCustomer.name,
-            address: cacheCustomer.address,
-            phoneNumber: cacheCustomer.phoneNumber,
-            email: cacheCustomer.email,
-            picStaffId: cacheCustomer.personInCharge.id
-          },
-          update: (store, { data: { updateCustomer } }) => {
-            storeDeleteQuery(store, /^customers/)
-            console.log(store)
-            this.$emit('edit')
-          }
-        })
-          .then((data) => {
-            console.log(data)
-            this.cancel(true)
+        try {
+          const { data: { updateCustomer } } = await this.$apollo.mutate({
+            mutation: CUSTOMER_UPDATE,
+            variables: {
+              id: cacheCustomerId,
+              code: cacheCustomer.code,
+              name: cacheCustomer.name,
+              address: cacheCustomer.address,
+              phoneNumber: cacheCustomer.phoneNumber,
+              email: cacheCustomer.email,
+              picStaffId: cacheCustomer.personInCharge.id
+            },
+            update: (store, { data: { updateCustomer } }) => {
+              if (updateCustomer.success) {
+                storeDeleteQuery(store, /^customers/)
+                console.log(store)
+                this.$emit('edit')
+              } else {
+                throw new Error(updateCustomer.message)
+              }
+            }
           })
-          .catch((e) => {
-            console.log(e)
-            this.currentCustomer = cacheCustomer
-            this.$emit('input', true)
-          })
+
+          snackbarPush({ color: 'success', message: updateCustomer.message })
+        } catch (e) {
+          this.currentCustomer = cacheCustomer
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }

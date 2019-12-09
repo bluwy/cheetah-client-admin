@@ -53,9 +53,11 @@
 </template>
 
 <script>
+import { getErrorMessages } from '@/utils/apollo'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ADMIN_CREATE from '@/graphql/AdminCreate.graphql'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 
@@ -105,37 +107,38 @@ export default {
       this.$refs.form.reset()
       this.admin = formAdminFactory()
     },
-    create () {
-      if (this.$refs.form.validate()) {
+    async create () {
+      if (this.$refs.form.validate() && this.isDirty) {
         const cacheAdmin = { ...this.admin }
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: ADMIN_CREATE,
-          variables: cacheAdmin,
-          update: (store, { data: { createAdmin } }) => {
-            if (createAdmin.success) {
-              const data = store.readQuery({ query: ADMIN_GET_ALL })
+        try {
+          const { data: { createAdmin } } = await this.$apollo.mutate({
+            mutation: ADMIN_CREATE,
+            variables: cacheAdmin,
+            update: (store, { data: { createAdmin } }) => {
+              if (createAdmin.success) {
+                const data = store.readQuery({ query: ADMIN_GET_ALL })
 
-              if (data.admins) {
-                data.admins.push(createAdmin.admin)
+                if (data.admins) {
+                  data.admins.push(createAdmin.admin)
 
-                store.writeQuery({ query: ADMIN_GET_ALL, data })
+                  store.writeQuery({ query: ADMIN_GET_ALL, data })
+                }
+              } else {
+                throw new Error(createAdmin.message)
               }
-            } else {
-              throw new Error(createAdmin.message)
             }
-          }
-        })
-          .then((data) => {
-            console.log(data)
           })
-          .catch((e) => {
-            console.log(e)
-            this.admin = cacheAdmin
-            this.$emit('input', true)
-          })
+
+          snackbarPush({ color: 'success', message: createAdmin.message })
+        } catch (e) {
+          this.admin = cacheAdmin
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }

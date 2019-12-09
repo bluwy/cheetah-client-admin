@@ -43,8 +43,10 @@
 
 <script>
 import { isEqual } from 'lodash-es'
+import { getErrorMessages } from '@/utils/apollo'
 import { required, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_GET from '@/graphql/StaffGet.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
@@ -118,47 +120,47 @@ export default {
       this.currentStaff = { ...this.staff }
       this.$refs.form.resetValidation()
     },
-    edit () {
+    async edit () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheStaffId = this.staffId
         const cacheStaff = { ...this.currentStaff }
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: STAFF_UPDATE,
-          variables: {
-            id: cacheStaffId,
-            username: cacheStaff.username,
-            fullName: cacheStaff.fullName
-          },
-          update: (store, { data: { updateStaff } }) => {
-            if (updateStaff.success) {
-              const data = store.readQuery({ query: STAFF_GET_ALL })
+        try {
+          const { data: { updateStaff } } = await this.$apollo.mutate({
+            mutation: STAFF_UPDATE,
+            variables: {
+              id: cacheStaffId,
+              username: cacheStaff.username,
+              fullName: cacheStaff.fullName
+            },
+            update: (store, { data: { updateStaff } }) => {
+              if (updateStaff.success) {
+                const data = store.readQuery({ query: STAFF_GET_ALL })
 
-              if (data.staffs) {
-                const idx = data.staffs.indexOf(v => v.id === cacheStaffId)
+                if (data.staffs) {
+                  const idx = data.staffs.indexOf(v => v.id === cacheStaffId)
 
-                if (idx !== -1) {
-                  data.staffs[idx] = updateStaff.staff
+                  if (idx !== -1) {
+                    data.staffs[idx] = updateStaff.staff
 
-                  store.writeQuery({ query: STAFF_GET_ALL, data })
+                    store.writeQuery({ query: STAFF_GET_ALL, data })
+                  }
                 }
+              } else {
+                throw new Error(updateStaff.message)
               }
-            } else {
-              throw new Error(updateStaff.message)
             }
-          }
-        })
-          .then((data) => {
-            console.log(data)
-            this.cancel(true)
           })
-          .catch((e) => {
-            console.log(e)
-            this.currentStaff = cacheStaff
-            this.$emit('input', true)
-          })
+
+          snackbarPush({ color: 'success', message: updateStaff.message })
+        } catch (e) {
+          this.currentStaff = cacheStaff
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }

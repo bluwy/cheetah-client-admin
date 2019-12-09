@@ -57,11 +57,13 @@
         <router-view></router-view>
       </transition>
     </v-content>
+    <snackbar-global></snackbar-global>
   </v-app>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import SnackbarGlobal from '@/components/SnackbarGlobal.vue'
 import ADMIN_GET from '@/graphql/AdminGet.graphql'
 
 export default {
@@ -78,6 +80,9 @@ export default {
         return !this.userData.id
       }
     }
+  },
+  components: {
+    SnackbarGlobal
   },
   data: () => ({
     appTitle: 'Hello Title',

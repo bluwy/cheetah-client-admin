@@ -48,9 +48,11 @@
 </template>
 
 <script>
+import { getErrorMessages } from '@/utils/apollo'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_CREATE from '@/graphql/StaffCreate.graphql'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
@@ -100,37 +102,38 @@ export default {
       this.$refs.form.reset()
       this.staff = formStaffFactory()
     },
-    create () {
-      if (this.$refs.form.validate()) {
+    async create () {
+      if (this.$refs.form.validate() && this.isDirty) {
         const cacheStaff = { ...this.staff }
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: STAFF_CREATE,
-          variables: cacheStaff,
-          update: (store, { data: { createStaff } }) => {
-            if (createStaff.success) {
-              const data = store.readQuery({ query: STAFF_GET_ALL })
+        try {
+          const { data: { createStaff } } = await this.$apollo.mutate({
+            mutation: STAFF_CREATE,
+            variables: cacheStaff,
+            update: (store, { data: { createStaff } }) => {
+              if (createStaff.success) {
+                const data = store.readQuery({ query: STAFF_GET_ALL })
 
-              if (data.staffs) {
-                data.staffs.push(createStaff.staff)
+                if (data.staffs) {
+                  data.staffs.push(createStaff.staff)
 
-                store.writeQuery({ query: STAFF_GET_ALL, data })
+                  store.writeQuery({ query: STAFF_GET_ALL, data })
+                }
+              } else {
+                throw new Error(createStaff.message)
               }
-            } else {
-              throw new Error(createStaff.message)
             }
-          }
-        })
-          .then((data) => {
-            console.log(data)
           })
-          .catch((e) => {
-            console.log(e)
-            this.staff = cacheStaff
-            this.$emit('input', true)
-          })
+
+          snackbarPush({ color: 'success', message: createStaff.message })
+        } catch (e) {
+          this.staff = cacheStaff
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }

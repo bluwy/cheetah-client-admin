@@ -125,7 +125,6 @@ export default {
   },
   methods: {
     refetch () {
-      console.log(this.$apollo.queries)
       this.$apollo.queries.jobs.refetch()
     },
     formatIssueDate (issueDate) {

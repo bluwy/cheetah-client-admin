@@ -39,12 +39,13 @@
 </template>
 
 <script>
-import { storeDeleteQuery } from '@/utils/apollo'
+import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputCustomer from '@/components/InputCustomer.vue'
 import InputStaff from '@/components/InputStaff.vue'
 import InputListTask from '@/components/InputListTask.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
 
 const formJobFactory = () => ({
@@ -95,34 +96,34 @@ export default {
       this.$refs.form.reset()
       this.job = formJobFactory()
     },
-    create () {
-      if (this.$refs.form.validate()) {
+    async create () {
+      if (this.$refs.form.validate() && this.isDirty) {
         const cacheJob = { ...this.job }
 
         this.cancel(true)
 
-        this.$apollo.mutate({
-          mutation: JOB_BATCH_CREATE,
-          variables: cacheJob,
-          update: (store, { data: { createJobBatch } }) => {
-            if (createJobBatch.success) {
-              storeDeleteQuery(store, /^jobs/)
-              console.log(store)
-              this.$emit('create')
-            } else {
-              throw new Error(createJobBatch.message)
+        try {
+          const { data: { createJobBatch } } = this.$apollo.mutate({
+            mutation: JOB_BATCH_CREATE,
+            variables: cacheJob,
+            update: (store, { data: { createJobBatch } }) => {
+              if (createJobBatch.success) {
+                storeDeleteQuery(store, /^jobs/)
+                console.log(store)
+                this.$emit('create')
+              } else {
+                throw new Error(createJobBatch.message)
+              }
             }
-          }
-        })
-          .then((data) => {
-            console.log(data)
-            this.cancel(true)
           })
-          .catch((e) => {
-            console.log(e)
-            this.job = cacheJob
-            this.$emit('input', true)
-          })
+
+          snackbarPush({ color: 'success', message: createJobBatch.message })
+        } catch (e) {
+          this.job = cacheJob
+          this.$emit('input', true)
+
+          snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
+        }
       }
     }
   }
