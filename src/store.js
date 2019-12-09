@@ -40,8 +40,8 @@ export default new Vuex.Store({
 
           commit('SET_USER_DATA', { data: userData })
         } catch (e) {
-          console.log(e)
           commit('SET_USER_DATA', { data: null })
+          throw e
         }
       }
     },

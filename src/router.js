@@ -81,7 +81,7 @@ const router = new Router({
 
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(v => v.meta.requiresAuth)) {
-    await store.dispatch('checkUser')
+    await store.dispatch('checkUser').catch(() => {})
 
     if (store.getters.isAuthed) {
       next()
