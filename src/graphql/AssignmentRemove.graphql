@@ -1,5 +1,5 @@
-mutation AssignmentRemove($jobId: ID!, $assignmentId: ID!) {
-  removeAssignment(jobId: $jobId, assignmentId: $assignmentId) {
+mutation AssignmentRemove($id: ID!) {
+  removeAssignment(id: $id) {
     success
     message
   }

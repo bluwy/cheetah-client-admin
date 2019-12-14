@@ -1,15 +1,11 @@
 mutation AssignmentUpdate(
-  $jobId: ID!,
-  $assignmentId: ID!,
-  $staffIds: [ID!],
+  $id: ID!,
   $checkIn: Date,
   $checkOut: Date,
   $needsFollowUp: Boolean
 ) {
   updateAssignment(
-    jobId: $jobId,
-    assignmentId: $assignmentId,
-    staffIds: $staffIds,
+    id: $id
     checkIn: $checkIn,
     checkOut: $checkOut,
     needsFollowUp: $needsFollowUp

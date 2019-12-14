@@ -1,13 +1,5 @@
-mutation TaskRemove(
-  $jobId: ID!,
-  $assignmentId: ID!,
-  $taskId: ID!
-) {
-  removeTask(
-    jobId: $jobId,
-    assignmentId: $assignmentId,
-    taskId: $taskId
-  ) {
+mutation TaskRemove($id: ID!) {
+  removeTask(id: $id) {
     success
     message
   }
