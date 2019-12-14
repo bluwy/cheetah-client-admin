@@ -4,8 +4,8 @@ import { isEmpty } from 'lodash-es'
 import { apolloClient } from './plugins/apollo'
 import { authToken } from './utils/localStorage'
 
-import ADMIN_CHECK from '@/graphql/AdminCheck.graphql'
-import ADMIN_LOGIN from '@/graphql/AdminLogin.graphql'
+import AUTH_ADMIN_CHECK from '@/graphql/AuthAdminCheck.graphql'
+import AUTH_ADMIN_LOGIN from '@/graphql/AuthAdminLogin.graphql'
 
 Vue.use(Vuex)
 
@@ -34,7 +34,7 @@ export default new Vuex.Store({
       if (token) {
         try {
           const { data: { checkAdmin: userData } } = await apolloClient.query({
-            query: ADMIN_CHECK,
+            query: AUTH_ADMIN_CHECK,
             variables: { token }
           })
 
@@ -51,7 +51,7 @@ export default new Vuex.Store({
     async login ({ commit }, { username, password }) {
       try {
         const { data: { loginAdmin } } = await apolloClient.mutate({
-          mutation: ADMIN_LOGIN,
+          mutation: AUTH_ADMIN_LOGIN,
           variables: { username, password }
         })
 

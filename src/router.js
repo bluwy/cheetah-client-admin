@@ -7,6 +7,7 @@ import DashLayout from '@/layouts/Dash.vue'
 
 import Login from '@/views/Login.vue'
 import Forgot from '@/views/Forgot.vue'
+import Reset from '@/views/Reset.vue'
 
 import Dashboard from '@/views/Dashboard.vue'
 import Jobs from '@/views/Jobs.vue'
@@ -68,6 +69,11 @@ const router = new Router({
           path: 'forgot',
           name: 'forgot',
           component: Forgot
+        },
+        {
+          path: 'reset',
+          name: 'reset',
+          component: Reset
         }
       ]
     },

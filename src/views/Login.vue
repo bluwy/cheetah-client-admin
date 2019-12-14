@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="handleLogin()">
-    <v-card width="400">
+    <v-card :loading="loading" width="400">
       <v-card-title>Login</v-card-title>
       <v-card-text>
         <v-alert v-if="messageText" text outlined :type="messageType">
@@ -20,9 +20,12 @@
         ></input-password>
       </v-card-text>
       <v-card-actions>
-        <v-btn block color="primary" type="submit">Login</v-btn>
+        <v-btn :disabled="loading" block color="primary" type="submit">Login</v-btn>
       </v-card-actions>
     </v-card>
+    <div class="text-center mt-3">
+      <router-link to="/forgot">Forgot password</router-link>
+    </div>
   </v-form>
 </template>
 
@@ -50,21 +53,26 @@ export default {
       password: [required]
     },
     messageType: '',
-    messageText: ''
+    messageText: '',
+    loading: false
   }),
   methods: {
     ...mapActions([
       'login'
     ]),
     async handleLogin () {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate() && !this.loading) {
         try {
+          this.loading = true
+
           if (await this.login(this.user)) {
-            this.$router.push({ path: '/' })
+            await this.$router.push({ path: '/' })
           }
         } catch (e) {
           this.messageType = 'error'
           this.messageText = getErrorMessages(e).join(', ')
+        } finally {
+          this.loading = false
         }
       }
     }

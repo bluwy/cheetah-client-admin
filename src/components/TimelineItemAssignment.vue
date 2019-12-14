@@ -23,7 +23,7 @@
         <v-card-title class="subtitle-1 black--text pa-0">Tasks</v-card-title>
         <ul class="assignment-card__list">
           <li v-show="!tasks || !tasks.length" key="empty">No tasks</li>
-          <li v-for="(task, i) in tasks" :key="i">
+          <li v-for="(task, i) in tasks" :key="i" class="mb-1">
             <v-chip small label class="mr-2" :color="themeColor">{{ task.type }}</v-chip>
             <span>{{ task.remarks }}</span>
           </li>
@@ -33,7 +33,7 @@
         <v-card-title class="subtitle-1 black--text pa-0">Actions</v-card-title>
         <ul class="assignment-card__list">
           <li v-show="!actions || !actions.length" key="empty">No actions</li>
-          <li v-for="(action, i) in actions" :key="i">
+          <li v-for="(action, i) in actions" :key="i" class="mb-1">
             <v-chip small label class="mr-2" :color="themeColor">{{ action.type }}</v-chip>
             <span>{{ action.remarks }}</span>
           </li>

@@ -1,4 +1,4 @@
-query AdminCheck($token: String!) {
+query AuthAdminCheck($token: String!) {
   checkAdmin(token: $token) {
     id
     role
