@@ -9,7 +9,6 @@ import Login from '@/views/Login.vue'
 import Forgot from '@/views/Forgot.vue'
 import Reset from '@/views/Reset.vue'
 
-import Dashboard from '@/views/Dashboard.vue'
 import Jobs from '@/views/Jobs.vue'
 import Customers from '@/views/Customers.vue'
 import Staffs from '@/views/Staffs.vue'
@@ -25,15 +24,10 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: '/jobs',
       component: DashLayout,
       meta: { requiresAuth: true },
       children: [
-        {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: Dashboard
-        },
         {
           path: 'jobs',
           name: 'jobs',

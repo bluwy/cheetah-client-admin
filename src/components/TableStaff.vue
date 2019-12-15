@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    v-if="isPrivilegeFull"
     :headers="headers"
     :items="staffs"
     :loading="!!loadingCount"
@@ -55,6 +56,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
 import DialogStaffEdit from '@/components/DialogStaffEdit.vue'
 import DialogStaffPasswordReset from '@/components/DialogStaffPasswordReset.vue'
@@ -89,6 +91,11 @@ export default {
     dialogRemove: false,
     targetStaffId: '0'
   }),
+  computed: {
+    ...mapGetters([
+      'isPrivilegeFull'
+    ])
+  },
   methods: {
     refetch () {
       this.$apollo.queries.staffs.refetch()
