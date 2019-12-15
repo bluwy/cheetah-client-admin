@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="resetPassword()">
-    <v-card :loading="loading" width="400">
+    <v-card :loading="loading" width="400" max-width="95vw">
       <v-card-title>Reset password</v-card-title>
       <v-card-subtitle>Enter your new password</v-card-subtitle>
       <v-card-text>

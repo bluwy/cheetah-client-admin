@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="handleLogin()">
-    <v-card :loading="loading" width="400">
+    <v-card :loading="loading" width="400" max-width="95vw">
       <v-card-title>Login</v-card-title>
       <v-card-text>
         <v-alert v-if="messageText" text outlined :type="messageType">

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" @input="$emit('input', $event)" width="700">
+  <v-dialog :value="value" @input="$emit('input', $event)" width="700" max-width="95vw">
     <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
       <slot :name="slot" v-bind="scope"></slot>
     </template>

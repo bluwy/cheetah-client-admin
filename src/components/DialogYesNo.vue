@@ -2,6 +2,7 @@
   <v-dialog
     :value="value"
     width="300"
+    max-width="95vw"
     @click:outside="no"
     @keydown.esc="no"
   >
