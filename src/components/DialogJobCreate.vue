@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash-es'
 import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
@@ -98,12 +99,12 @@ export default {
     },
     async create () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheJob = { ...this.job }
+        const cacheJob = cloneDeep(this.job)
 
         this.cancel(true)
 
         try {
-          const { data: { createJobBatch } } = this.$apollo.mutate({
+          const { data: { createJobBatch } } = await this.$apollo.mutate({
             mutation: JOB_BATCH_CREATE,
             variables: cacheJob,
             update: (store, { data: { createJobBatch } }) => {

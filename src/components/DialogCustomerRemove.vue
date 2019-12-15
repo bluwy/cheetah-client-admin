@@ -37,7 +37,7 @@ export default {
       this.close()
 
       try {
-        const { data: { removeCustomer } } = this.$apollo.mutate({
+        const { data: { removeCustomer } } = await this.$apollo.mutate({
           mutation: CUSTOMER_REMOVE,
           variables: {
             id: cacheCustomerId
