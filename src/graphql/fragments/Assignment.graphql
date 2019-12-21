@@ -1,0 +1,23 @@
+#import "./Action.graphql"
+#import "./Staff.graphql"
+#import "./Task.graphql"
+
+fragment assignmentFragment on Assignment {
+  id
+  address
+  preferTime
+  checkIn
+  checkOut
+  tasks {
+    ...taskFragment
+  }
+  actions {
+    ...actionFragment
+  }
+  staffPrimary {
+    ...staffFragment
+  }
+  staffSecondary {
+    ...staffFragment
+  }
+}

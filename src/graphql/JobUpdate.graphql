@@ -1,6 +1,19 @@
-mutation JobUpdate($jobId: ID!, $customerId: ID) {
-  updateJob(jobId: $jobId, customerId: $customerId) {
-    success
-    message
+#import "./fragments/Job.graphql"
+
+mutation JobUpdate(
+  $jobId: ID!,
+  $customerId: ID,
+  $needsFollowUp: Boolean
+) {
+  updateJob(
+    data: {
+      customer: { id: $customerId },
+      needsFollowUp: $needsFollowUp
+    },
+    where: {
+      id: $jobId
+    }
+  ) {
+    ...jobFragment
   }
 }

@@ -1,11 +1,7 @@
-query StaffGetAll(
-  $query: String,
-  $limit: Int = 20
-) {
-  # No pagination needed, so extend limit to 20
-  staffs(query: $query, limit: $limit) {
-    id
-    username
-    fullName
+#import "./fragments/Staff.graphql"
+
+query StaffGetAll($where: StaffWhereInput) {
+  staffs(where: $where) {
+    ...staffFragment
   }
 }

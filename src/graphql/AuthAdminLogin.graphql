@@ -1,12 +1,7 @@
-mutation AuthAdminLogin($username: String!, $password: String!) {
+mutation AdminLogin($username: String!, $password: String!) {
   loginAdmin(username: $username, password: $password) {
-    success
-    message
     token
-    userData {
-      id
-      role
-      privilege
-    }
+    adminId
+    adminPrivilege
   }
 }

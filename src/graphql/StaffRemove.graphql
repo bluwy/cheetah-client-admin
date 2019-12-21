@@ -1,6 +1,7 @@
-mutation StaffRemove($id: ID!) {
-  removeStaff(id: $id) {
-    success
-    message
+#import "./fragments/Staff.graphql"
+
+mutation StaffDelete($id: ID!) {
+  deleteStaff(where: { id: $id }) {
+    ...staffFragment
   }
 }

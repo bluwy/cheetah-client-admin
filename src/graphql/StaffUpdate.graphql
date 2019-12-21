@@ -1,19 +1,19 @@
+#import "./fragments/Staff.graphql"
+
 mutation StaffUpdate(
   $id: ID!,
   $username: String,
   $fullName: String
 ) {
   updateStaff(
-    id: $id,
-    username: $username,
-    fullName: $fullName
-  ) {
-    success
-    message
-    staff {
-      id
-      username
-      fullName
+    data: {
+      username: $username,
+      fullName: $fullName
+    },
+    where: {
+      id: $id,
     }
+  ) {
+    ...staffFragment
   }
 }

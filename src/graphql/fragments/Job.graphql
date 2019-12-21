@@ -1,0 +1,13 @@
+#import "./Customer.graphql"
+
+fragment jobFragment on Job {
+  id
+  dateIssued
+  customer {
+    ...customerFragment    
+  }
+  assignments {
+    ...assignmentFragment
+  }
+  needsFollowUp
+}

@@ -1,19 +1,17 @@
+# import "./fragments/Admin.graphql"
+
 mutation AdminCreate(
   $username: String!,
   $password: String!,
-  $privilege: AdminPrivilege
+  $privilege: AdminPrivilege!
 ) {
   createAdmin(
-    username: $username,
-    password: $password,
-    privilege: $privilege
-  ) {
-    success
-    message
-    admin {
-      id
-      username
-      privilege
+    data: {
+      username: $username,
+      password: $password,
+      privilege: $privilege
     }
+  ) {
+    ...adminFragment
   }
 }

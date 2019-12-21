@@ -1,34 +1,23 @@
-mutation AssignmentBatchAdd(
-  $jobId: ID!,
-  $staffIds: [ID!],
-  $tasks: [TaskInput!]
+# import "./fragments/Assignment.graphql"
+
+mutation AssignmentCreate(
+  $address: String!,
+  $staffPrimaryId: ID!,
+  $staffSecondaryId: ID,
+  $tasks: [TaskCreateInput!]!
+  $jobId: ID!
 ) {
-  addAssignmentBatch(
-    jobId: $jobId,
-    staffIds: $staffIds,
-    tasks: $tasks
-  ) {
-    success
-    message
-    assignment {
-      id
-      staffs {
-        id
-        username
-      }
-      checkIn
-      checkOut
-      tasks {
-        id
-        type
-        remarks
-      }
-      actions {
-        id
-        type
-        remarks
-      }
-      needsFollowUp
+  createAssignment(
+    data: {
+      address: $address,
+      staffPrimary: { id: $staffPrimaryId } ,
+      staffSecondary: { id: $staffSecondaryId },
+      tasks: $tasks
+    },
+    jobWhere: {
+      id: $jobId
     }
+  ) {
+    ...assignmentFragment
   }
 }

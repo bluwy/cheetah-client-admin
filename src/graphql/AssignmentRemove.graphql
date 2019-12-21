@@ -1,6 +1,0 @@
-mutation AssignmentRemove($id: ID!) {
-  removeAssignment(id: $id) {
-    success
-    message
-  }
-}

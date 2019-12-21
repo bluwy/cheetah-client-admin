@@ -1,28 +1,17 @@
-query GetCustomers(
-  $temp: Boolean,
-  $query: String,
-  $sortBy: CustomerSortBy,
-  $sortDesc: Boolean,
+#import "./fragments/Customer.graphql"
+
+query CustomerGetAll(
+  $offset: Int,
   $limit: Int,
-  $offset: Int
+  $orderBy: CustomerOrderByInput,
+  $where: CustomerWhereInput
 ) {
   customers(
-    temp: $temp,
-    query: $query,
-    sortBy: $sortBy,
-    sortDesc: $sortDesc,
-    limit: $limit,
-    offset: $offset
+    skip: $offset,
+    first: $limit,
+    orderBy: $orderBy,
+    where: $where
   ) {
-    id
-    code
-    name
-    address
-    phoneNumber
-    email
-    personInCharge {
-      id
-      username
-    }
+    ...customerFragment
   }
 }

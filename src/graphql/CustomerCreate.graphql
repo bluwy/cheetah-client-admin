@@ -1,20 +1,31 @@
-mutation CreateCustomer(
+#import "./fragments/Customer.graphql"
+
+mutation CustomerCreate(
   $code: String!,
   $name: String!,
-  $address: String,
+  $addresses: [String!],
   $phoneNumber: String,
+  $companyBelongId: ID!
   $email: String,
-  $picStaffId: ID
+  $temporary: Boolean,
+  $active: Boolean,
+  $staffPrimaryId: ID!,
+  $staffSecondaryId: ID
 ) {
   createCustomer(
-    code: $code,
-    name: $name,
-    address: $address,
-    phoneNumber: $phoneNumber,
-    email: $email,
-    picStaffId: $picStaffId
+    data: {
+      code: $code,
+      name: $name,
+      addresses: $addresses,
+      phoneNumber: $phoneNumber,
+      companyBelong: { id: $companyBelongId },
+      email: $email,
+      temporary: $temporary,
+      active: $active,
+      staffPrimary: { id: $staffPrimaryId },
+      staffSecondary: { id: $staffSecondaryId }
+    }
   ) {
-    message
-    success
+    ...customerFragment
   }
 }

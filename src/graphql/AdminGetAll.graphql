@@ -1,8 +1,7 @@
+# import "./fragments/Admin.graphql"
+
 query AdminGetAll {
-  # No pagination needed, so extend limit to 20
-  admins(limit: 20) {
-    id
-    username
-    privilege
+  admins {
+    ...adminFragment
   }
 }

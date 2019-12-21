@@ -1,16 +1,25 @@
 mutation AssignmentUpdate(
   $id: ID!,
-  $checkIn: Date,
-  $checkOut: Date,
-  $needsFollowUp: Boolean
+  $address: String
+  $preferTime: DateTime,
+  $checkIn: DateTime,
+  $checkOut: DateTime,
+  $staffPrimaryId: ID,
+  $staffSecondaryId: ID,
 ) {
   updateAssignment(
-    id: $id
-    checkIn: $checkIn,
-    checkOut: $checkOut,
-    needsFollowUp: $needsFollowUp
+    data: {
+      address: $address,
+      preferTime: $preferTime,
+      checkIn: $checkIn,
+      checkOut: $checkOut,
+      staffPrimary: { id: $staffPrimaryId },
+      staffSecondary: { id: $staffSecondaryId }
+    },
+    where: {
+      id: $id
+    }
   ) {
-    success
-    message
+    ...assignmentFragment
   }
 }

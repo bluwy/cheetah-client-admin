@@ -1,0 +1,6 @@
+fragment staffFragment on Staff {
+  id
+  username
+  fullName
+  passwordForgotten
+}

@@ -1,0 +1,5 @@
+fragment adminFragment on Admin {
+  id
+  username
+  privilege
+}

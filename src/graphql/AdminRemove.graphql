@@ -1,6 +1,7 @@
-mutation AdminRemove($id: ID!) {
-  removeAdmin(id: $id) {
-    success
-    message
+# import "./fragments/Admin.graphql"
+
+mutation AdminDelete($id: ID!) {
+  deleteAdmin(where: { id: $id }) {
+    ...adminFragment
   }
 }

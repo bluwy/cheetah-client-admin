@@ -1,7 +1,7 @@
+# import "./fragments/Admin.graphql"
+
 query AdminGet($id: ID!) {
-  admin(id: $id) {
-    id
-    username
-    privilege
+  admin(where: { id: $id }) {
+    ...adminFragment
   }
 }

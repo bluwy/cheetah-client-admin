@@ -1,6 +1,7 @@
-mutation TaskRemove($id: ID!) {
-  removeTask(id: $id) {
-    success
-    message
+#import "./fragments/Task.graphql"
+
+mutation TaskDelete($id: ID!) {
+  deleteTask(where: { id: $id }) {
+    ...taskFragment
   }
 }

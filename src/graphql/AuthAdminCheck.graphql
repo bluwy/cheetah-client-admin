@@ -1,7 +1,6 @@
-query AuthAdminCheck($token: String!) {
-  checkAdmin(token: $token) {
-    id
-    role
-    privilege
+query AdminVerifyToken($token: String!) {
+  verifyAdminToken(token: $token) {
+    adminId
+    adminPrivilege
   }
 }

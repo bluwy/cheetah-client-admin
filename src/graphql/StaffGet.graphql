@@ -1,7 +1,7 @@
+#import "./fragments/Staff.graphql"
+
 query StaffGet($id: ID!) {
-  staff(id: $id) {
-    id
-    username
-    fullName
+  staff(where: { id: $id }) {
+    ...staffFragment
   }
 }

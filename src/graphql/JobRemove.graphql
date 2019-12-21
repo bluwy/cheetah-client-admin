@@ -1,6 +1,7 @@
-mutation JobRemove($id: ID!) {
-  removeJob(id: $id) {
-    success
-    message
+#import "./fragments/Job.graphql"
+
+mutation JobDelete($id: ID!) {
+  deleteJob(where: { id: $id }) {
+    ...jobFragment
   }
 }

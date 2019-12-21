@@ -1,0 +1,4 @@
+fragment actionFragment on Action {
+  id
+  remarks
+}

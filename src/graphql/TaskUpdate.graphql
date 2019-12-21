@@ -1,6 +1,15 @@
+#import "./fragments/Task.graphql"
+
 mutation TaskUpdate($id: ID!, $type: TaskType, $remarks: String) {
-  updateTask(id: $id, type: $type, remarks: $remarks) {
-    success
-    message
+  updateTask(
+    data: {
+      type: $type,
+      remarks: $remarks
+    },
+    where: {
+      id: $id
+    }
+  ) {
+    ...taskFragment
   }
 }

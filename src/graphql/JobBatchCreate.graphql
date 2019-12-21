@@ -1,6 +1,21 @@
-mutation CreateJobBatch($customerId: ID!, $staffIds: [ID!], $tasks: [TaskInput!]) {
-  createJobBatch(customerId: $customerId, staffIds: $staffIds, tasks: $tasks) {
-    success
-    message
+#import "./fragments/Job.graphql"
+
+mutation JobCreate(
+  $customerId: ID!,
+  $address: String!,
+  $staffPrimaryId: ID!,
+  $staffSecondaryId: ID,
+  $tasks: [TaskCreateInput!]!
+) {
+  createJob(
+    data: {
+      customer: { id: $customerId },
+      address: $address,
+      staffPrimary: { id: $staffPrimaryId },
+      staffSecondary: { id: $staffSecondaryId },
+      tasks: $tasks
+    }
+  ) {
+    ...jobFragment
   }
 }

@@ -1,14 +1,7 @@
+#import "./fragments/Customer.graphql"
+
 query CustomerGet($id: ID!) {
-  customer(id: $id) {
-    id
-    code
-    name
-    address
-    phoneNumber
-    email
-    personInCharge {
-      id
-      username
-    }
+  customer(where: { id: $id }) {
+    ...customerFragment
   }
 }
