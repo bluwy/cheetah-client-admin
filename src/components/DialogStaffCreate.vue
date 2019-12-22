@@ -40,7 +40,7 @@
             <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
           </template>
         </dialog-yes-no>
-        <v-btn color="primary" @click="create()">Create</v-btn>
+        <v-btn color="primary" @click="createStaff()">Create</v-btn>
       </v-card-actions>
     </v-card>
     </v-form>
@@ -102,32 +102,32 @@ export default {
       this.$refs.form.reset()
       this.staff = formStaffFactory()
     },
-    async create () {
+    async createStaff () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheStaff = { ...this.staff }
 
         this.cancel(true)
 
         try {
-          const { data: { createStaff } } = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: STAFF_CREATE,
             variables: cacheStaff,
             update: (store, { data: { createStaff } }) => {
-              if (createStaff.success) {
+              if (createStaff != null) {
                 const data = store.readQuery({ query: STAFF_GET_ALL })
 
                 if (data.staffs) {
-                  data.staffs.push(createStaff.staff)
+                  data.staffs.push(createStaff)
 
                   store.writeQuery({ query: STAFF_GET_ALL, data })
                 }
               } else {
-                throw new Error(createStaff.message)
+                throw new Error('Unable to create staff')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: createStaff.message })
+          snackbarPush({ color: 'success', message: 'Staff created' })
         } catch (e) {
           this.staff = cacheStaff
           this.$emit('input', true)

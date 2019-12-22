@@ -4,7 +4,7 @@
     header="Remove customer?"
     message="You cannot undo this action."
     @no="close"
-    @yes="remove"
+    @yes="deleteCustomer"
   ></dialog-yes-no>
 </template>
 
@@ -12,10 +12,10 @@
 import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import DialogYesNo from '@/components/DialogYesNo.vue'
-import CUSTOMER_REMOVE from '@/graphql/CustomerRemove.graphql'
+import CUSTOMER_DELETE from '@/graphql/CustomerDelete.graphql'
 
 export default {
-  name: 'DialogCustomerRemove',
+  name: 'DialogCustomerDelete',
   components: {
     DialogYesNo
   },
@@ -31,29 +31,29 @@ export default {
     close () {
       this.$emit('input', false)
     },
-    async remove () {
+    async deleteCustomer () {
       const cacheCustomerId = this.customerId
 
       this.close()
 
       try {
-        const { data: { removeCustomer } } = await this.$apollo.mutate({
-          mutation: CUSTOMER_REMOVE,
+        await this.$apollo.mutate({
+          mutation: CUSTOMER_DELETE,
           variables: {
             id: cacheCustomerId
           },
-          update: (store, { data: { removeCustomer } }) => {
-            if (removeCustomer.success) {
+          update: (store, { data: { deleteCustomer } }) => {
+            if (deleteCustomer != null) {
               storeDeleteQuery(store, /^customers/)
               console.log(store)
-              this.$emit('remove')
+              this.$emit('removeCustomer')
             } else {
-              throw new Error(removeCustomer.message)
+              throw new Error('Unable to remove customer')
             }
           }
         })
 
-        snackbarPush({ color: 'success', message: removeCustomer.message })
+        snackbarPush({ color: 'success', message: 'Customer removed' })
       } catch (e) {
         this.$emit('input', true)
 

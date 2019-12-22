@@ -67,7 +67,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="edit()">Edit</v-btn>
+          <v-btn color="primary" @click="updateCustomer()">Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -87,16 +87,18 @@ import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 const formCustomerFactory = () => ({
   code: '',
   name: '',
-  address: '',
-  phoneNumber: '',
   email: '',
-  personInCharge: {
-    id: ''
-  }
+  addresses: [],
+  phoneNumber: '',
+  companyId: '',
+  staffPrimaryId: '',
+  staffSecondaryId: '',
+  temporary: false,
+  active: true
 })
 
 export default {
-  name: 'DialogCustomerEdit',
+  name: 'DialogCustomerUpdate',
   apollo: {
     customer: {
       query: CUSTOMER_GET,
@@ -164,7 +166,7 @@ export default {
       this.currentCustomer = cloneDeep(this.customer)
       this.$refs.form.resetValidation()
     },
-    async edit () {
+    async updateCustomer () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheCustomerId = this.customerId
         const cacheCustomer = cloneDeep(this.currentCustomer)
@@ -172,29 +174,24 @@ export default {
         this.cancel(true)
 
         try {
-          const { data: { updateCustomer } } = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: CUSTOMER_UPDATE,
             variables: {
               id: cacheCustomerId,
-              code: cacheCustomer.code,
-              name: cacheCustomer.name,
-              address: cacheCustomer.address,
-              phoneNumber: cacheCustomer.phoneNumber,
-              email: cacheCustomer.email,
-              picStaffId: cacheCustomer.personInCharge.id
+              ...cacheCustomer
             },
             update: (store, { data: { updateCustomer } }) => {
-              if (updateCustomer.success) {
+              if (updateCustomer != null) {
                 storeDeleteQuery(store, /^customers/)
                 console.log(store)
-                this.$emit('edit')
+                this.$emit('updateCustomer')
               } else {
-                throw new Error(updateCustomer.message)
+                throw new Error('Unable to update customer')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: updateCustomer.message })
+          snackbarPush({ color: 'success', message: 'Customer update' })
         } catch (e) {
           this.currentCustomer = cacheCustomer
           this.$emit('input', true)

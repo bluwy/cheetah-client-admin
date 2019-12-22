@@ -24,7 +24,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="add()">Create</v-btn>
+          <v-btn color="primary" @click="createAssignment()">Create</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -39,7 +39,7 @@ import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import InputStaff from '@/components/InputStaff.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import ASSIGNMENT_BATCH_ADD from '@/graphql/AssignmentBatchAdd.graphql'
+import ASSIGNMENT_CREATE from '@/graphql/AssignmentCreate.graphql'
 import JOB_GET from '@/graphql/JobGet.graphql'
 
 const formAssignmentFactory = () => ({
@@ -48,7 +48,7 @@ const formAssignmentFactory = () => ({
 })
 
 export default {
-  name: 'DialogAssignmentAdd',
+  name: 'DialogAssignmentCreate',
   components: {
     DialogYesNo,
     InputListTask,
@@ -90,22 +90,22 @@ export default {
       this.$refs.form.reset()
       this.assignment = formAssignmentFactory()
     },
-    async add () {
+    async createAssignment () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheAssignment = cloneDeep(this.assignment)
 
         this.cancel(true)
 
         try {
-          const { data: { addAssignmentBatch } } = await this.$apollo.mutate({
-            mutation: ASSIGNMENT_BATCH_ADD,
+          await this.$apollo.mutate({
+            mutation: ASSIGNMENT_CREATE,
             variables: {
               jobId: this.jobId,
               staffIds: cacheAssignment.staffIds,
               tasks: cacheAssignment.tasks
             },
-            update: (store, { data: { addAssignmentBatch } }) => {
-              if (addAssignmentBatch.success) {
+            update: (store, { data: { createAssignment } }) => {
+              if (createAssignment != null) {
                 const data = store.readQuery({
                   query: JOB_GET,
                   variables: {
@@ -114,7 +114,7 @@ export default {
                 })
 
                 if (data.job) {
-                  data.job.assignments.push(addAssignmentBatch.assignment)
+                  data.job.assignments.push(createAssignment)
 
                   store.writeQuery({
                     query: JOB_GET,
@@ -125,12 +125,12 @@ export default {
                   })
                 }
               } else {
-                throw new Error(addAssignmentBatch.message)
+                throw new Error('Unable to create assignment')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: addAssignmentBatch.message })
+          snackbarPush({ color: 'success', message: 'Assignment created' })
         } catch (e) {
           this.assignment = cacheAssignment
           this.$emit('input', true)

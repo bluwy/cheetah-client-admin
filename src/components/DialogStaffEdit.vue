@@ -34,7 +34,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="edit()">Edit</v-btn>
+          <v-btn color="primary" @click="updateStaff()">Edit</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -57,7 +57,7 @@ const formStaffFactory = () => ({
 })
 
 export default {
-  name: 'DialogStaffEdit',
+  name: 'DialogStaffUpdate',
   apollo: {
     staff: {
       query: STAFF_GET,
@@ -120,7 +120,7 @@ export default {
       this.currentStaff = { ...this.staff }
       this.$refs.form.resetValidation()
     },
-    async edit () {
+    async updateStaff () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheStaffId = this.staffId
         const cacheStaff = { ...this.currentStaff }
@@ -128,7 +128,7 @@ export default {
         this.cancel(true)
 
         try {
-          const { data: { updateStaff } } = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: STAFF_UPDATE,
             variables: {
               id: cacheStaffId,
@@ -136,25 +136,25 @@ export default {
               fullName: cacheStaff.fullName
             },
             update: (store, { data: { updateStaff } }) => {
-              if (updateStaff.success) {
+              if (updateStaff != null) {
                 const data = store.readQuery({ query: STAFF_GET_ALL })
 
                 if (data.staffs) {
                   const idx = data.staffs.indexOf(v => v.id === cacheStaffId)
 
                   if (idx !== -1) {
-                    data.staffs[idx] = updateStaff.staff
+                    data.staffs[idx] = updateStaff
 
                     store.writeQuery({ query: STAFF_GET_ALL, data })
                   }
                 }
               } else {
-                throw new Error(updateStaff.message)
+                throw new Error('Unable to update staff')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: updateStaff.message })
+          snackbarPush({ color: 'success', message: 'Staff updated' })
         } catch (e) {
           this.currentStaff = cacheStaff
           this.$emit('input', true)

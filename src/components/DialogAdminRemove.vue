@@ -4,7 +4,7 @@
     header="Remove admin?"
     message="You cannot undo this action."
     @no="close"
-    @yes="remove"
+    @yes="deleteAdmin"
   ></dialog-yes-no>
 </template>
 
@@ -13,10 +13,10 @@ import { getErrorMessages } from '@/utils/apollo'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
-import ADMIN_REMOVE from '@/graphql/AdminRemove.graphql'
+import ADMIN_DELETE from '@/graphql/AdminDelete.graphql'
 
 export default {
-  name: 'DialogAdminRemove',
+  name: 'DialogAdminDelete',
   components: {
     DialogYesNo
   },
@@ -32,19 +32,19 @@ export default {
     close () {
       this.$emit('input', false)
     },
-    async remove () {
+    async deleteAdmin () {
       const cacheAdminId = this.adminId
 
       this.close()
 
       try {
-        const { data: { removeAdmin } } = await this.$apollo.mutate({
-          mutation: ADMIN_REMOVE,
+        await this.$apollo.mutate({
+          mutation: ADMIN_DELETE,
           variables: {
             id: cacheAdminId
           },
-          update: (store, { data: { removeAdmin } }) => {
-            if (removeAdmin.success) {
+          update: (store, { data: { deleteAdmin } }) => {
+            if (deleteAdmin != null) {
               const data = store.readQuery({ query: ADMIN_GET_ALL })
 
               if (data.admins) {
@@ -53,12 +53,12 @@ export default {
                 store.writeQuery({ query: ADMIN_GET_ALL, data })
               }
             } else {
-              throw new Error(removeAdmin.message)
+              throw new Error('Unable to remove admin')
             }
           }
         })
 
-        snackbarPush({ color: 'success', message: removeAdmin.message })
+        snackbarPush({ color: 'success', message: 'Admin removed' })
       } catch (e) {
         this.$emit('input', true)
 

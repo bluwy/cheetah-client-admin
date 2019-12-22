@@ -4,7 +4,7 @@
     header="Remove staff?"
     message="You cannot undo this action."
     @no="close"
-    @yes="remove"
+    @yes="deleteStaff"
   ></dialog-yes-no>
 </template>
 
@@ -13,10 +13,10 @@ import { getErrorMessages } from '@/utils/apollo'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
-import STAFF_REMOVE from '@/graphql/StaffRemove.graphql'
+import STAFF_DELETE from '@/graphql/StaffDelete.graphql'
 
 export default {
-  name: 'DialogStaffRemove',
+  name: 'DialogStaffDelete',
   components: {
     DialogYesNo
   },
@@ -32,19 +32,19 @@ export default {
     close () {
       this.$emit('input', false)
     },
-    async remove () {
+    async deleteStaff () {
       const cacheStaffId = this.staffId
 
       this.close()
 
       try {
-        const { data: { removeStaff } } = await this.$apollo.mutate({
-          mutation: STAFF_REMOVE,
+        await this.$apollo.mutate({
+          mutation: STAFF_DELETE,
           variables: {
             id: cacheStaffId
           },
-          update: (store, { data: { removeStaff } }) => {
-            if (removeStaff.success) {
+          update: (store, { data: { deleteStaff } }) => {
+            if (deleteStaff != null) {
               const data = store.readQuery({ query: STAFF_GET_ALL })
 
               if (data.staffs) {
@@ -53,12 +53,12 @@ export default {
                 store.writeQuery({ query: STAFF_GET_ALL, data })
               }
             } else {
-              throw new Error(removeStaff.message)
+              throw new Error('Unable to remove staff')
             }
           }
         })
 
-        snackbarPush({ color: 'success', message: removeStaff.message })
+        snackbarPush({ color: 'success', message: 'Staff removed' })
       } catch (e) {
         this.$emit('input', true)
 

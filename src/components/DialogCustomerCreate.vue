@@ -67,7 +67,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="create()">Create</v-btn>
+          <v-btn color="primary" @click="createCustomer()">Create</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -131,28 +131,28 @@ export default {
       this.$refs.form.reset()
       this.customer = formCustomerFactory()
     },
-    async create () {
+    async createCustomer () {
       if (this.$refs.form.validate()) {
         const cacheCustomer = { ...this.customer }
 
         this.cancel(true)
 
         try {
-          const { data: { createCustomer } } = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: CUSTOMER_CREATE,
             variables: cacheCustomer,
             update: (store, { data: { createCustomer } }) => {
-              if (createCustomer.success) {
+              if (createCustomer != null) {
                 storeDeleteQuery(store, /^customers/)
                 console.log(store)
-                this.$emit('create')
+                this.$emit('createCustomer')
               } else {
-                throw new Error(createCustomer.message)
+                throw new Error('Unable to create customer')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: createCustomer.message })
+          snackbarPush({ color: 'success', message: 'Customer created' })
         } catch (e) {
           this.customer = cacheCustomer
           this.$emit('input', true)

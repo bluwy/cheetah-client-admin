@@ -4,7 +4,7 @@
     header="Remove job?"
     message="You cannot undo this action."
     @no="close"
-    @yes="remove"
+    @yes="deleteJob"
   ></dialog-yes-no>
 </template>
 
@@ -12,10 +12,10 @@
 import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import JOB_REMOVE from '@/graphql/JobRemove.graphql'
+import JOB_DELETE from '@/graphql/JobDelete.graphql'
 
 export default {
-  name: 'DialogJobRemove',
+  name: 'DialogJobDelete',
   components: {
     DialogYesNo
   },
@@ -31,29 +31,29 @@ export default {
     close () {
       this.$emit('input', false)
     },
-    async remove () {
+    async deleteJob () {
       const cacheJobId = this.jobId
 
       this.close()
 
       try {
-        const { data: { removeJob } } = await this.$apollo.mutate({
-          mutation: JOB_REMOVE,
+        await this.$apollo.mutate({
+          mutation: JOB_DELETE,
           variables: {
             id: cacheJobId
           },
-          update: (store, { data: { removeJob } }) => {
-            if (removeJob.success) {
+          update: (store, { data: { deleteJob } }) => {
+            if (deleteJob != null) {
               storeDeleteQuery(store, /^jobs/)
               console.log(store)
-              this.$emit('remove')
+              this.$emit('deleteJob')
             } else {
-              throw new Error(removeJob.message)
+              throw new Error('Unable to remove job')
             }
           }
         })
 
-        snackbarPush({ color: 'success', message: removeJob.message })
+        snackbarPush({ color: 'success', message: 'Job removed' })
       } catch (e) {
         this.$emit('input', true)
 

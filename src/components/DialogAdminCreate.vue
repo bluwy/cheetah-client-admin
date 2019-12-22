@@ -45,7 +45,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="create()">Create</v-btn>
+          <v-btn color="primary" @click="createAdmin()">Create</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash-es'
 import { getErrorMessages } from '@/utils/apollo'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
@@ -107,18 +108,18 @@ export default {
       this.$refs.form.reset()
       this.admin = formAdminFactory()
     },
-    async create () {
+    async createAdmin () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheAdmin = { ...this.admin }
+        const cacheAdmin = cloneDeep(this.admin)
 
         this.cancel(true)
 
         try {
-          const { data: { createAdmin } } = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: ADMIN_CREATE,
             variables: cacheAdmin,
             update: (store, { data: { createAdmin } }) => {
-              if (createAdmin.success) {
+              if (createAdmin != null) {
                 const data = store.readQuery({ query: ADMIN_GET_ALL })
 
                 if (data.admins) {
@@ -127,12 +128,12 @@ export default {
                   store.writeQuery({ query: ADMIN_GET_ALL, data })
                 }
               } else {
-                throw new Error(createAdmin.message)
+                throw new Error('Unable to create admin')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: createAdmin.message })
+          snackbarPush({ color: 'success', message: 'Admin created' })
         } catch (e) {
           this.admin = cacheAdmin
           this.$emit('input', true)

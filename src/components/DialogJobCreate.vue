@@ -31,7 +31,7 @@
               <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="create()">Create</v-btn>
+          <v-btn color="primary" @click="createJob()">Create</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -47,7 +47,7 @@ import InputCustomer from '@/components/InputCustomer.vue'
 import InputStaff from '@/components/InputStaff.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import JOB_BATCH_CREATE from '@/graphql/JobBatchCreate.graphql'
+import JOB_CREATE from '@/graphql/JobCreate.graphql'
 
 const formJobFactory = () => ({
   customerId: null,
@@ -97,28 +97,28 @@ export default {
       this.$refs.form.reset()
       this.job = formJobFactory()
     },
-    async create () {
+    async createJob () {
       if (this.$refs.form.validate() && this.isDirty) {
         const cacheJob = cloneDeep(this.job)
 
         this.cancel(true)
 
         try {
-          const { data: { createJobBatch } } = await this.$apollo.mutate({
-            mutation: JOB_BATCH_CREATE,
+          await this.$apollo.mutate({
+            mutation: JOB_CREATE,
             variables: cacheJob,
-            update: (store, { data: { createJobBatch } }) => {
-              if (createJobBatch.success) {
+            update: (store, { data: { createJob } }) => {
+              if (createJob != null) {
                 storeDeleteQuery(store, /^jobs/)
                 console.log(store)
-                this.$emit('create')
+                this.$emit('createJob')
               } else {
-                throw new Error(createJobBatch.message)
+                throw new Error('Unable to create job')
               }
             }
           })
 
-          snackbarPush({ color: 'success', message: createJobBatch.message })
+          snackbarPush({ color: 'success', message: 'Job created' })
         } catch (e) {
           this.job = cacheJob
           this.$emit('input', true)

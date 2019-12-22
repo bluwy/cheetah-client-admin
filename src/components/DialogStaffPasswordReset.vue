@@ -41,10 +41,10 @@ import { required, minStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import STAFF_PASSWORD_RESET from '@/graphql/StaffPasswordReset.graphql'
+import STAFF_RESET_PASSWORD from '@/graphql/StaffResetPassword.graphql'
 
 export default {
-  name: 'DialogStaffPasswordReset',
+  name: 'DialogStaffResetPassword',
   components: {
     DialogYesNo,
     InputPassword
@@ -90,17 +90,17 @@ export default {
 
         try {
           const { data: { resetStaffPassword } } = await this.$apollo.mutate({
-            mutation: STAFF_PASSWORD_RESET,
+            mutation: STAFF_RESET_PASSWORD,
             variables: {
               id: this.staffId,
               password: cachePassword
             }
           })
 
-          if (resetStaffPassword.success) {
-            snackbarPush({ color: 'success', message: resetStaffPassword.message })
+          if (resetStaffPassword) {
+            snackbarPush({ color: 'success', message: 'Staff password resetted' })
           } else {
-            throw new Error(resetStaffPassword.message)
+            throw new Error('Unable to reset staff password')
           }
         } catch (e) {
           this.password = cachePassword
