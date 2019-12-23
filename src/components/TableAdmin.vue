@@ -9,23 +9,39 @@
     <template #top>
       <v-toolbar flat>
         <v-toolbar-title>Admins</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn class="mr-3" icon color="primary" @click="refetch()">
+        <v-spacer />
+        <v-btn
+          class="mr-3"
+          icon
+          color="primary"
+          @click="refetch()"
+        >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
         <dialog-admin-create v-model="dialogCreate">
           <template #activator>
-            <v-btn color="primary" @click.stop="dialogCreate = true">
-              <v-icon left>mdi-plus-circle</v-icon>
+            <v-btn
+              color="primary"
+              @click.stop="dialogCreate = true"
+            >
+              <v-icon left>
+                mdi-plus-circle
+              </v-icon>
               Create
             </v-btn>
           </template>
         </dialog-admin-create>
-        <dialog-admin-delete v-model="dialogDelete" :adminId="targetAdminId"></dialog-admin-delete>
+        <dialog-admin-delete
+          v-model="dialogDelete"
+          :admin-id="targetAdminId"
+        />
       </v-toolbar>
     </template>
     <template #item.privilege="{ item }">
-      <v-chip small :color="getPrivilegeColor(item.privilege)">
+      <v-chip
+        small
+        :color="getPrivilegeColor(item.privilege)"
+      >
         {{ item.privilege }}
       </v-chip>
     </template>
@@ -33,8 +49,16 @@
       <v-tooltip top>
         <span>Remove admin</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogDelete(item.id)">
-            <v-icon small>mdi-delete</v-icon>
+          <v-btn
+            icon
+            small
+            color="error"
+            v-on="on"
+            @click.stop="openDialogDelete(item.id)"
+          >
+            <v-icon small>
+              mdi-delete
+            </v-icon>
           </v-btn>
         </template>
       </v-tooltip>

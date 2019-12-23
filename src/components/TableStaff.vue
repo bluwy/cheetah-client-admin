@@ -9,29 +9,57 @@
     <template #top>
       <v-toolbar flat>
         <v-toolbar-title>Staffs</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn class="mr-3" icon color="primary" @click="refetch()">
+        <v-spacer />
+        <v-btn
+          class="mr-3"
+          icon
+          color="primary"
+          @click="refetch()"
+        >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
         <dialog-staff-create v-model="dialogCreate">
           <template #activator>
-            <v-btn color="primary" @click.stop="dialogCreate = true">
-              <v-icon left>mdi-plus-circle</v-icon>
+            <v-btn
+              color="primary"
+              @click.stop="dialogCreate = true"
+            >
+              <v-icon left>
+                mdi-plus-circle
+              </v-icon>
               Create
             </v-btn>
           </template>
         </dialog-staff-create>
-        <dialog-staff-update v-model="dialogUpdate" :staffId="targetStaffId"></dialog-staff-update>
-        <dialog-staff-reset-password v-model="dialogResetPassword" :staffId="targetStaffId"></dialog-staff-reset-password>
-        <dialog-staff-delete v-model="dialogDelete" :staffId="targetStaffId"></dialog-staff-delete>
+        <dialog-staff-update
+          v-model="dialogUpdate"
+          :staff-id="targetStaffId"
+        />
+        <dialog-staff-reset-password
+          v-model="dialogResetPassword"
+          :staff-id="targetStaffId"
+        />
+        <dialog-staff-delete
+          v-model="dialogDelete"
+          :staff-id="targetStaffId"
+        />
       </v-toolbar>
     </template>
     <template #item.username="{ item }">
       <span>{{ item.username }}</span>
-      <v-tooltip v-if="item.passwordForgotten" top>
+      <v-tooltip
+        v-if="item.passwordForgotten"
+        top
+      >
         <span>Staff has forgotten his/her password</span>
         <template #activator="{ on }">
-          <v-icon right color="warning" v-on="on">mdi-alert-circle</v-icon>
+          <v-icon
+            right
+            color="warning"
+            v-on="on"
+          >
+            mdi-alert-circle
+          </v-icon>
         </template>
       </v-tooltip>
     </template>
@@ -39,24 +67,48 @@
       <v-tooltip top>
         <span>Update staff</span>
         <template #activator="{ on }">
-          <v-btn icon small color="warning" v-on="on" @click.stop="openDialogUpdate(item.id)">
-            <v-icon small>mdi-pencil</v-icon>
+          <v-btn
+            icon
+            small
+            color="warning"
+            v-on="on"
+            @click.stop="openDialogUpdate(item.id)"
+          >
+            <v-icon small>
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
       </v-tooltip>
       <v-tooltip top>
         <span>Reset password</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogResetPassword(item.id)">
-            <v-icon small>mdi-lock</v-icon>
+          <v-btn
+            icon
+            small
+            color="error"
+            v-on="on"
+            @click.stop="openDialogResetPassword(item.id)"
+          >
+            <v-icon small>
+              mdi-lock
+            </v-icon>
           </v-btn>
         </template>
       </v-tooltip>
       <v-tooltip top>
         <span>Remove staff</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogDelete(item.id)">
-            <v-icon small>mdi-delete</v-icon>
+          <v-btn
+            icon
+            small
+            color="error"
+            v-on="on"
+            @click.stop="openDialogDelete(item.id)"
+          >
+            <v-icon small>
+              mdi-delete
+            </v-icon>
           </v-btn>
         </template>
       </v-tooltip>

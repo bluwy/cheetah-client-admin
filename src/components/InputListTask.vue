@@ -2,21 +2,31 @@
   <v-list>
     <v-list-item key="header">
       <v-list-item-content>
-        <v-list-item-title slot="title">Tasks</v-list-item-title>
+        <v-list-item-title slot="title">
+          Tasks
+        </v-list-item-title>
       </v-list-item-content>
       <v-list-item-action>
-        <v-btn icon small color="primary" @click.stop="addEmptyTask()">
+        <v-btn
+          icon
+          small
+          color="primary"
+          @click.stop="addEmptyTask()"
+        >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-list-item-action>
     </v-list-item>
-    <v-list-item v-for="(task, i) in tasks" :key="i">
+    <v-list-item
+      v-for="(task, i) in tasks"
+      :key="i"
+    >
       <input-task
         :task-type.sync="task.type"
         :task-remarks.sync="task.remarks"
         icon-type="remove"
         @click:icon="tasks.splice(i, 1)"
-      ></input-task>
+      />
     </v-list-item>
   </v-list>
 </template>
@@ -39,6 +49,12 @@ export default {
       default: true
     }
   },
+  computed: {
+    isDirty () {
+      // Every task object is not empty
+      return this.tasks.length && this.tasks.some(task => Object.values(task).some(v => !!v))
+    }
+  },
   watch: {
     tasks: {
       handler (val) {
@@ -47,12 +63,6 @@ export default {
         }
       },
       immediate: true
-    }
-  },
-  computed: {
-    isDirty () {
-      // Every task object is not empty
-      return this.tasks.length && this.tasks.some(task => Object.values(task).some(v => !!v))
     }
   },
   methods: {

@@ -1,15 +1,33 @@
 <template>
-  <v-timeline class="mt-2" align-top dense>
+  <v-timeline
+    class="mt-2"
+    align-top
+    dense
+  >
     <timeline-item-assignment
       v-for="(assignment, i) in assignments"
       :key="i"
       v-bind="assignment"
-    ></timeline-item-assignment>
-    <v-timeline-item v-if="canAddAssignment" right fill-dot small>
-      <dialog-assignment-create v-model="dialogAssignmentAdd" :jobId="jobId">
+    />
+    <v-timeline-item
+      v-if="canAddAssignment"
+      right
+      fill-dot
+      small
+    >
+      <dialog-assignment-create
+        v-model="dialogAssignmentAdd"
+        :job-id="jobId"
+      >
         <template #activator>
-          <v-btn block color="primary" @click.stop="dialogAssignmentAdd = true">
-            <v-icon left>mdi-plus</v-icon>
+          <v-btn
+            block
+            color="primary"
+            @click.stop="dialogAssignmentAdd = true"
+          >
+            <v-icon left>
+              mdi-plus
+            </v-icon>
             Add assignment
           </v-btn>
         </template>

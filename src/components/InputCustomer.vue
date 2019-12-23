@@ -10,8 +10,14 @@
     editable
     @input="$emit('input', $event)"
   >
-    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
-      <slot v-bind="scope" :name="slot"></slot>
+    <template
+      v-for="(_, slot) in $scopedSlots"
+      #[slot]="scope"
+    >
+      <slot
+        v-bind="scope"
+        :name="slot"
+      />
     </template>
   </v-overflow-btn>
 </template>
@@ -39,10 +45,12 @@ export default {
   },
   props: {
     value: {
-      type: [String, Array]
+      type: [String, Array],
+      required: true
     },
     rules: {
-      type: Array
+      type: Array,
+      default: () => []
     },
     multiple: {
       type: Boolean
@@ -57,13 +65,6 @@ export default {
     query: '',
     customers: []
   }),
-  watch: {
-    value (val) {
-      if (this.multiple) {
-        this.query = ''
-      }
-    }
-  },
   computed: {
     placeholder () {
       return 'Select customer' + (this.multiple ? '(s)' : '')
@@ -81,6 +82,13 @@ export default {
         text: `${v.code} - ${v.name}`,
         value: v.id
       }))
+    }
+  },
+  watch: {
+    value (val) {
+      if (this.multiple) {
+        this.query = ''
+      }
     }
   }
 }

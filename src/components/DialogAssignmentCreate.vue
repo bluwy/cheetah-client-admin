@@ -1,19 +1,41 @@
 <template>
-  <v-dialog :value="value" persistent width="600" max-width="95vw">
-    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
-      <slot :name="slot" v-bind="scope"></slot>
+  <v-dialog
+    :value="value"
+    persistent
+    width="600"
+    max-width="95vw"
+  >
+    <template
+      v-for="(_, slot) in $scopedSlots"
+      #[slot]="scope"
+    >
+      <slot
+        :name="slot"
+        v-bind="scope"
+      />
     </template>
-    <v-form v-model="valid" ref="form" lazy-validation>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
       <v-card>
         <v-card-title>Add Assignment</v-card-title>
         <v-card-text>
           <v-container fluid>
-            <input-staff v-model="assignment.staffIds" multiple :rules="rule.staffIds"></input-staff>
-            <input-list-task ref="tasksInput" :tasks="assignment.tasks"></input-list-task>
+            <input-staff
+              v-model="assignment.staffIds"
+              multiple
+              :rules="rule.staffIds"
+            />
+            <input-list-task
+              ref="tasksInput"
+              :tasks="assignment.tasks"
+            />
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <dialog-yes-no
             v-model="cancelDialog"
             header="Are you sure?"
@@ -21,10 +43,21 @@
             @yes="cancel(true)"
           >
             <template #activator>
-              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
+              <v-btn
+                outlined
+                color="error"
+                @click.stop="cancel()"
+              >
+                Cancel
+              </v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="createAssignment()">Create</v-btn>
+          <v-btn
+            color="primary"
+            @click="createAssignment()"
+          >
+            Create
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

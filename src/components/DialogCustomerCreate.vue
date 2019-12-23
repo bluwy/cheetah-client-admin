@@ -1,62 +1,95 @@
 <template>
-  <v-dialog :value="value" persistent width="700" max-width="95vw">
-    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
-      <slot :name="slot" v-bind="scope"></slot>
+  <v-dialog
+    :value="value"
+    persistent
+    width="700"
+    max-width="95vw"
+  >
+    <template
+      v-for="(_, slot) in $scopedSlots"
+      #[slot]="scope"
+    >
+      <slot
+        :name="slot"
+        v-bind="scope"
+      />
     </template>
-    <v-form v-model="valid" ref="form" lazy-validation>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
       <v-card>
         <v-card-title>Create Customer</v-card-title>
         <v-card-text>
           <v-container fluid>
             <v-row no-gutters>
-              <v-col cols="12" md="4">
+              <v-col
+                cols="12"
+                md="4"
+              >
                 <v-subheader>General</v-subheader>
               </v-col>
-              <v-col cols="12" md="8">
+              <v-col
+                cols="12"
+                md="8"
+              >
                 <v-text-field
                   v-model="customer.code"
                   :rules="rule.code"
                   label="Code"
-                ></v-text-field>
+                />
                 <v-text-field
                   v-model="customer.name"
                   :rules="rule.name"
                   label="Name"
-                ></v-text-field>
+                />
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="4">
+              <v-col
+                cols="12"
+                md="4"
+              >
                 <v-subheader>Description</v-subheader>
               </v-col>
-              <v-col cols="12" md="8">
+              <v-col
+                cols="12"
+                md="8"
+              >
                 <v-text-field
                   v-model="customer.address"
                   label="Address"
-                ></v-text-field>
+                />
                 <v-text-field
                   v-model="customer.phoneNumber"
                   label="Phone Number"
-                ></v-text-field>
+                />
                 <v-text-field
                   v-model="customer.email"
                   :rules="rule.email"
                   label="Email"
-                ></v-text-field>
+                />
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="4">
+              <v-col
+                cols="12"
+                md="4"
+              >
                 <v-subheader>Person in charge</v-subheader>
               </v-col>
-              <v-col cols="12" md="8">
-                <input-staff v-model="customer.picStaffId"></input-staff>
+              <v-col
+                cols="12"
+                md="8"
+              >
+                <input-staff v-model="customer.picStaffId" />
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <dialog-yes-no
             v-model="cancelDialog"
             header="Are you sure?"
@@ -64,10 +97,21 @@
             @yes="cancel(true)"
           >
             <template #activator>
-              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
+              <v-btn
+                outlined
+                color="error"
+                @click.stop="cancel()"
+              >
+                Cancel
+              </v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="createCustomer()">Create</v-btn>
+          <v-btn
+            color="primary"
+            @click="createCustomer()"
+          >
+            Create
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

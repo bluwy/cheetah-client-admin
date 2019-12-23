@@ -1,10 +1,24 @@
 <template>
-  <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="forgotPassword()">
-    <v-card :loading="loading" width="400" max-width="95vw">
+  <v-form
+    ref="form"
+    v-model="valid"
+    lazy-validation
+    @submit.prevent="forgotPassword()"
+  >
+    <v-card
+      :loading="loading"
+      width="400"
+      max-width="95vw"
+    >
       <v-card-title>Forgot password</v-card-title>
       <v-card-subtitle>Enter username to reset password</v-card-subtitle>
       <v-card-text>
-        <v-alert v-if="messageText" text outlined :type="messageType">
+        <v-alert
+          v-if="messageText"
+          text
+          outlined
+          :type="messageType"
+        >
           {{ messageText }}
         </v-alert>
         <v-text-field
@@ -12,10 +26,17 @@
           :rules="usernameRule"
           label="Username"
           spellcheck="false"
-        ></v-text-field>
+        />
       </v-card-text>
       <v-card-actions>
-        <v-btn :disabled="loading" block color="primary" type="submit">Reset password</v-btn>
+        <v-btn
+          :disabled="loading"
+          block
+          color="primary"
+          type="submit"
+        >
+          Reset password
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-form>

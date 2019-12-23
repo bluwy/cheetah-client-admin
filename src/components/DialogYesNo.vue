@@ -6,20 +6,42 @@
     @click:outside="no"
     @keydown.esc="no"
   >
-    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
-      <slot :name="slot" v-bind="scope"></slot>
+    <template
+      v-for="(_, slot) in $scopedSlots"
+      #[slot]="scope"
+    >
+      <slot
+        :name="slot"
+        v-bind="scope"
+      />
     </template>
     <v-card>
       <v-card-title v-if="header || $slots.header">
-        <slot name="header">{{ header }}</slot>
+        <slot name="header">
+          {{ header }}
+        </slot>
       </v-card-title>
       <v-card-text v-if="message || $slots.message">
-        <slot name="message">{{ message }}</slot>
+        <slot name="message">
+          {{ message }}
+        </slot>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="no">{{ noText }}</v-btn>
-        <v-btn text color="primary" @click="yes">{{ yesText }}</v-btn>
+        <v-spacer />
+        <v-btn
+          text
+          color="primary"
+          @click="no"
+        >
+          {{ noText }}
+        </v-btn>
+        <v-btn
+          text
+          color="primary"
+          @click="yes"
+        >
+          {{ yesText }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -33,10 +55,12 @@ export default {
       type: Boolean
     },
     header: {
-      type: String
+      type: String,
+      default: ''
     },
     message: {
-      type: String
+      type: String,
+      default: ''
     },
     yesText: {
       type: String,

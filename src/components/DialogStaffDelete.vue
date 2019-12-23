@@ -5,7 +5,7 @@
     message="You cannot undo this action."
     @no="close"
     @yes="deleteStaff"
-  ></dialog-yes-no>
+  />
 </template>
 
 <script>
@@ -25,7 +25,8 @@ export default {
       type: Boolean
     },
     staffId: {
-      type: String
+      type: String,
+      default: ''
     }
   },
   methods: {

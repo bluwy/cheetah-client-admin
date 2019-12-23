@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <table-staff></table-staff>
+    <table-staff />
   </v-container>
 </template>
 

@@ -7,7 +7,11 @@
     right
   >
     {{ currentSnack.message }}
-    <v-btn text icon @click="snackbar = false">
+    <v-btn
+      text
+      icon
+      @click="snackbar = false"
+    >
       <v-icon>$close</v-icon>
     </v-btn>
   </v-snackbar>

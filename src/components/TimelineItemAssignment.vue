@@ -1,6 +1,13 @@
 <template>
-  <v-timeline-item right fill-dot small :color="themeColor">
-    <div class="py-1">{{ formatCheckTime }}</div>
+  <v-timeline-item
+    right
+    fill-dot
+    small
+    :color="themeColor"
+  >
+    <div class="py-1">
+      {{ formatCheckTime }}
+    </div>
     <v-card
       class="assignment-card"
       outlined
@@ -20,21 +27,57 @@
         </v-chip>
       </v-card-text>
       <v-card-text class="pt-0">
-        <v-card-title class="subtitle-1 black--text pa-0">Tasks</v-card-title>
+        <v-card-title class="subtitle-1 black--text pa-0">
+          Tasks
+        </v-card-title>
         <ul class="assignment-card__list">
-          <li v-show="!tasks || !tasks.length" key="empty">No tasks</li>
-          <li v-for="(task, i) in tasks" :key="i" class="mb-1">
-            <v-chip small label class="mr-2" :color="themeColor">{{ task.type }}</v-chip>
+          <li
+            v-show="!tasks || !tasks.length"
+            key="empty"
+          >
+            No tasks
+          </li>
+          <li
+            v-for="(task, i) in tasks"
+            :key="i"
+            class="mb-1"
+          >
+            <v-chip
+              small
+              label
+              class="mr-2"
+              :color="themeColor"
+            >
+              {{ task.type }}
+            </v-chip>
             <span>{{ task.remarks }}</span>
           </li>
         </ul>
       </v-card-text>
       <v-card-text class="pt-0">
-        <v-card-title class="subtitle-1 black--text pa-0">Actions</v-card-title>
+        <v-card-title class="subtitle-1 black--text pa-0">
+          Actions
+        </v-card-title>
         <ul class="assignment-card__list">
-          <li v-show="!actions || !actions.length" key="empty">No actions</li>
-          <li v-for="(action, i) in actions" :key="i" class="mb-1">
-            <v-chip small label class="mr-2" :color="themeColor">{{ action.type }}</v-chip>
+          <li
+            v-show="!actions || !actions.length"
+            key="empty"
+          >
+            No actions
+          </li>
+          <li
+            v-for="(action, i) in actions"
+            :key="i"
+            class="mb-1"
+          >
+            <v-chip
+              small
+              label
+              class="mr-2"
+              :color="themeColor"
+            >
+              {{ action.type }}
+            </v-chip>
             <span>{{ action.remarks }}</span>
           </li>
         </ul>
@@ -50,10 +93,12 @@ export default {
   name: 'TimelineItemAssignment',
   props: {
     checkIn: {
-      type: Number
+      type: Number,
+      default: null
     },
     checkOut: {
-      type: Number
+      type: Number,
+      default: null
     },
     staffs: {
       type: Array,

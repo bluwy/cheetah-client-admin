@@ -1,9 +1,23 @@
 <template>
-  <v-form v-model="valid" ref="form" lazy-validation @submit.prevent="handleLogin()">
-    <v-card :loading="loading" width="400" max-width="95vw">
+  <v-form
+    ref="form"
+    v-model="valid"
+    lazy-validation
+    @submit.prevent="handleLogin()"
+  >
+    <v-card
+      :loading="loading"
+      width="400"
+      max-width="95vw"
+    >
       <v-card-title>Login</v-card-title>
       <v-card-text>
-        <v-alert v-if="messageText" text outlined :type="messageType">
+        <v-alert
+          v-if="messageText"
+          text
+          outlined
+          :type="messageType"
+        >
           {{ messageText }}
         </v-alert>
         <v-text-field
@@ -11,20 +25,29 @@
           :rules="rule.username"
           label="Username"
           spellcheck="false"
-        ></v-text-field>
+        />
         <input-password
           v-model="user.password"
           :rules="rule.password"
           label="Password"
           spellcheck="false"
-        ></input-password>
+        />
       </v-card-text>
       <v-card-actions>
-        <v-btn :disabled="loading" block color="primary" type="submit">Login</v-btn>
+        <v-btn
+          :disabled="loading"
+          block
+          color="primary"
+          type="submit"
+        >
+          Login
+        </v-btn>
       </v-card-actions>
     </v-card>
     <div class="text-center mt-3">
-      <router-link to="/forgot">Forgot password</router-link>
+      <router-link to="/forgot">
+        Forgot password
+      </router-link>
     </div>
   </v-form>
 </template>

@@ -12,42 +12,91 @@
     <template #top>
       <v-toolbar flat>
         <v-toolbar-title>Customers</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn class="mr-3" icon color="primary" @click="refetch()">
+        <v-spacer />
+        <v-btn
+          class="mr-3"
+          icon
+          color="primary"
+          @click="refetch()"
+        >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <dialog-customer-create v-model="dialogCreate" @create-customer="refetch()">
+        <dialog-customer-create
+          v-model="dialogCreate"
+          @create-customer="refetch()"
+        >
           <template #activator>
-            <v-btn color="primary" @click.stop="dialogCreate = true">
-              <v-icon left>mdi-plus-circle</v-icon>
+            <v-btn
+              color="primary"
+              @click.stop="dialogCreate = true"
+            >
+              <v-icon left>
+                mdi-plus-circle
+              </v-icon>
               Create
             </v-btn>
           </template>
         </dialog-customer-create>
-        <dialog-customer-update v-model="dialogUpdate" :customerId="targetCustomerId" @update-customer="refetch()"></dialog-customer-update>
-        <dialog-customer-delete v-model="dialogDelete" :customerId="targetCustomerId" @delete-customer="refetch()"></dialog-customer-delete>
+        <dialog-customer-update
+          v-model="dialogUpdate"
+          :customer-id="targetCustomerId"
+          @update-customer="refetch()"
+        />
+        <dialog-customer-delete
+          v-model="dialogDelete"
+          :customer-id="targetCustomerId"
+          @delete-customer="refetch()"
+        />
       </v-toolbar>
     </template>
     <template #item.temporary="{ item }">
-      <v-checkbox class="my-0 py-0" :input-value="item.temporary" hide-details dense @change="toggleTemporary(item)"></v-checkbox>
+      <v-checkbox
+        class="my-0 py-0"
+        :input-value="item.temporary"
+        hide-details
+        dense
+        @change="toggleTemporary(item)"
+      />
     </template>
     <template #item.active="{ item }">
-      <v-checkbox class="my-0 py-0" :input-value="item.active" hide-details dense @change="toggleActive(item)"></v-checkbox>
+      <v-checkbox
+        class="my-0 py-0"
+        :input-value="item.active"
+        hide-details
+        dense
+        @change="toggleActive(item)"
+      />
     </template>
     <template #item.action="{ item }">
       <v-tooltip top>
         <span>Update customer</span>
         <template #activator="{ on }">
-          <v-btn icon small color="warning" v-on="on" @click.stop="openDialogUpdate(item.id)">
-            <v-icon small>mdi-pencil</v-icon>
+          <v-btn
+            icon
+            small
+            color="warning"
+            v-on="on"
+            @click.stop="openDialogUpdate(item.id)"
+          >
+            <v-icon small>
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
       </v-tooltip>
       <v-tooltip top>
         <span>Remove customer</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogDelete(item.id)">
-            <v-icon small>mdi-delete</v-icon>
+          <v-btn
+            icon
+            small
+            color="error"
+            v-on="on"
+            @click.stop="openDialogDelete(item.id)"
+          >
+            <v-icon small>
+              mdi-delete
+            </v-icon>
           </v-btn>
         </template>
       </v-tooltip>

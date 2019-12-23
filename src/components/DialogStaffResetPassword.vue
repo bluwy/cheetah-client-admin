@@ -1,9 +1,24 @@
 <template>
-  <v-dialog :value="value" persistent width="400" max-width="95vw">
-    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
-      <slot :name="slot" v-bind="scope"></slot>
+  <v-dialog
+    :value="value"
+    persistent
+    width="400"
+    max-width="95vw"
+  >
+    <template
+      v-for="(_, slot) in $scopedSlots"
+      #[slot]="scope"
+    >
+      <slot
+        :name="slot"
+        v-bind="scope"
+      />
     </template>
-    <v-form v-model="valid" ref="form" lazy-validation>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
       <v-card>
         <v-card-title>Reset Staff Password</v-card-title>
         <v-card-text>
@@ -13,11 +28,11 @@
               :rules="passwordRule"
               label="New password"
               spellcheck="false"
-            ></input-password>
+            />
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <dialog-yes-no
             v-model="dialogCancel"
             header="Are you sure?"
@@ -25,10 +40,21 @@
             @yes="cancel(true)"
           >
             <template #activator>
-              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
+              <v-btn
+                outlined
+                color="error"
+                @click.stop="cancel()"
+              >
+                Cancel
+              </v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="resetPassword()">Reset</v-btn>
+          <v-btn
+            color="primary"
+            @click="resetPassword()"
+          >
+            Reset
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

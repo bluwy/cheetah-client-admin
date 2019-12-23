@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "lintfix": "vue-cli-service lint --fix"
+    "lint": "vue-cli-service lint --no-fix",
+    "lintfix": "vue-cli-service lint"
   },
   "dependencies": {
     "apollo-boost": "^0.4.4",
@@ -44,7 +44,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/recommended",
       "@vue/standard"
     ],
     "rules": {},

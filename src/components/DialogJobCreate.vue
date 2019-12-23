@@ -1,26 +1,59 @@
 <template>
-  <v-dialog :value="value" persistent width="700" max-width="95vw">
-    <template v-for="(_, slot) in $scopedSlots" #[slot]="scope">
-      <slot :name="slot" v-bind="scope"></slot>
+  <v-dialog
+    :value="value"
+    persistent
+    width="700"
+    max-width="95vw"
+  >
+    <template
+      v-for="(_, slot) in $scopedSlots"
+      #[slot]="scope"
+    >
+      <slot
+        :name="slot"
+        v-bind="scope"
+      />
     </template>
-    <v-form v-model="valid" ref="form" lazy-validation>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
       <v-card>
         <v-card-title>Create Job</v-card-title>
         <v-card-text>
           <v-container fluid>
             <v-row>
-              <v-col class="py-0" cols=12 md="6">
-                <input-customer v-model="job.customerId" :rules="rule.customerId"></input-customer>
+              <v-col
+                class="py-0"
+                cols="12"
+                md="6"
+              >
+                <input-customer
+                  v-model="job.customerId"
+                  :rules="rule.customerId"
+                />
               </v-col>
-              <v-col class="py-0" cols=12 md="6">
-                <input-staff v-model="job.staffIds" multiple :rules="rule.staffIds"></input-staff>
+              <v-col
+                class="py-0"
+                cols="12"
+                md="6"
+              >
+                <input-staff
+                  v-model="job.staffIds"
+                  multiple
+                  :rules="rule.staffIds"
+                />
               </v-col>
             </v-row>
-            <input-list-task ref="tasksInput" :tasks="job.tasks"></input-list-task>
+            <input-list-task
+              ref="tasksInput"
+              :tasks="job.tasks"
+            />
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <dialog-yes-no
             v-model="cancelDialog"
             header="Are you sure?"
@@ -28,10 +61,21 @@
             @yes="cancel(true)"
           >
             <template #activator>
-              <v-btn outlined color="error" @click.stop="cancel()">Cancel</v-btn>
+              <v-btn
+                outlined
+                color="error"
+                @click.stop="cancel()"
+              >
+                Cancel
+              </v-btn>
             </template>
           </dialog-yes-no>
-          <v-btn color="primary" @click="createJob()">Create</v-btn>
+          <v-btn
+            color="primary"
+            @click="createJob()"
+          >
+            Create
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

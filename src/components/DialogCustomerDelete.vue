@@ -5,7 +5,7 @@
     message="You cannot undo this action."
     @no="close"
     @yes="deleteCustomer"
-  ></dialog-yes-no>
+  />
 </template>
 
 <script>
@@ -24,7 +24,8 @@ export default {
       type: Boolean
     },
     customerId: {
-      type: String
+      type: String,
+      default: ''
     }
   },
   methods: {

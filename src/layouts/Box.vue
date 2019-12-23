@@ -1,8 +1,12 @@
 <template>
   <v-app>
     <v-content>
-      <v-row class="card-wrap" justify="center" align="center">
-        <router-view></router-view>
+      <v-row
+        class="card-wrap"
+        justify="center"
+        align="center"
+      >
+        <router-view />
       </v-row>
     </v-content>
   </v-app>

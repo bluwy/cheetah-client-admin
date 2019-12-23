@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <table-customer></table-customer>
+    <table-customer />
   </v-container>
 </template>
 
