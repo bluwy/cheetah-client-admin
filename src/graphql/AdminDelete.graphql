@@ -1,4 +1,4 @@
-# import "./fragments/Admin.graphql"
+#import "./fragments/Admin.graphql"
 
 mutation AdminDelete($id: ID!) {
   deleteAdmin(where: { id: $id }) {

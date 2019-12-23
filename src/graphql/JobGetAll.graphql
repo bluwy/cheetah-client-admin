@@ -1,4 +1,4 @@
-#import "./fragments/Job.graphql"
+#import "./fragments/JobWithoutAssignments.graphql"
 
 query JobGetAll(
   $offset: Int,
@@ -12,6 +12,6 @@ query JobGetAll(
     orderBy: $orderBy,
     where: $where
   ) {
-    ...jobFragment
+    ...jobWithoutAssignmentsFragment
   }
 }

@@ -1,15 +1,11 @@
 #import "./Customer.graphql"
-#import "./Assignment.graphql"
 
-fragment jobFragment on Job {
+fragment jobWithoutAssignmentsFragment on Job {
   id
   code
   dateIssued
   customer {
     ...customerFragment    
-  }
-  assignments {
-    ...assignmentFragment
   }
   needsFollowUp
 }
