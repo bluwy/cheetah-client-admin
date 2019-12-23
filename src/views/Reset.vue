@@ -25,7 +25,7 @@
 import { getErrorMessages } from '@/utils/apollo'
 import { required, minStrLength } from '@/utils/inputRules'
 import InputPassword from '@/components/InputPassword.vue'
-import AUTH_ADMIN_PASSWORD_RESET from '@/graphql/AuthAdminPasswordReset.graphql'
+import ADMIN_RESET_PASSWORD from '@/graphql/AdminResetPassword.graphql'
 
 export default {
   name: 'Reset',
@@ -56,7 +56,7 @@ export default {
           this.loading = true
 
           const { data: { resetAdminPassword } } = await this.$apollo.mutate({
-            mutation: AUTH_ADMIN_PASSWORD_RESET,
+            mutation: ADMIN_RESET_PASSWORD,
             variables: {
               token: this.token,
               password: this.password

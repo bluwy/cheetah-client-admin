@@ -4,8 +4,8 @@ import { isEmpty } from 'lodash-es'
 import { apolloClient } from './plugins/apollo'
 import { authToken } from './utils/localStorage'
 
-import AUTH_ADMIN_CHECK from '@/graphql/AuthAdminCheck.graphql'
-import AUTH_ADMIN_LOGIN from '@/graphql/AuthAdminLogin.graphql'
+import ADMIN_VERIFY_TOKEN from '@/graphql/AdminVerifyToken.graphql'
+import ADMIN_LOGIN from '@/graphql/AdminLogin.graphql'
 
 Vue.use(Vuex)
 
@@ -33,12 +33,21 @@ export default new Vuex.Store({
 
       if (token) {
         try {
-          const { data: { checkAdmin: userData } } = await apolloClient.query({
-            query: AUTH_ADMIN_CHECK,
+          const { data: { verifyAdminToken } } = await apolloClient.query({
+            query: ADMIN_VERIFY_TOKEN,
             variables: { token }
           })
 
-          commit('SET_USER_DATA', { data: userData })
+          if (verifyAdminToken != null) {
+            commit('SET_USER_DATA', {
+              data: {
+                id: verifyAdminToken.adminId,
+                privilege: verifyAdminToken.adminPrivilege
+              }
+            })
+          } else {
+            throw new Error('Invalid token')
+          }
         } catch (e) {
           commit('SET_USER_DATA', { data: null })
           throw e
@@ -51,17 +60,24 @@ export default new Vuex.Store({
     async login ({ commit }, { username, password }) {
       try {
         const { data: { loginAdmin } } = await apolloClient.mutate({
-          mutation: AUTH_ADMIN_LOGIN,
+          mutation: ADMIN_LOGIN,
           variables: { username, password }
         })
 
-        if (loginAdmin.success) {
+        if (loginAdmin != null) {
           authToken(loginAdmin.token)
-          commit('SET_USER_DATA', { data: loginAdmin.userData })
+
+          commit('SET_USER_DATA', {
+            data: {
+              id: loginAdmin.adminId,
+              privilege: loginAdmin.adminPrivilege
+            }
+          })
+
           commit('SET_USER_CHECKED', { val: true })
           return true
         } else {
-          throw new Error(loginAdmin.message)
+          throw new Error('Unable to login user')
         }
       } catch (e) {
         commit('SET_USER_DATA', { data: null })

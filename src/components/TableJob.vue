@@ -16,7 +16,7 @@
         <v-btn class="mr-3" icon color="primary" @click="refetch()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <dialog-job-create v-model="dialogCreate" @create="refetch()">
+        <dialog-job-create v-model="dialogCreate" @create-job="refetch()">
           <template #activator>
             <v-btn color="primary" @click.stop="dialogCreate = true">
               <v-icon left>mdi-plus-circle</v-icon>
@@ -25,12 +25,15 @@
           </template>
         </dialog-job-create>
         <dialog-job-details v-model="dialogDetails" :jobId="targetJobId"></dialog-job-details>
-        <dialog-assignment-add v-model="dialogAssignmentAdd" :jobId="targetJobId"></dialog-assignment-add>
-        <dialog-job-remove v-model="dialogRemove" :jobId="targetJobId" @remove="refetch()"></dialog-job-remove>
+        <dialog-assignment-create v-model="dialogAssignmentCreate" :jobId="targetJobId"></dialog-assignment-create>
+        <dialog-job-delete v-model="dialogDelete" :jobId="targetJobId" @delete-job="refetch()"></dialog-job-delete>
       </v-toolbar>
     </template>
     <template #item.dateIssued="{ item }">
       {{ formatIssueDate(item.dateIssued) }}
+    </template>
+    <template #item.needsFollowUp="{ item }">
+      <v-icon v-if="item.needsFollowUp" small>$warning</v-icon>
     </template>
     <template #item.action="{ item }">
       <v-tooltip top>
@@ -44,7 +47,7 @@
       <v-tooltip top>
         <span>Add assignment</span>
         <template #activator="{ on }">
-          <v-btn icon small color="warning" :disabled="!canAddAssignment(item)" v-on="on" @click="openDialogAssignmentAdd(item.id)">
+          <v-btn icon small color="warning" :disabled="!item.needsFollowUp" v-on="on" @click="openDialogAssignmentCreate(item.id)">
             <v-icon small>mdi-file-plus</v-icon>
           </v-btn>
         </template>
@@ -52,7 +55,7 @@
       <v-tooltip top>
         <span>Remove job</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click="openDialogDelete(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -63,11 +66,10 @@
 
 <script>
 import { format } from 'date-fns'
-import { snakeCase } from 'lodash-es'
-import DialogAssignmentAdd from '@/components/DialogAssignmentAdd.vue'
+import DialogAssignmentCreate from '@/components/DialogAssignmentCreate.vue'
 import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import DialogJobDetails from '@/components/DialogJobDetails.vue'
-import DialogJobRemove from '@/components/DialogJobRemove.vue'
+import DialogJobDelete from '@/components/DialogJobDelete.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 
 export default {
@@ -77,20 +79,20 @@ export default {
       query: JOB_GET_ALL,
       variables () {
         return {
-          sortBy: this.jobSortBy,
-          sortDesc: this.sortDesc,
+          offset: this.queryOffset,
           limit: this.queryLimit,
-          offset: this.pageOffset
+          orderBy: this.queryOrderBy,
+          where: this.queryWhere
         }
       },
       loadingKey: 'loadingCount'
     }
   },
   components: {
-    DialogAssignmentAdd,
+    DialogAssignmentCreate,
     DialogJobCreate,
     DialogJobDetails,
-    DialogJobRemove
+    DialogJobDelete
   },
   props: {
     queryLimit: {
@@ -101,8 +103,10 @@ export default {
   data: () => ({
     loadingCount: 0,
     headers: [
+      { text: 'Code', value: 'code' },
       { text: 'Customer', value: 'customer.name', sortable: false },
       { text: 'Date Issued', value: 'dateIssued' },
+      { text: 'Follow Up', value: 'needsFollowUp' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
     page: 1,
@@ -111,16 +115,19 @@ export default {
     jobs: [],
     dialogCreate: false,
     dialogDetails: false,
-    dialogAssignmentAdd: false,
-    dialogRemove: false,
-    targetJobId: '0'
+    dialogAssignmentCreate: false,
+    dialogDelete: false,
+    targetJobId: ''
   }),
   computed: {
-    pageOffset () {
+    queryOffset () {
       return this.queryLimit * (this.page - 1)
     },
-    jobSortBy () {
-      return snakeCase(this.sortBy).toUpperCase()
+    queryOrderBy () {
+      return { [this.sortBy]: this.sortDesc ? 'desc' : 'asc' }
+    },
+    queryWhere () {
+      return {}
     }
   },
   methods: {
@@ -128,27 +135,19 @@ export default {
       this.$apollo.queries.jobs.refetch()
     },
     formatIssueDate (issueDate) {
-      return format(issueDate, 'd MMM yyyy')
-    },
-    canAddAssignment (job) {
-      if (!job.assignments || !job.assignments.length) {
-        return true
-      } else {
-        const last = job.assignments[job.assignments.length - 1]
-        return last.checkIn != null && last.checkOut != null && last.needsFollowUp
-      }
+      return format(new Date(issueDate), 'd MMM yyyy')
     },
     openDialogDetails (jobId) {
       this.targetJobId = jobId
       this.dialogDetails = true
     },
-    openDialogAssignmentAdd (jobId) {
+    openDialogAssignmentCreate (jobId) {
       this.targetJobId = jobId
-      this.dialogAssignmentAdd = true
+      this.dialogAssignmentCreate = true
     },
-    openDialogRemove (jobId) {
+    openDialogDelete (jobId) {
       this.targetJobId = jobId
-      this.dialogRemove = true
+      this.dialogDelete = true
     }
   }
 }

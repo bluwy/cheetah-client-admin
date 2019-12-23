@@ -21,16 +21,25 @@
             </v-btn>
           </template>
         </dialog-staff-create>
-        <dialog-staff-edit v-model="dialogEdit" :staffId="targetStaffId"></dialog-staff-edit>
-        <dialog-staff-password-reset v-model="dialogPasswordReset" :staffId="targetStaffId"></dialog-staff-password-reset>
-        <dialog-staff-remove v-model="dialogRemove" :staffId="targetStaffId"></dialog-staff-remove>
+        <dialog-staff-update v-model="dialogUpdate" :staffId="targetStaffId"></dialog-staff-update>
+        <dialog-staff-reset-password v-model="dialogResetPassword" :staffId="targetStaffId"></dialog-staff-reset-password>
+        <dialog-staff-delete v-model="dialogDelete" :staffId="targetStaffId"></dialog-staff-delete>
       </v-toolbar>
+    </template>
+    <template #item.username="{ item }">
+      <span>{{ item.username }}</span>
+      <v-tooltip v-if="item.passwordForgotten" top>
+        <span>Staff has forgotten his/her password</span>
+        <template #activator="{ on }">
+          <v-icon right color="warning" v-on="on">mdi-alert-circle</v-icon>
+        </template>
+      </v-tooltip>
     </template>
     <template #item.action="{ item }">
       <v-tooltip top>
-        <span>Edit staff</span>
+        <span>Update staff</span>
         <template #activator="{ on }">
-          <v-btn icon small color="warning" v-on="on" @click.stop="openDialogEdit(item.id)">
+          <v-btn icon small color="warning" v-on="on" @click.stop="openDialogUpdate(item.id)">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -38,7 +47,7 @@
       <v-tooltip top>
         <span>Reset password</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogPasswordReset(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogResetPassword(item.id)">
             <v-icon small>mdi-lock</v-icon>
           </v-btn>
         </template>
@@ -46,7 +55,7 @@
       <v-tooltip top>
         <span>Remove staff</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogDelete(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -58,9 +67,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
-import DialogStaffEdit from '@/components/DialogStaffEdit.vue'
-import DialogStaffPasswordReset from '@/components/DialogStaffPasswordReset.vue'
-import DialogStaffRemove from '@/components/DialogStaffRemove.vue'
+import DialogStaffUpdate from '@/components/DialogStaffUpdate.vue'
+import DialogStaffDelete from '@/components/DialogStaffDelete.vue'
+import DialogStaffResetPassword from '@/components/DialogStaffResetPassword.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 
 export default {
@@ -73,9 +82,9 @@ export default {
   },
   components: {
     DialogStaffCreate,
-    DialogStaffEdit,
-    DialogStaffPasswordReset,
-    DialogStaffRemove
+    DialogStaffUpdate,
+    DialogStaffResetPassword,
+    DialogStaffDelete
   },
   data: () => ({
     loadingCount: 0,
@@ -86,10 +95,10 @@ export default {
     ],
     staffs: [],
     dialogCreate: false,
-    dialogEdit: false,
-    dialogPasswordReset: false,
-    dialogRemove: false,
-    targetStaffId: '0'
+    dialogUpdate: false,
+    dialogResetPassword: false,
+    dialogDelete: false,
+    targetStaffId: ''
   }),
   computed: {
     ...mapGetters([
@@ -100,17 +109,17 @@ export default {
     refetch () {
       this.$apollo.queries.staffs.refetch()
     },
-    openDialogEdit (staffId) {
+    openDialogUpdate (staffId) {
       this.targetStaffId = staffId
-      this.dialogEdit = true
+      this.dialogUpdate = true
     },
-    openDialogPasswordReset (staffId) {
+    openDialogResetPassword (staffId) {
       this.targetStaffId = staffId
-      this.dialogPasswordReset = true
+      this.dialogResetPassword = true
     },
-    openDialogRemove (staffId) {
+    openDialogDelete (staffId) {
       this.targetStaffId = staffId
-      this.dialogRemove = true
+      this.dialogDelete = true
     }
   }
 }

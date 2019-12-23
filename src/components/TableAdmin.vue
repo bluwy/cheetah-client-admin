@@ -13,7 +13,7 @@
         <v-btn class="mr-3" icon color="primary" @click="refetch()">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <dialog-admin-create v-model="dialogCreate" @create="refetch()">
+        <dialog-admin-create v-model="dialogCreate">
           <template #activator>
             <v-btn color="primary" @click.stop="dialogCreate = true">
               <v-icon left>mdi-plus-circle</v-icon>
@@ -21,7 +21,7 @@
             </v-btn>
           </template>
         </dialog-admin-create>
-        <dialog-admin-remove v-model="dialogRemove" :adminId="targetAdminId"></dialog-admin-remove>
+        <dialog-admin-delete v-model="dialogDelete" :adminId="targetAdminId"></dialog-admin-delete>
       </v-toolbar>
     </template>
     <template #item.privilege="{ item }">
@@ -33,7 +33,7 @@
       <v-tooltip top>
         <span>Remove admin</span>
         <template #activator="{ on }">
-          <v-btn icon small color="error" v-on="on" @click.stop="openDialogRemove(item.id)">
+          <v-btn icon small color="error" v-on="on" @click.stop="openDialogDelete(item.id)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -45,7 +45,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import DialogAdminCreate from '@/components/DialogAdminCreate.vue'
-import DialogAdminRemove from '@/components/DialogAdminRemove.vue'
+import DialogAdminDelete from '@/components/DialogAdminDelete.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
 
 export default {
@@ -58,7 +58,7 @@ export default {
   },
   components: {
     DialogAdminCreate,
-    DialogAdminRemove
+    DialogAdminDelete
   },
   data: () => ({
     loadingCount: 0,
@@ -69,8 +69,8 @@ export default {
     ],
     admins: [],
     dialogCreate: false,
-    dialogRemove: false,
-    targetAdminId: '0'
+    dialogDelete: false,
+    targetAdminId: ''
   }),
   computed: {
     ...mapGetters([
@@ -91,9 +91,9 @@ export default {
           return ''
       }
     },
-    openDialogRemove (adminId) {
+    openDialogDelete (adminId) {
       this.targetAdminId = adminId
-      this.dialogRemove = true
+      this.dialogDelete = true
     }
   }
 }

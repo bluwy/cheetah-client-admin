@@ -24,7 +24,7 @@
 <script>
 import { getErrorMessages } from '@/utils/apollo'
 import { required } from '@/utils/inputRules'
-import AUTH_ADMIN_PASSWORD_FORGOT from '@/graphql/AuthAdminPasswordForgot.graphql'
+import ADMIN_FORGOT_PASSWORD from '@/graphql/AdminForgotPassword.graphql'
 
 export default {
   name: 'Forgot',
@@ -44,7 +44,7 @@ export default {
           this.loading = true
 
           const { data: { forgotAdminPassword } } = await this.$apollo.mutate({
-            mutation: AUTH_ADMIN_PASSWORD_FORGOT,
+            mutation: ADMIN_FORGOT_PASSWORD,
             variables: {
               username: this.username
             }

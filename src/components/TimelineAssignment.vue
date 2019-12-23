@@ -6,26 +6,26 @@
       v-bind="assignment"
     ></timeline-item-assignment>
     <v-timeline-item v-if="canAddAssignment" right fill-dot small>
-      <dialog-assignment-add v-model="dialogAssignmentAdd" :jobId="jobId">
+      <dialog-assignment-create v-model="dialogAssignmentAdd" :jobId="jobId">
         <template #activator>
           <v-btn block color="primary" @click.stop="dialogAssignmentAdd = true">
             <v-icon left>mdi-plus</v-icon>
             Add assignment
           </v-btn>
         </template>
-      </dialog-assignment-add>
+      </dialog-assignment-create>
     </v-timeline-item>
   </v-timeline>
 </template>
 
 <script>
-import DialogAssignmentAdd from '@/components/DialogAssignmentAdd.vue'
+import DialogAssignmentCreate from '@/components/DialogAssignmentCreate.vue'
 import TimelineItemAssignment from '@/components/TimelineItemAssignment.vue'
 
 export default {
   name: 'TimelineAssignment',
   components: {
-    DialogAssignmentAdd,
+    DialogAssignmentCreate,
     TimelineItemAssignment
   },
   props: {
