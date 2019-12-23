@@ -1,7 +1,7 @@
 #import "./fragments/Staff.graphql"
 
-query StaffGetAll($where: StaffWhereInput) {
-  staffs(where: $where) {
+query StaffGetAll($limit: Int, $where: StaffWhereInput) {
+  staffs(first: $limit, where: $where) {
     ...staffFragment
   }
 }

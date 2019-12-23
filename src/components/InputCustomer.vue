@@ -17,18 +17,21 @@
 </template>
 
 <script>
-import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
+import CUSTOMER_INPUT_GET_ALL from '@/graphql/CustomerInputGetAll.graphql'
 
 export default {
   name: 'InputCustomer',
   apollo: {
     customers: {
-      query: CUSTOMER_GET_ALL,
+      query: CUSTOMER_INPUT_GET_ALL,
       variables () {
         return {
-          query: this.query || '',
-          limit: this.maxQueryResult
+          limit: this.queryLimit,
+          where: this.queryWhere
         }
+      },
+      skip () {
+        return this.multiple ? false : this.value
       },
       debounce: 500,
       loadingKey: 'loadingCount'
@@ -44,7 +47,7 @@ export default {
     multiple: {
       type: Boolean
     },
-    maxQueryResult: {
+    queryLimit: {
       type: Number,
       default: 10
     }
@@ -54,12 +57,30 @@ export default {
     query: '',
     customers: []
   }),
+  watch: {
+    value (val) {
+      if (this.multiple) {
+        this.query = ''
+      }
+    }
+  },
   computed: {
     placeholder () {
       return 'Select customer' + (this.multiple ? '(s)' : '')
     },
+    queryWhere () {
+      return this.query ? {
+        OR: [
+          { code: { contains: this.query } },
+          { name: { contains: this.query } }
+        ]
+      } : undefined
+    },
     mapCustomers () {
-      return this.customers.map(v => ({ text: v.name, value: v.id }))
+      return this.customers.map(v => ({
+        text: `${v.code} - ${v.name}`,
+        value: v.id
+      }))
     }
   }
 }

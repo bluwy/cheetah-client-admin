@@ -1,0 +1,7 @@
+query CustomerGetAll($limit: Int, $where: CustomerWhereInput) {
+  customers(first: $limit, where: $where) {
+    id
+    code
+    name
+  }
+}

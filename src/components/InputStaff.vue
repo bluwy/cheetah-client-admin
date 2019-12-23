@@ -26,9 +26,12 @@ export default {
       query: STAFF_GET_ALL,
       variables () {
         return {
-          query: this.query || '',
-          limit: this.maxQueryResult
+          limit: this.queryLimit,
+          where: this.queryWhere
         }
+      },
+      skip () {
+        return this.multiple ? false : this.value
       },
       debounce: 500,
       loadingKey: 'loadingCount'
@@ -44,7 +47,7 @@ export default {
     multiple: {
       type: Boolean
     },
-    maxQueryResult: {
+    queryLimit: {
       type: Number,
       default: 5
     }
@@ -54,9 +57,21 @@ export default {
     query: '',
     staffs: []
   }),
+  watch: {
+    value (val) {
+      if (this.multiple) {
+        this.query = ''
+      }
+    }
+  },
   computed: {
     placeholder () {
       return 'Select staff' + (this.multiple ? '(s)' : '')
+    },
+    queryWhere () {
+      return this.query ? {
+        username: { contains: this.query }
+      } : undefined
     },
     mapStaffs () {
       return this.staffs.map(v => ({ text: v.username, value: v.id }))
