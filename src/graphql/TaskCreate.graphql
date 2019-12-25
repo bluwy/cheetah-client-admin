@@ -8,7 +8,8 @@ mutation TaskCreate($assignmentId: ID!, $type: TaskType!, $remarks: String!) {
     },
     assignmentWhere: {
       id: $assignmentId
-    }) {
+    }
+  ) {
     ...taskFragment
   }
 }
