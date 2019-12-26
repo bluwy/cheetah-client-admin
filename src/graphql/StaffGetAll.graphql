@@ -1,7 +1,7 @@
 #import "./fragments/Staff.graphql"
 
 query StaffGetAll($limit: Int, $where: StaffWhereInput) {
-  staffs(first: $limit, where: $where) {
+  staffs(first: $limit, where: $where) @connection(key: "staffs", filter: ["where"]) {
     ...staffFragment
   }
 }
