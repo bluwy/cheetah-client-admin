@@ -14,26 +14,23 @@
           class="mr-3"
           icon
           color="primary"
-          @click="refetch()"
+          @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <dialog-admin-create v-model="dialogCreate">
-          <template #activator>
-            <v-btn
-              color="primary"
-              @click.stop="dialogCreate = true"
-            >
-              <v-icon left>
-                mdi-plus-circle
-              </v-icon>
-              Create
-            </v-btn>
-          </template>
-        </dialog-admin-create>
+        <v-btn
+          color="primary"
+          @click.stop="dialogCreate = true"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Create
+        </v-btn>
+        <dialog-admin-create v-model="dialogCreate" />
         <dialog-admin-delete
+          ref="dialogDelete"
           v-model="dialogDelete"
-          :admin-id="targetAdminId"
         />
       </v-toolbar>
     </template>
@@ -54,7 +51,7 @@
             small
             color="error"
             v-on="on"
-            @click.stop="openDialogDelete(item.id)"
+            @click.stop="$refs.dialogDelete.open(item.id)"
           >
             <v-icon small>
               mdi-delete
@@ -93,8 +90,7 @@ export default {
     ],
     admins: [],
     dialogCreate: false,
-    dialogDelete: false,
-    targetAdminId: ''
+    dialogDelete: false
   }),
   computed: {
     ...mapGetters([
@@ -114,10 +110,6 @@ export default {
         default:
           return ''
       }
-    },
-    openDialogDelete (adminId) {
-      this.targetAdminId = adminId
-      this.dialogDelete = true
     }
   }
 }

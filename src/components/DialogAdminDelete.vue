@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
-    :value="value"
+    v-bind="$attrs"
     header="Remove admin?"
     message="You cannot undo this action."
+    v-on="$listeners"
     @no="close"
     @yes="deleteAdmin"
   />
@@ -10,6 +11,7 @@
 
 <script>
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
@@ -20,21 +22,19 @@ export default {
   components: {
     DialogYesNo
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    adminId: {
-      type: String,
-      default: ''
-    }
-  },
+  data: () => ({
+    adminId: ''
+  }),
   methods: {
+    open (adminId) {
+      this.adminId = adminId
+      this.$emit('input', true)
+    },
     close () {
       this.$emit('input', false)
     },
     async deleteAdmin () {
-      const cacheAdminId = this.adminId
+      const cache = cacheObjKeys(this, ['adminId'])
 
       this.close()
 
@@ -42,17 +42,18 @@ export default {
         await this.$apollo.mutate({
           mutation: ADMIN_DELETE,
           variables: {
-            id: cacheAdminId
+            id: cache.adminId
           },
           update: (store, { data: { deleteAdmin } }) => {
             if (deleteAdmin != null) {
               const data = store.readQuery({ query: ADMIN_GET_ALL })
 
-              if (data.admins) {
-                data.admins = data.admins.filter(v => v.id !== cacheAdminId)
-
-                store.writeQuery({ query: ADMIN_GET_ALL, data })
-              }
+              store.writeQuery({
+                query: ADMIN_GET_ALL,
+                data: {
+                  admins: data.admins.filter(v => v.id !== deleteAdmin.id)
+                }
+              })
             } else {
               throw new Error('Unable to remove admin')
             }
@@ -61,7 +62,8 @@ export default {
 
         snackbarPush({ color: 'success', message: 'Admin removed' })
       } catch (e) {
-        this.$emit('input', true)
+        restoreObjKeys(this, cache)
+        this.open(cache.adminId)
 
         snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
       }

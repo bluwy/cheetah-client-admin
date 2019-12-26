@@ -1,42 +1,35 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     persistent
     width="400"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="createAdmin()"
     >
       <v-card>
         <v-card-title>Create Admin</v-card-title>
         <v-card-text>
           <v-container fluid>
             <v-text-field
-              v-model="admin.username"
+              v-model="formAdmin.username"
               :rules="rule.username"
               label="Username"
               spellcheck="false"
             />
             <input-password
-              v-model="admin.password"
+              v-model="formAdmin.password"
               :rules="rule.password"
               label="Password"
               spellcheck="false"
             />
             <v-radio-group
-              v-model="admin.privilege"
+              v-model="formAdmin.privilege"
               :rules="rule.privilege"
               row
             >
@@ -57,24 +50,21 @@
         <v-card-actions>
           <v-spacer />
           <dialog-yes-no
-            v-model="cancelDialog"
+            v-model="dialogClose"
             header="Are you sure?"
             message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="createAdmin()"
           >
             Create
           </v-btn>
@@ -85,8 +75,9 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash-es'
+import { isEqual } from 'lodash-es'
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
@@ -106,59 +97,54 @@ export default {
     DialogYesNo,
     InputPassword
   },
-  props: {
-    value: {
-      type: Boolean
-    }
-  },
   data: () => ({
     valid: false,
-    admin: formAdminFactory(),
+    formAdmin: formAdminFactory(),
     rule: {
       username: [required, maxStrLength(16)],
       password: [required, minStrLength(8)],
       privilege: [required]
     },
-    cancelDialog: false
+    dialogClose: false
   }),
   computed: {
     isDirty () {
-      const a = this.admin
-      return !!(a.username || a.password || a.privilege)
+      return !isEqual(this.formAdmin, formAdminFactory())
     }
   },
   methods: {
-    cancel (force) {
+    close (force) {
       if (!force && this.isDirty) {
-        this.cancelDialog = true
+        this.dialogClose = true
       } else {
         this.reset()
         this.$emit('input', false)
       }
     },
     reset () {
-      this.$refs.form.reset()
-      this.admin = formAdminFactory()
+      this.formAdmin = formAdminFactory()
+      this.$refs.form.resetValidation()
     },
     async createAdmin () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheAdmin = cloneDeep(this.admin)
+        const cache = cacheObjKeys(this, ['formAdmin'])
 
-        this.cancel(true)
+        this.close(true)
 
         try {
           await this.$apollo.mutate({
             mutation: ADMIN_CREATE,
-            variables: cacheAdmin,
+            variables: cache.formAdmin,
             update: (store, { data: { createAdmin } }) => {
               if (createAdmin != null) {
                 const data = store.readQuery({ query: ADMIN_GET_ALL })
 
-                if (data.admins) {
-                  data.admins.push(createAdmin.admin)
-
-                  store.writeQuery({ query: ADMIN_GET_ALL, data })
-                }
+                store.writeQuery({
+                  query: ADMIN_GET_ALL,
+                  data: {
+                    admins: data.admins.concat([createAdmin])
+                  }
+                })
               } else {
                 throw new Error('Unable to create admin')
               }
@@ -167,7 +153,7 @@ export default {
 
           snackbarPush({ color: 'success', message: 'Admin created' })
         } catch (e) {
-          this.admin = cacheAdmin
+          restoreObjKeys(this, cache)
           this.$emit('input', true)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
