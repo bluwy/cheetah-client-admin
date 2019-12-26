@@ -1,6 +1,6 @@
 <template>
   <v-text-field
-    v-bind="$props"
+    v-bind="$attrs"
     :type="show ? 'text' : 'password'"
     :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
     v-on="$listeners"
@@ -19,13 +19,8 @@
 </template>
 
 <script>
-import { VTextField } from 'vuetify/lib/components'
-
 export default {
   name: 'InputPassword',
-  props: {
-    ...VTextField.options.props
-  },
   data: () => ({
     show: false
   })

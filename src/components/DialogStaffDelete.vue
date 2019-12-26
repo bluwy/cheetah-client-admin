@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
-    :value="value"
+    v-bind="$attrs"
     header="Remove staff?"
-    message="You cannot undo this action."
+    message="You cannot undo this action"
+    v-on="$listeners"
     @no="close"
     @yes="deleteStaff"
   />
@@ -10,6 +11,7 @@
 
 <script>
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
@@ -20,21 +22,19 @@ export default {
   components: {
     DialogYesNo
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    staffId: {
-      type: String,
-      default: ''
-    }
-  },
+  data: () => ({
+    staffId: ''
+  }),
   methods: {
+    open (staffId) {
+      this.staffId = staffId
+      this.$emit('input', true)
+    },
     close () {
       this.$emit('input', false)
     },
     async deleteStaff () {
-      const cacheStaffId = this.staffId
+      const cache = cacheObjKeys(this, ['staffId'])
 
       this.close()
 
@@ -42,17 +42,18 @@ export default {
         await this.$apollo.mutate({
           mutation: STAFF_DELETE,
           variables: {
-            id: cacheStaffId
+            id: cache.staffId
           },
           update: (store, { data: { deleteStaff } }) => {
             if (deleteStaff != null) {
               const data = store.readQuery({ query: STAFF_GET_ALL })
 
-              if (data.staffs) {
-                data.staffs = data.staffs.filter(v => v.id !== cacheStaffId)
-
-                store.writeQuery({ query: STAFF_GET_ALL, data })
-              }
+              store.writeQuery({
+                query: STAFF_GET_ALL,
+                data: {
+                  staffs: data.staffs.filter(v => v.id !== deleteStaff.id)
+                }
+              })
             } else {
               throw new Error('Unable to remove staff')
             }
@@ -61,7 +62,8 @@ export default {
 
         snackbarPush({ color: 'success', message: 'Staff removed' })
       } catch (e) {
-        this.$emit('input', true)
+        restoreObjKeys(this, cache)
+        this.open(cache.staffId)
 
         snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
       }

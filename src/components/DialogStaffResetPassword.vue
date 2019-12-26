@@ -1,23 +1,16 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     persistent
     width="400"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="resetPassword()"
     >
       <v-card>
         <v-card-title>Reset Staff Password</v-card-title>
@@ -34,24 +27,21 @@
         <v-card-actions>
           <v-spacer />
           <dialog-yes-no
-            v-model="dialogCancel"
+            v-model="dialogClose"
             header="Are you sure?"
-            message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            message="Data you have entered are not saved"
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="resetPassword()"
           >
             Reset
           </v-btn>
@@ -63,6 +53,7 @@
 
 <script>
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
 import { required, minStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
@@ -75,20 +66,12 @@ export default {
     DialogYesNo,
     InputPassword
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    staffId: {
-      type: String,
-      required: true
-    }
-  },
   data: () => ({
     valid: false,
+    staffId: '',
     password: '',
     passwordRule: [required, minStrLength(8)],
-    dialogCancel: false
+    dialogClose: false
   }),
   computed: {
     isDirty () {
@@ -96,9 +79,13 @@ export default {
     }
   },
   methods: {
-    cancel (force) {
+    open (staffId) {
+      this.staffId = staffId
+      this.$emit('input', true)
+    },
+    close (force) {
       if (!force && this.isDirty) {
-        this.dialogCancel = true
+        this.dialogClose = true
       } else {
         this.reset()
         this.$emit('input', false)
@@ -110,16 +97,16 @@ export default {
     },
     async resetPassword () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cachePassword = this.password
+        const cache = cacheObjKeys(this, ['staffId', 'password'])
 
-        this.cancel(true)
+        this.close(true)
 
         try {
           const { data: { resetStaffPassword } } = await this.$apollo.mutate({
             mutation: STAFF_RESET_PASSWORD,
             variables: {
-              id: this.staffId,
-              password: cachePassword
+              id: cache.staffId,
+              newPassword: cache.password
             }
           })
 
@@ -129,8 +116,8 @@ export default {
             throw new Error('Unable to reset staff password')
           }
         } catch (e) {
-          this.password = cachePassword
-          this.$emit('input', true)
+          restoreObjKeys(this, cache)
+          this.open(cache.staffId)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
         }

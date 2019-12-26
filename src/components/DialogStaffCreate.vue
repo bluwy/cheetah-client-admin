@@ -1,42 +1,35 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     persistent
     width="400"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="createStaff()"
     >
       <v-card>
         <v-card-title>Create Staff</v-card-title>
         <v-card-text>
           <v-container fluid>
             <v-text-field
-              v-model="staff.username"
+              v-model="formStaff.username"
               :rules="rule.username"
               label="Username"
               spellcheck="false"
             />
             <v-text-field
-              v-model="staff.fullName"
+              v-model="formStaff.fullName"
               :rules="rule.fullName"
               label="Full Name"
               spellcheck="false"
             />
             <input-password
-              v-model="staff.password"
+              v-model="formStaff.password"
               :rules="rule.password"
               label="Password"
               spellcheck="false"
@@ -46,24 +39,21 @@
         <v-card-actions>
           <v-spacer />
           <dialog-yes-no
-            v-model="cancelDialog"
+            v-model="dialogClose"
             header="Are you sure?"
-            message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            message="Data you have entered are not saved"
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="createStaff()"
           >
             Create
           </v-btn>
@@ -74,7 +64,9 @@
 </template>
 
 <script>
+import { isEqual } from 'lodash-es'
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
@@ -94,59 +86,54 @@ export default {
     DialogYesNo,
     InputPassword
   },
-  props: {
-    value: {
-      type: Boolean
-    }
-  },
   data: () => ({
     valid: false,
-    staff: formStaffFactory(),
+    formStaff: formStaffFactory(),
     rule: {
       username: [required, maxStrLength(16)],
       fullName: [required, maxStrLength(128)],
       password: [required, minStrLength(8)]
     },
-    cancelDialog: false
+    dialogClose: false
   }),
   computed: {
     isDirty () {
-      const s = this.staff
-      return !!(s.username || s.fullName || s.password)
+      return !isEqual(this.formStaff, formStaffFactory())
     }
   },
   methods: {
-    cancel (force) {
+    close (force) {
       if (!force && this.isDirty) {
-        this.cancelDialog = true
+        this.dialogClose = true
       } else {
         this.reset()
         this.$emit('input', false)
       }
     },
     reset () {
-      this.$refs.form.reset()
-      this.staff = formStaffFactory()
+      this.formStaff = formStaffFactory()
+      this.$refs.form.resetValidation()
     },
     async createStaff () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheStaff = { ...this.staff }
+        const cache = cacheObjKeys(this, ['formStaff'])
 
-        this.cancel(true)
+        this.close(true)
 
         try {
           await this.$apollo.mutate({
             mutation: STAFF_CREATE,
-            variables: cacheStaff,
+            variables: cache.formStaff,
             update: (store, { data: { createStaff } }) => {
               if (createStaff != null) {
                 const data = store.readQuery({ query: STAFF_GET_ALL })
 
-                if (data.staffs) {
-                  data.staffs.push(createStaff)
-
-                  store.writeQuery({ query: STAFF_GET_ALL, data })
-                }
+                store.writeQuery({
+                  query: STAFF_GET_ALL,
+                  data: {
+                    staffs: data.staffs.concat([createStaff])
+                  }
+                })
               } else {
                 throw new Error('Unable to create staff')
               }
@@ -155,7 +142,7 @@ export default {
 
           snackbarPush({ color: 'success', message: 'Staff created' })
         } catch (e) {
-          this.staff = cacheStaff
+          restoreObjKeys(this, cache)
           this.$emit('input', true)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })

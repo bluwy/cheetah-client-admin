@@ -14,34 +14,31 @@
           class="mr-3"
           icon
           color="primary"
-          @click="refetch()"
+          @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <dialog-staff-create v-model="dialogCreate">
-          <template #activator>
-            <v-btn
-              color="primary"
-              @click.stop="dialogCreate = true"
-            >
-              <v-icon left>
-                mdi-plus-circle
-              </v-icon>
-              Create
-            </v-btn>
-          </template>
-        </dialog-staff-create>
+        <v-btn
+          color="primary"
+          @click.stop="dialogCreate = true"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Create
+        </v-btn>
+        <dialog-staff-create v-model="dialogCreate" />
         <dialog-staff-update
+          ref="dialogUpdate"
           v-model="dialogUpdate"
-          :staff-id="targetStaffId"
         />
         <dialog-staff-reset-password
+          ref="dialogResetPassword"
           v-model="dialogResetPassword"
-          :staff-id="targetStaffId"
         />
         <dialog-staff-delete
+          ref="dialogDelete"
           v-model="dialogDelete"
-          :staff-id="targetStaffId"
         />
       </v-toolbar>
     </template>
@@ -55,6 +52,7 @@
         <template #activator="{ on }">
           <v-icon
             right
+            dense
             color="warning"
             v-on="on"
           >
@@ -72,7 +70,7 @@
             small
             color="warning"
             v-on="on"
-            @click.stop="openDialogUpdate(item.id)"
+            @click.stop="$refs.dialogUpdate.open(item.id)"
           >
             <v-icon small>
               mdi-pencil
@@ -88,7 +86,7 @@
             small
             color="error"
             v-on="on"
-            @click.stop="openDialogResetPassword(item.id)"
+            @click.stop="$refs.dialogResetPassword.open(item.id)"
           >
             <v-icon small>
               mdi-lock
@@ -104,7 +102,7 @@
             small
             color="error"
             v-on="on"
-            @click.stop="openDialogDelete(item.id)"
+            @click.stop="$refs.dialogDelete.open(item.id)"
           >
             <v-icon small>
               mdi-delete
@@ -149,8 +147,7 @@ export default {
     dialogCreate: false,
     dialogUpdate: false,
     dialogResetPassword: false,
-    dialogDelete: false,
-    targetStaffId: ''
+    dialogDelete: false
   }),
   computed: {
     ...mapGetters([
@@ -160,18 +157,6 @@ export default {
   methods: {
     refetch () {
       this.$apollo.queries.staffs.refetch()
-    },
-    openDialogUpdate (staffId) {
-      this.targetStaffId = staffId
-      this.dialogUpdate = true
-    },
-    openDialogResetPassword (staffId) {
-      this.targetStaffId = staffId
-      this.dialogResetPassword = true
-    },
-    openDialogDelete (staffId) {
-      this.targetStaffId = staffId
-      this.dialogDelete = true
     }
   }
 }

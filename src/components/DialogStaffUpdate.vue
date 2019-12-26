@@ -1,36 +1,29 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     persistent
     width="400"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="updateStaff()"
     >
       <v-card>
         <v-card-title>Edit Staff</v-card-title>
         <v-card-text>
           <v-container fluid>
             <v-text-field
-              v-model="currentStaff.username"
+              v-model="newFormStaff.username"
               :rules="rule.username"
               label="Username"
               spellcheck="false"
             />
             <v-text-field
-              v-model="currentStaff.fullName"
+              v-model="newFormStaff.fullName"
               :rules="rule.fullName"
               label="Full Name"
               spellcheck="false"
@@ -40,24 +33,21 @@
         <v-card-actions>
           <v-spacer />
           <dialog-yes-no
-            v-model="cancelDialog"
+            v-model="dialogClose"
             header="Are you sure?"
-            message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            message="Data you have entered are not saved"
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="updateStaff()"
           >
             Edit
           </v-btn>
@@ -68,19 +58,15 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash-es'
+import { isEqual, merge, cloneDeep } from 'lodash-es'
+import { updatedDiff } from 'deep-object-diff'
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
 import { required, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_GET from '@/graphql/StaffGet.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
-
-const formStaffFactory = () => ({
-  username: '',
-  fullName: ''
-})
 
 export default {
   name: 'DialogStaffUpdate',
@@ -93,97 +79,91 @@ export default {
         }
       },
       skip () {
-        return !this.value
+        return !this.staffId
       }
     }
   },
   components: {
     DialogYesNo
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    staffId: {
-      type: String,
-      required: true
-    }
-  },
   data: () => ({
     valid: false,
     // Staff from server
-    staff: formStaffFactory(),
+    staffId: '',
+    staff: {},
     // Staff to be edited by form
-    currentStaff: formStaffFactory(),
+    formStaffFactory: () => ({
+      username: '',
+      fullName: ''
+    }),
+    oriFormStaff: {},
+    newFormStaff: {},
     rule: {
       username: [required, maxStrLength(16)],
       fullName: [required, maxStrLength(128)]
     },
     loading: false,
-    cancelDialog: false
+    dialogClose: false
   }),
   computed: {
     isDirty () {
-      return !isEqual(this.staff, this.currentStaff)
+      return !isEqual(this.oriFormStaff, this.newFormStaff)
     }
   },
   watch: {
     staff (val) {
-      // When staffId change, clone new staff to enable dirty comparison
-      this.currentStaff = { ...val }
+      this.formStaffFactory = () => ({
+        username: val.username,
+        fullName: val.fullName
+      })
+
+      this.reset()
     }
   },
   methods: {
-    cancel (force) {
+    open (staffId) {
+      this.staffId = staffId
+      this.$emit('input', true)
+    },
+    close (force) {
       if (!force && this.isDirty) {
-        this.cancelDialog = true
+        this.dialogClose = true
       } else {
         this.reset()
         this.$emit('input', false)
       }
     },
     reset () {
-      this.currentStaff = { ...this.staff }
+      this.oriFormStaff = this.formStaffFactory()
+      this.newFormStaff = this.formStaffFactory()
       this.$refs.form.resetValidation()
     },
     async updateStaff () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheStaffId = this.staffId
-        const cacheStaff = { ...this.currentStaff }
+        const diff = updatedDiff(this.oriFormStaff, this.newFormStaff)
 
-        this.cancel(true)
+        const cache = cacheObjKeys(this, ['staffId', 'oriFormStaff', 'newFormStaff'])
+
+        const optimisticResponse = {
+          updateStaff: merge(cloneDeep(this.staff), diff)
+        }
+
+        this.close(true)
 
         try {
           await this.$apollo.mutate({
             mutation: STAFF_UPDATE,
             variables: {
-              id: cacheStaffId,
-              username: cacheStaff.username,
-              fullName: cacheStaff.fullName
+              id: cache.staffId,
+              ...diff
             },
-            update: (store, { data: { updateStaff } }) => {
-              if (updateStaff != null) {
-                const data = store.readQuery({ query: STAFF_GET_ALL })
-
-                if (data.staffs) {
-                  const idx = data.staffs.indexOf(v => v.id === cacheStaffId)
-
-                  if (idx !== -1) {
-                    data.staffs[idx] = updateStaff
-
-                    store.writeQuery({ query: STAFF_GET_ALL, data })
-                  }
-                }
-              } else {
-                throw new Error('Unable to update staff')
-              }
-            }
+            optimisticResponse
           })
 
           snackbarPush({ color: 'success', message: 'Staff updated' })
         } catch (e) {
-          this.currentStaff = cacheStaff
-          this.$emit('input', true)
+          restoreObjKeys(this, cache)
+          this.open(cache.staffId)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
         }
