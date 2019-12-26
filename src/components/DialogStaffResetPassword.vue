@@ -53,7 +53,7 @@
 
 <script>
 import { getErrorMessages } from '@/utils/apollo'
-import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
+import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
@@ -97,7 +97,7 @@ export default {
     },
     async resetPassword () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cache = cacheObjKeys(this, ['staffId', 'password'])
+        const { cache, restore } = cacheObjKeys(this, ['staffId', 'password'])
 
         this.close(true)
 
@@ -116,7 +116,7 @@ export default {
             throw new Error('Unable to reset staff password')
           }
         } catch (e) {
-          restoreObjKeys(this, cache)
+          restore()
           this.open(cache.staffId)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })

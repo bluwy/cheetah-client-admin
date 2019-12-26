@@ -66,7 +66,7 @@
 <script>
 import { isEqual } from 'lodash-es'
 import { getErrorMessages } from '@/utils/apollo'
-import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
+import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputPassword from '@/components/InputPassword.vue'
@@ -116,7 +116,7 @@ export default {
     },
     async createStaff () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cache = cacheObjKeys(this, ['formStaff'])
+        const { cache, restore } = cacheObjKeys(this, ['formStaff'])
 
         this.close(true)
 
@@ -142,7 +142,7 @@ export default {
 
           snackbarPush({ color: 'success', message: 'Staff created' })
         } catch (e) {
-          restoreObjKeys(this, cache)
+          restore()
           this.$emit('input', true)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })

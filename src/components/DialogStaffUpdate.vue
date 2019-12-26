@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import { isEqual, merge, cloneDeep } from 'lodash-es'
+import { isEqual, cloneDeep, merge } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
 import { getErrorMessages } from '@/utils/apollo'
-import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
+import { cacheObjKeys } from '@/utils/common'
 import { required, maxStrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
@@ -102,7 +102,6 @@ export default {
       username: [required, maxStrLength(16)],
       fullName: [required, maxStrLength(128)]
     },
-    loading: false,
     dialogClose: false
   }),
   computed: {
@@ -142,7 +141,7 @@ export default {
       if (this.$refs.form.validate() && this.isDirty) {
         const diff = updatedDiff(this.oriFormStaff, this.newFormStaff)
 
-        const cache = cacheObjKeys(this, ['staffId', 'oriFormStaff', 'newFormStaff'])
+        const { cache, restore } = cacheObjKeys(this, ['staffId', 'oriFormStaff', 'newFormStaff'])
 
         const optimisticResponse = {
           updateStaff: merge(cloneDeep(this.staff), diff)
@@ -162,7 +161,7 @@ export default {
 
           snackbarPush({ color: 'success', message: 'Staff updated' })
         } catch (e) {
-          restoreObjKeys(this, cache)
+          restore()
           this.open(cache.staffId)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })

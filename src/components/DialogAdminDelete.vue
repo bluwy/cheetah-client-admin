@@ -11,7 +11,7 @@
 
 <script>
 import { getErrorMessages } from '@/utils/apollo'
-import { cacheObjKeys, restoreObjKeys } from '@/utils/common'
+import { cacheObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
@@ -34,7 +34,7 @@ export default {
       this.$emit('input', false)
     },
     async deleteAdmin () {
-      const cache = cacheObjKeys(this, ['adminId'])
+      const { cache, restore } = cacheObjKeys(this, ['adminId'])
 
       this.close()
 
@@ -62,7 +62,7 @@ export default {
 
         snackbarPush({ color: 'success', message: 'Admin removed' })
       } catch (e) {
-        restoreObjKeys(this, cache)
+        restore()
         this.open(cache.adminId)
 
         snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
