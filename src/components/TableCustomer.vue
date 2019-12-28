@@ -35,9 +35,9 @@
           v-model="dialogCreate"
           @create-customer="refetch()"
         />
-        <dialog-customer-update
-          ref="dialogUpdate"
-          v-model="dialogUpdate"
+        <dialog-customer-details
+          ref="dialogDetails"
+          v-model="dialogDetails"
         />
         <dialog-customer-delete
           ref="dialogDelete"
@@ -67,17 +67,17 @@
     </template>
     <template #item.action="{ item }">
       <v-tooltip top>
-        <span>Edit customer</span>
+        <span>Customer details</span>
         <template #activator="{ on }">
           <v-btn
             icon
             small
             color="warning"
             v-on="on"
-            @click.stop="$refs.dialogUpdate.open(item.id)"
+            @click.stop="$refs.dialogDetails.open(item.id)"
           >
             <v-icon small>
-              mdi-pencil
+              mdi-information
             </v-icon>
           </v-btn>
         </template>
@@ -105,7 +105,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import DialogCustomerCreate from '@/components/DialogCustomerCreate.vue'
-import DialogCustomerUpdate from '@/components/DialogCustomerUpdate.vue'
+import DialogCustomerDetails from '@/components/DialogCustomerDetails.vue'
 import DialogCustomerDelete from '@/components/DialogCustomerDelete.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
@@ -129,7 +129,7 @@ export default {
   },
   components: {
     DialogCustomerCreate,
-    DialogCustomerUpdate,
+    DialogCustomerDetails,
     DialogCustomerDelete
   },
   props: {
@@ -157,7 +157,7 @@ export default {
     showActive: undefined,
     customers: [],
     dialogCreate: false,
-    dialogUpdate: false,
+    dialogDetails: false,
     dialogDelete: false
   }),
   computed: {
