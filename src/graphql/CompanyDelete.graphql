@@ -1,0 +1,7 @@
+#import "./fragments/Company.graphql"
+
+mutation CompanyDelete($id: ID!) {
+  deleteCompany(where: { id: $id }) {
+    ...companyFragment
+  }
+}

@@ -12,6 +12,7 @@
         class="mr-2"
         large
         text
+        color="primary"
         to="jobs"
       >
         Jobs
@@ -20,6 +21,7 @@
         class="mr-2"
         large
         text
+        color="primary"
         to="customers"
       >
         Customers
@@ -29,6 +31,7 @@
           <v-btn
             large
             text
+            color="primary"
             v-on="on"
           >
             <v-icon
@@ -46,7 +49,22 @@
         <v-list dense>
           <v-list-item
             v-if="isPrivilegeFull"
+            color="primary"
+            to="companies"
+            link
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-factory</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>View companies</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            v-if="isPrivilegeFull"
+            color="primary"
             to="staffs"
+            link
           >
             <v-list-item-icon>
               <v-icon>mdi-worker</v-icon>
@@ -57,7 +75,9 @@
           </v-list-item>
           <v-list-item
             v-if="isPrivilegeFull"
+            color="primary"
             to="admins"
+            link
           >
             <v-list-item-icon>
               <v-icon>mdi-shield-account</v-icon>
@@ -66,7 +86,10 @@
               <v-list-item-title>View admins</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="handleLogout()">
+          <v-list-item
+            color="primary"
+            @click="handleLogout()"
+          >
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>

@@ -1,0 +1,7 @@
+#import "./fragments/Company.graphql"
+
+mutation CompanyCreate($alias: String!, $name: String!) {
+  createCompany(data: { alias: $alias, name: $name }) {
+    ...companyFragment
+  }
+}

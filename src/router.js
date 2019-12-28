@@ -11,6 +11,7 @@ import Reset from '@/views/Reset.vue'
 
 import Jobs from '@/views/Jobs.vue'
 import Customers from '@/views/Customers.vue'
+import Companies from '@/views/Companies.vue'
 import Staffs from '@/views/Staffs.vue'
 import Admins from '@/views/Admins.vue'
 
@@ -39,14 +40,22 @@ const router = new Router({
           component: Customers
         },
         {
+          path: 'companies',
+          name: 'companies',
+          component: Companies,
+          meta: { requiresPrivilegeFull: true }
+        },
+        {
           path: 'staffs',
           name: 'staffs',
-          component: Staffs
+          component: Staffs,
+          meta: { requiresPrivilegeFull: true }
         },
         {
           path: 'admins',
           name: 'admins',
-          component: Admins
+          component: Admins,
+          meta: { requiresPrivilegeFull: true }
         }
       ]
     },
@@ -84,7 +93,11 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('checkUser').catch(() => {})
 
     if (store.getters.isAuthed) {
-      next()
+      if (to.matched.some(v => v.meta.requiresPrivilegeFull) && !store.getters.isPrivilegeFull) {
+        next('/')
+      } else {
+        next()
+      }
     } else {
       next('/login')
     }
