@@ -21,30 +21,27 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
+        <v-btn
+          color="primary"
+          @click.stop="dialogCreate = true"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Create
+        </v-btn>
         <dialog-customer-create
+          ref="dialogCreate"
           v-model="dialogCreate"
           @create-customer="refetch()"
-        >
-          <template #activator>
-            <v-btn
-              color="primary"
-              @click.stop="dialogCreate = true"
-            >
-              <v-icon left>
-                mdi-plus-circle
-              </v-icon>
-              Create
-            </v-btn>
-          </template>
-        </dialog-customer-create>
+        />
         <dialog-customer-update
+          ref="dialogUpdate"
           v-model="dialogUpdate"
-          :customer-id="targetCustomerId"
-          @update-customer="refetch()"
         />
         <dialog-customer-delete
+          ref="dialogDelete"
           v-model="dialogDelete"
-          :customer-id="targetCustomerId"
           @delete-customer="refetch()"
         />
       </v-toolbar>
@@ -53,6 +50,7 @@
       <v-checkbox
         class="my-0 py-0"
         :input-value="item.temporary"
+        :readonly="isPrivilegeBasic"
         hide-details
         dense
         @change="toggleTemporary(item)"
@@ -69,14 +67,14 @@
     </template>
     <template #item.action="{ item }">
       <v-tooltip top>
-        <span>Update customer</span>
+        <span>Edit customer</span>
         <template #activator="{ on }">
           <v-btn
             icon
             small
             color="warning"
             v-on="on"
-            @click.stop="openDialogUpdate(item.id)"
+            @click.stop="$refs.dialogUpdate.open(item.id)"
           >
             <v-icon small>
               mdi-pencil
@@ -92,7 +90,7 @@
             small
             color="error"
             v-on="on"
-            @click.stop="openDialogDelete(item.id)"
+            @click.stop="$refs.dialogDelete.open(item.id)"
           >
             <v-icon small>
               mdi-delete
@@ -105,13 +103,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import DialogCustomerCreate from '@/components/DialogCustomerCreate.vue'
 import DialogCustomerUpdate from '@/components/DialogCustomerUpdate.vue'
 import DialogCustomerDelete from '@/components/DialogCustomerDelete.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
-import FRAGMENT_CUSTOMER from '@/graphql/fragments/Customer.graphql'
-import { snackbarPush } from './SnackbarGlobal.vue'
 
 export default {
   name: 'TableCustomer',
@@ -145,8 +143,6 @@ export default {
     headers: [
       { text: 'Code', value: 'code' },
       { text: 'Name', value: 'name' },
-      { text: 'Email', value: 'email' },
-      { text: 'Phone', value: 'phoneNumber' },
       { text: 'PIC', value: 'staffPrimary.username', sortable: false },
       { text: 'Assist', value: 'staffSecondary.username', sortable: false },
       { text: 'Handled By', value: 'companyBelong.name', sortable: false },
@@ -157,15 +153,17 @@ export default {
     page: 1,
     sortBy: 'id',
     sortDesc: false,
-    showTemporary: false,
-    showActive: true,
+    showTemporary: undefined,
+    showActive: undefined,
     customers: [],
     dialogCreate: false,
     dialogUpdate: false,
-    dialogDelete: false,
-    targetCustomerId: ''
+    dialogDelete: false
   }),
   computed: {
+    ...mapGetters([
+      'isPrivilegeBasic'
+    ]),
     queryOffset () {
       return this.queryLimit * (this.page - 1)
     },
@@ -185,35 +183,13 @@ export default {
     refetch () {
       this.$apollo.queries.customers.refetch()
     },
-    openDialogUpdate (customerId) {
-      this.targetCustomerId = customerId
-      this.dialogUpdate = true
-    },
-    openDialogDelete (customerId) {
-      this.targetCustomerId = customerId
-      this.dialogDelete = true
-    },
     async toggleTemporary (customer) {
       const { id, temporary } = customer
 
       try {
         await this.$apollo.mutate({
           mutation: CUSTOMER_UPDATE,
-          variables: { id, temporary: !temporary },
-          update: (store, { data: { updateCustomer } }) => {
-            const data = store.readFragment({
-              id,
-              fragment: FRAGMENT_CUSTOMER
-            })
-
-            data.temporary = !temporary
-
-            store.writeFragment({
-              id,
-              fragment: FRAGMENT_CUSTOMER,
-              data
-            })
-          }
+          variables: { id, temporary: !temporary }
         })
       } catch (e) {
         console.log(e)
@@ -226,21 +202,7 @@ export default {
       try {
         await this.$apollo.mutate({
           mutation: CUSTOMER_UPDATE,
-          variables: { id, active: !active },
-          update: (store, { data: { updateCustomer } }) => {
-            const data = store.readFragment({
-              id,
-              fragment: FRAGMENT_CUSTOMER
-            })
-
-            data.active = !active
-
-            store.writeFragment({
-              id,
-              fragment: FRAGMENT_CUSTOMER,
-              data
-            })
-          }
+          variables: { id, active: !active }
         })
       } catch (e) {
         console.log(e)

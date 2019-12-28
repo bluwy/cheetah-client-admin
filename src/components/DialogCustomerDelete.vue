@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
-    :value="value"
+    v-bind="$attrs"
     header="Remove customer?"
     message="You cannot undo this action."
+    v-on="$listeners"
     @no="close"
     @yes="deleteCustomer"
   />
@@ -10,6 +11,7 @@
 
 <script>
 import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
+import { cacheObjKeys } from '@/utils/common'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import CUSTOMER_DELETE from '@/graphql/CustomerDelete.graphql'
@@ -19,21 +21,19 @@ export default {
   components: {
     DialogYesNo
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    customerId: {
-      type: String,
-      default: ''
-    }
-  },
+  data: () => ({
+    customerId: ''
+  }),
   methods: {
+    open (customerId) {
+      this.customerId = customerId
+      this.$emit('input', true)
+    },
     close () {
       this.$emit('input', false)
     },
     async deleteCustomer () {
-      const cacheCustomerId = this.customerId
+      const { cache, restore } = cacheObjKeys(this, ['customerId'])
 
       this.close()
 
@@ -41,13 +41,14 @@ export default {
         await this.$apollo.mutate({
           mutation: CUSTOMER_DELETE,
           variables: {
-            id: cacheCustomerId
+            id: cache.customerId
           },
           update: (store, { data: { deleteCustomer } }) => {
             if (deleteCustomer != null) {
+              console.log(store)
               storeDeleteQuery(store, /^customers/)
               console.log(store)
-              this.$emit('removeCustomer')
+              this.$emit('delte-customer')
             } else {
               throw new Error('Unable to remove customer')
             }
@@ -56,7 +57,8 @@ export default {
 
         snackbarPush({ color: 'success', message: 'Customer removed' })
       } catch (e) {
-        this.$emit('input', true)
+        restore()
+        this.open(cache.adminId)
 
         snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
       }

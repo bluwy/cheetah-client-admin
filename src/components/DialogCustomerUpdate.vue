@@ -1,114 +1,138 @@
 <template>
   <v-dialog
-    :value="value"
-    persistent
+    v-bind="$attrs"
     width="700"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="updateCustomer()"
     >
       <v-card>
-        <v-card-title>Edit Customer</v-card-title>
-        <v-card-text>
-          <v-container fluid>
+        <v-card-title>
+          <v-row no-gutters>
+            <v-col>Customer Details</v-col>
+            <v-col cols="auto">
+              <v-btn
+                icon
+                color="primary"
+              >
+                <v-icon @click="close()">
+                  mdi-close
+                </v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-title>
+        <v-container fluid>
+          <v-card-title class="pt-0">
             <v-row no-gutters>
               <v-col
-                cols="12"
-                md="4"
-              >
-                <v-subheader>General</v-subheader>
-              </v-col>
-              <v-col
-                cols="12"
-                md="8"
+                cols="auto"
+                style="width: 120px;"
               >
                 <v-text-field
-                  v-model="currentCustomer.code"
-                  :rules="rule.code"
-                  label="Code"
+                  v-model="newFormCustomer.code"
+                  class="font-weight-bold"
+                  placeholder="Code*"
+                  hide-details
+                  dense
+                  solo
+                  flat
                 />
+              </v-col>
+              <v-col>
                 <v-text-field
-                  v-model="currentCustomer.name"
+                  v-model="newFormCustomer.name"
                   :rules="rule.name"
-                  label="Name"
+                  placeholder="Name*"
+                  hide-details
+                  dense
+                  solo
+                  flat
                 />
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-subheader>Description</v-subheader>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="newFormCustomer.phoneNumber"
+              prepend-icon="mdi-phone"
+              placeholder="Phone number"
+              hide-details
+              dense
+              solo
+              flat
+            />
+            <v-text-field
+              v-model="newFormCustomer.email"
+              :rules="rule.email"
+              prepend-icon="mdi-email"
+              placeholder="Email"
+              hide-details
+              dense
+              solo
+              flat
+            />
+            <input-addresses
+              :addresses="newFormCustomer.addresses"
+              prepend-icon="mdi-map-marker"
+            />
+            <v-row>
+              <v-col cols="12">
+                <input-company
+                  v-model="newFormCustomer.companyBelongId"
+                  label="Managed by"
+                  hide-details
+                  dense
+                />
               </v-col>
               <v-col
                 cols="12"
-                md="8"
+                sm="6"
               >
-                <v-text-field
-                  v-model="currentCustomer.address"
-                  label="Address"
+                <input-staff
+                  v-model="newFormCustomer.staffPrimaryId"
+                  label="Handled by"
+                  hide-details
+                  dense
                 />
-                <v-text-field
-                  v-model="currentCustomer.phoneNumber"
-                  label="Phone Number"
-                />
-                <v-text-field
-                  v-model="currentCustomer.email"
-                  :rules="rule.email"
-                  label="Email"
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+              >
+                <input-staff
+                  v-model="newFormCustomer.staffSecondaryId"
+                  label="Assisted by"
+                  hide-details
+                  dense
                 />
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-subheader>Person in charge</v-subheader>
-              </v-col>
-              <v-col
-                cols="12"
-                md="8"
-              >
-                <input-staff v-model="currentCustomer.personInCharge.id" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
+          </v-card-text>
+        </v-container>
+        <v-card-actions v-if="isDirty">
           <v-spacer />
           <dialog-yes-no
-            v-model="cancelDialog"
+            v-model="dialogClose"
             header="Are you sure?"
-            message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            message="Data you have entered are not saved"
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="updateCustomer()"
           >
             Edit
           </v-btn>
@@ -119,30 +143,21 @@
 </template>
 
 <script>
-import { cloneDeep, isEqual } from 'lodash-es'
-import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
+import { isEqual, cloneDeep, merge } from 'lodash-es'
+import { updatedDiff } from 'deep-object-diff'
+import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, transformObj } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputAddresses from '@/components/InputAddresses.vue'
+import InputCompany from '@/components/InputCompany.vue'
 import InputStaff from '@/components/InputStaff'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import CUSTOMER_GET from '@/graphql/CustomerGet.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 
-const formCustomerFactory = () => ({
-  code: '',
-  name: '',
-  email: '',
-  addresses: [],
-  phoneNumber: '',
-  companyId: '',
-  staffPrimaryId: '',
-  staffSecondaryId: '',
-  temporary: false,
-  active: true
-})
-
 export default {
-  name: 'DialogCustomerUpdate',
+  name: 'DialogCustomerDetails',
   apollo: {
     customer: {
       query: CUSTOMER_GET,
@@ -151,94 +166,118 @@ export default {
           id: this.customerId
         }
       },
-      result ({ data: { customer } }) {
-        // Provide default object so id can be edited
-        if (customer.personInCharge == null) {
-          customer.personInCharge = {}
-        }
-      },
       skip () {
-        return !this.value
+        return !this.customerId
       }
     }
   },
   components: {
     DialogYesNo,
+    InputAddresses,
+    InputCompany,
     InputStaff
-  },
-  props: {
-    value: {
-      type: Boolean
-    },
-    customerId: {
-      type: String,
-      required: true
-    }
   },
   data: () => ({
     valid: false,
-    customer: formCustomerFactory(),
-    currentCustomer: formCustomerFactory(),
+    // Customer from server
+    customerId: '',
+    customer: {},
+    // Customer to be edited by form
+    formCustomerFactory: () => ({
+      code: '',
+      name: '',
+      addresses: [],
+      phoneNumber: '',
+      companyBelongId: '',
+      email: '',
+      staffPrimaryId: '',
+      staffSecondaryId: ''
+    }),
+    oriFormCustomer: {},
+    newFormCustomer: {},
     rule: {
       code: [required],
       name: [required],
       email: [email]
     },
-    cancelDialog: false
+    dialogClose: false
   }),
   computed: {
     isDirty () {
-      return !isEqual(this.customer, this.currentCustomer)
+      return !isEqual(this.oriFormCustomer, this.newFormCustomer)
     }
   },
   watch: {
     customer (val) {
-      // When customerId change, clone new staff to enable dirty comparison
-      this.currentCustomer = cloneDeep(val)
+      this.formCustomerFactory = () => ({
+        code: val.code,
+        name: val.name,
+        addresses: cloneDeep(val.addresses || []),
+        phoneNumber: val.phoneNumber,
+        companyBelongId: val.companyBelong.id || '',
+        email: val.email,
+        staffPrimaryId: val.staffPrimary.id || '',
+        staffSecondaryId: (val.staffSecondary && val.staffSecondary.id) || ''
+      })
+
+      this.reset()
     }
   },
+  created () {
+    this.oriFormCustomer = this.formCustomerFactory()
+    this.newFormCustomer = this.formCustomerFactory()
+  },
   methods: {
-    cancel (force) {
+    open (customerId) {
+      this.customerId = customerId
+      this.$emit('input', true)
+    },
+    close (force) {
       if (!force && this.isDirty) {
-        this.cancelDialog = true
+        this.dialogClose = true
       } else {
         this.reset()
         this.$emit('input', false)
       }
     },
     reset () {
-      this.currentCustomer = cloneDeep(this.customer)
+      this.oriFormCustomer = this.formCustomerFactory()
+      this.newFormCustomer = this.formCustomerFactory()
       this.$refs.form.resetValidation()
+    },
+    parseFormToVars (form) {
+      return transformObj(cloneDeep(form), [
+        { from: 'companyBelongId', to: 'companyBelongWhere', value: v => ({ id: v }) },
+        { from: 'staffPrimaryId', to: 'staffPrimaryWhere', value: v => ({ id: v }) },
+        { from: 'staffSecondaryId', to: 'staffSecondaryWhere', value: v => ({ id: v }) }
+      ])
     },
     async updateCustomer () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheCustomerId = this.customerId
-        const cacheCustomer = cloneDeep(this.currentCustomer)
+        const { cache, restore } = cacheObjKeys(this, ['customerId', 'oriFormCustomer', 'newFormCustomer'])
 
-        this.cancel(true)
+        const diff = updatedDiff(cache.oriFormCustomer, cache.newFormCustomer)
+
+        const optimisticResponse = {
+          updateCustomer: merge(cloneDeep(this.customer), diff)
+        }
+
+        this.close(true)
 
         try {
           await this.$apollo.mutate({
             mutation: CUSTOMER_UPDATE,
             variables: {
-              id: cacheCustomerId,
-              ...cacheCustomer
+              id: cache.customerId,
+              ...this.parseFormToVars(diff)
             },
-            update: (store, { data: { updateCustomer } }) => {
-              if (updateCustomer != null) {
-                storeDeleteQuery(store, /^customers/)
-                console.log(store)
-                this.$emit('updateCustomer')
-              } else {
-                throw new Error('Unable to update customer')
-              }
-            }
+            optimisticResponse
           })
 
-          snackbarPush({ color: 'success', message: 'Customer update' })
+          snackbarPush({ color: 'success', message: 'Customer updated' })
         } catch (e) {
-          this.currentCustomer = cacheCustomer
-          this.$emit('input', true)
+          restore()
+          this.open(cache.customerId)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
         }

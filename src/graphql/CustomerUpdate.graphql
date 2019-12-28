@@ -4,14 +4,14 @@ mutation CustomerUpdate(
   $id: ID!,
   $code: String,
   $name: String,
-  $email: String,
   $addresses: [String!],
   $phoneNumber: String,
-  $companyId: ID,
-  $staffPrimaryId: ID,
-  $staffSeondaryId: ID,
+  $companyBelongWhere: CompanyWhereUniqueInput,
+  $email: String,
   $temporary: Boolean,
-  $active: Boolean
+  $active: Boolean,
+  $staffPrimaryWhere: StaffWhereUniqueInput,
+  $staffSeondaryWhere: StaffWhereUniqueInput
 ) {
   updateCustomer(
     data: {
@@ -20,11 +20,11 @@ mutation CustomerUpdate(
       email: $email,
       addresses: $addresses,
       phoneNumber: $phoneNumber,
-      companyBelong: { id: $companyId },
+      companyBelong: $companyBelongWhere,
       temporary: $temporary,
       active: $active,
-      staffPrimary: { id: $staffPrimaryId },
-      staffSecondary: { id: $staffSeondaryId }
+      staffPrimary: $staffPrimaryWhere,
+      staffSecondary: $staffSeondaryWhere
     },
     where: {
       id: $id

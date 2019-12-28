@@ -1,0 +1,7 @@
+#import "./fragments/Company.graphql"
+
+query CompanyGetAll($limit: Int) {
+  companies(first: $limit) {
+    ...companyFragment
+  }
+}

@@ -1,13 +1,15 @@
 <template>
-  <v-overflow-btn
+  <v-autocomplete
     :value="value"
     :search-input.sync="query"
     :loading="!!loadingCount"
     :items="mapCustomers"
+    :cache-items="multiple"
     :multiple="multiple"
     :placeholder="placeholder"
     :rules="rules"
     editable
+    solo
     @input="$emit('input', $event)"
   >
     <template
@@ -19,7 +21,7 @@
         :name="slot"
       />
     </template>
-  </v-overflow-btn>
+  </v-autocomplete>
 </template>
 
 <script>

@@ -1,8 +1,8 @@
 <template>
   <v-autocomplete
     v-bind="$attrs"
-    :items="mapStaffs"
-    :placeholder="placeholder"
+    :items="mapCompanies"
+    placeholder="Select company"
     clearable
     v-on="$listeners"
     @input="$emit('input', $event)"
@@ -20,26 +20,21 @@
 </template>
 
 <script>
-import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
+import COMPANY_GET_ALL from '@/graphql/CompanyGetAll.graphql'
 
 export default {
-  name: 'InputStaff',
+  name: 'InputCompany',
   apollo: {
-    staffs: {
-      query: STAFF_GET_ALL
+    companies: {
+      query: COMPANY_GET_ALL
     }
   },
   data: () => ({
-    loadingCount: 0,
-    query: '',
-    staffs: []
+    companies: []
   }),
   computed: {
-    placeholder () {
-      return 'Select staff' + (this.multiple ? '(s)' : '')
-    },
-    mapStaffs () {
-      return this.staffs.map(v => ({ text: v.username, value: v.id }))
+    mapCompanies () {
+      return this.companies.map(v => ({ text: v.name, value: v.id }))
     }
   }
 }

@@ -1,114 +1,127 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     persistent
     width="700"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="createCustomer()"
     >
       <v-card>
-        <v-card-title>Create Customer</v-card-title>
-        <v-card-text>
-          <v-container fluid>
+        <v-card-title>
+          Create Customer
+        </v-card-title>
+        <v-container fluid>
+          <v-card-title class="pt-0">
             <v-row no-gutters>
               <v-col
-                cols="12"
-                md="4"
-              >
-                <v-subheader>General</v-subheader>
-              </v-col>
-              <v-col
-                cols="12"
-                md="8"
+                cols="auto"
+                style="width: 120px;"
               >
                 <v-text-field
-                  v-model="customer.code"
-                  :rules="rule.code"
-                  label="Code"
+                  v-model="formCustomer.code"
+                  class="font-weight-bold"
+                  placeholder="Code*"
+                  hide-details
+                  dense
+                  solo
+                  flat
                 />
+              </v-col>
+              <v-col>
                 <v-text-field
-                  v-model="customer.name"
+                  v-model="formCustomer.name"
                   :rules="rule.name"
-                  label="Name"
+                  placeholder="Name*"
+                  hide-details
+                  dense
+                  solo
+                  flat
                 />
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-subheader>Description</v-subheader>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="formCustomer.phoneNumber"
+              prepend-icon="mdi-phone"
+              placeholder="Phone number"
+              hide-details
+              dense
+              solo
+              flat
+            />
+            <v-text-field
+              v-model="formCustomer.email"
+              :rules="rule.email"
+              prepend-icon="mdi-email"
+              placeholder="Email"
+              hide-details
+              dense
+              solo
+              flat
+            />
+            <input-addresses
+              :addresses="formCustomer.addresses"
+              prepend-icon="mdi-map-marker"
+            />
+            <v-row>
+              <v-col cols="12">
+                <input-company
+                  v-model="formCustomer.companyBelongId"
+                  label="Managed by"
+                  hide-details
+                  dense
+                />
               </v-col>
               <v-col
                 cols="12"
-                md="8"
+                sm="6"
               >
-                <v-text-field
-                  v-model="customer.address"
-                  label="Address"
+                <input-staff
+                  v-model="formCustomer.staffPrimaryId"
+                  label="Handled by"
+                  hide-details
+                  dense
                 />
-                <v-text-field
-                  v-model="customer.phoneNumber"
-                  label="Phone Number"
-                />
-                <v-text-field
-                  v-model="customer.email"
-                  :rules="rule.email"
-                  label="Email"
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+              >
+                <input-staff
+                  v-model="formCustomer.staffSecondaryId"
+                  label="Assisted by"
+                  hide-details
+                  dense
                 />
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-subheader>Person in charge</v-subheader>
-              </v-col>
-              <v-col
-                cols="12"
-                md="8"
-              >
-                <input-staff v-model="customer.picStaffId" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
+          </v-card-text>
+        </v-container>
         <v-card-actions>
           <v-spacer />
           <dialog-yes-no
-            v-model="cancelDialog"
+            v-model="dialogClose"
             header="Are you sure?"
-            message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            message="Data you have entered are not saved"
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="createCustomer()"
           >
             Create
           </v-btn>
@@ -119,77 +132,92 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { isEqual, cloneDeep } from 'lodash-es'
 import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
+import { cacheObjKeys, transformObj } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputAddresses from '@/components/InputAddresses.vue'
+import InputCompany from '@/components/InputCompany.vue'
 import InputStaff from '@/components/InputStaff'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import CUSTOMER_CREATE from '@/graphql/CustomerCreate.graphql'
-import { snackbarPush } from './SnackbarGlobal.vue'
 
 const formCustomerFactory = () => ({
   code: '',
   name: '',
-  address: '',
+  addresses: [],
   phoneNumber: '',
+  companyBelongId: '',
   email: '',
-  picStaffId: null
+  staffPrimaryId: '',
+  staffSecondaryId: ''
 })
 
 export default {
   name: 'DialogCustomerCreate',
   components: {
     DialogYesNo,
+    InputAddresses,
+    InputCompany,
     InputStaff
-  },
-  props: {
-    value: {
-      type: Boolean
-    }
   },
   data: () => ({
     valid: false,
-    customer: formCustomerFactory(),
+    formCustomer: formCustomerFactory(),
     rule: {
       code: [required],
       name: [required],
       email: [email]
     },
-    cancelDialog: false
+    dialogClose: false
   }),
   computed: {
+    ...mapGetters([
+      'isPrivilegeBasic'
+    ]),
     isDirty () {
-      const c = this.customer
-      return !!(c.code || c.name || c.address || c.phoneNumber || c.email || c.picStaffId)
+      return !isEqual(this.formCustomer, formCustomerFactory())
     }
   },
   methods: {
-    cancel (force) {
+    close (force) {
       if (!force && this.isDirty) {
-        this.cancelDialog = true
+        this.dialogClose = true
       } else {
         this.reset()
         this.$emit('input', false)
       }
     },
     reset () {
-      this.$refs.form.reset()
-      this.customer = formCustomerFactory()
+      this.formCustomer = formCustomerFactory()
+      this.$refs.form.resetValidation()
+    },
+    parseFormToVars (form) {
+      return transformObj(cloneDeep(form), [
+        { from: 'staffSecondaryId', to: 'staffSecondaryWhere', value: v => ({ id: v }) }
+      ])
     },
     async createCustomer () {
-      if (this.$refs.form.validate()) {
-        const cacheCustomer = { ...this.customer }
+      if (this.$refs.form.validate() && this.isDirty) {
+        const { cache, restore } = cacheObjKeys(this, ['formCustomer'])
 
-        this.cancel(true)
+        this.close(true)
 
         try {
           await this.$apollo.mutate({
             mutation: CUSTOMER_CREATE,
-            variables: cacheCustomer,
+            variables: {
+              ...this.parseFormToVars(cache.formCustomer),
+              temporary: this.isPrivilegeBasic
+            },
             update: (store, { data: { createCustomer } }) => {
               if (createCustomer != null) {
+                console.log(store)
                 storeDeleteQuery(store, /^customers/)
                 console.log(store)
-                this.$emit('createCustomer')
+                this.$emit('create-customer')
               } else {
                 throw new Error('Unable to create customer')
               }
@@ -198,7 +226,7 @@ export default {
 
           snackbarPush({ color: 'success', message: 'Customer created' })
         } catch (e) {
-          this.customer = cacheCustomer
+          restore()
           this.$emit('input', true)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })

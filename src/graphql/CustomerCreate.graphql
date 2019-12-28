@@ -10,7 +10,7 @@ mutation CustomerCreate(
   $temporary: Boolean,
   $active: Boolean,
   $staffPrimaryId: ID!,
-  $staffSecondaryId: ID
+  $staffSecondaryWhere: StaffWhereUniqueInput
 ) {
   createCustomer(
     data: {
@@ -23,7 +23,7 @@ mutation CustomerCreate(
       temporary: $temporary,
       active: $active,
       staffPrimary: { id: $staffPrimaryId },
-      staffSecondary: { id: $staffSecondaryId }
+      staffSecondary: $staffSecondaryWhere
     }
   ) {
     ...customerFragment
