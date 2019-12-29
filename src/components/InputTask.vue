@@ -1,39 +1,34 @@
 <template>
   <v-input
-    :append-icon="iconType === 'add' ? 'mdi-plus' : 'mdi-close'"
-    class="align-center"
-    hide-details
+    v-bind="$attrs"
     color="primary"
-    @click:append="$emit('click:icon', $event)"
+    hide-details
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        v-bind="scope"
-        :name="slot"
-      />
-    </template>
-    <v-row align="center">
+    <v-row>
       <v-col
-        class="py-0"
+        class="pt-0"
         cols="4"
       >
         <v-select
           :value="taskType"
           :items="taskTypes"
+          :rules="rule.taskType"
           placeholder="Type"
+          hide-details
+          dense
           @change="$emit('update:taskType', $event)"
         />
       </v-col>
       <v-col
-        class="py-0"
+        class="pt-0"
         cols="8"
       >
         <v-text-field
           :value="taskRemarks"
           placeholder="Remarks"
+          hide-details
+          dense
           @input="$emit('update:taskRemarks', $event)"
         />
       </v-col>
@@ -42,24 +37,24 @@
 </template>
 
 <script>
+import { required } from '@/utils/inputRules'
+
 export default {
   name: 'InputTask',
   props: {
-    iconType: {
-      type: String,
-      required: true,
-      validator: v => v === 'add' || 'remove'
-    },
     taskType: {
       type: String,
-      default: ''
+      required: true
     },
     taskRemarks: {
       type: String,
-      default: ''
+      required: true
     }
   },
   data: () => ({
+    rule: {
+      taskType: [required]
+    },
     taskTypes: [
       { text: 'Service', value: 'SERVICE' },
       { text: 'Complaint', value: 'COMPLAINT' },

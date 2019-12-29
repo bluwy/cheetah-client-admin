@@ -2,10 +2,7 @@
   <v-autocomplete
     v-bind="$attrs"
     :items="mapCompanies"
-    placeholder="Select company"
-    clearable
     v-on="$listeners"
-    @input="$emit('input', $event)"
   >
     <template
       v-for="(_, slot) in $scopedSlots"
@@ -29,12 +26,18 @@ export default {
       query: COMPANY_GET_ALL
     }
   },
+  props: {
+    companiesFilter: {
+      type: Function,
+      default: () => true
+    }
+  },
   data: () => ({
     companies: []
   }),
   computed: {
     mapCompanies () {
-      return this.companies.map(v => ({ text: v.name, value: v.id }))
+      return this.companies.filter(this.companiesFilter).map(v => ({ text: v.name, value: v.id }))
     }
   }
 }

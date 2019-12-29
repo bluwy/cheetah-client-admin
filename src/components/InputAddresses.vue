@@ -21,10 +21,10 @@
         <v-text-field
           :value="address"
           append-outer-icon="mdi-close"
-          hide-details
-          dense
           color="primary"
           placeholder="Address"
+          hide-details
+          dense
           solo
           flat
           @click:append-outer="addresses.splice(i, 1)"

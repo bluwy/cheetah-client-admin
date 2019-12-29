@@ -2,10 +2,7 @@
   <v-autocomplete
     v-bind="$attrs"
     :items="mapStaffs"
-    :placeholder="placeholder"
-    clearable
     v-on="$listeners"
-    @input="$emit('input', $event)"
   >
     <template
       v-for="(_, slot) in $scopedSlots"
@@ -29,17 +26,19 @@ export default {
       query: STAFF_GET_ALL
     }
   },
+  props: {
+    staffsFilter: {
+      type: Function,
+      default: () => true
+    }
+  },
   data: () => ({
-    loadingCount: 0,
     query: '',
     staffs: []
   }),
   computed: {
-    placeholder () {
-      return 'Select staff' + (this.multiple ? '(s)' : '')
-    },
     mapStaffs () {
-      return this.staffs.map(v => ({ text: v.username, value: v.id }))
+      return this.staffs.filter(this.staffsFilter).map(v => ({ text: v.username, value: v.id }))
     }
   }
 }

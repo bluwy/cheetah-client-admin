@@ -1,16 +1,9 @@
 <template>
   <v-autocomplete
-    :value="value"
+    v-bind="$attrs"
     :search-input.sync="query"
-    :loading="!!loadingCount"
     :items="mapCustomers"
-    :cache-items="multiple"
-    :multiple="multiple"
-    :placeholder="placeholder"
-    :rules="rules"
-    editable
-    solo
-    @input="$emit('input', $event)"
+    v-on="$listeners"
   >
     <template
       v-for="(_, slot) in $scopedSlots"
@@ -39,23 +32,15 @@ export default {
         }
       },
       skip () {
-        return this.multiple ? false : this.value
+        return this.$attrs.multiple ? false : this.$attrs.value
       },
-      debounce: 500,
-      loadingKey: 'loadingCount'
+      debounce: 500
     }
   },
   props: {
-    value: {
-      type: [String, Array],
-      required: true
-    },
-    rules: {
-      type: Array,
-      default: () => []
-    },
-    multiple: {
-      type: Boolean
+    customersFilter: {
+      type: Function,
+      default: () => true
     },
     queryLimit: {
       type: Number,
@@ -63,14 +48,10 @@ export default {
     }
   },
   data: () => ({
-    loadingCount: 0,
     query: '',
     customers: []
   }),
   computed: {
-    placeholder () {
-      return 'Select customer' + (this.multiple ? '(s)' : '')
-    },
     queryWhere () {
       return this.query ? {
         OR: [
@@ -80,17 +61,10 @@ export default {
       } : undefined
     },
     mapCustomers () {
-      return this.customers.map(v => ({
+      return this.customers.filter(this.customersFilter).map(v => ({
         text: `${v.code} - ${v.name}`,
         value: v.id
       }))
-    }
-  },
-  watch: {
-    value (val) {
-      if (this.multiple) {
-        this.query = ''
-      }
     }
   }
 }

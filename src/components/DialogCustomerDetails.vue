@@ -88,6 +88,7 @@
                   label="Managed by"
                   hide-details
                   dense
+                  clearable
                 />
               </v-col>
               <v-col
@@ -96,9 +97,11 @@
               >
                 <input-staff
                   v-model="newFormCustomer.staffPrimaryId"
+                  :staffs-filter="v => v.id !== newFormCustomer.staffSecondaryId"
                   label="Handled by"
                   hide-details
                   dense
+                  clearable
                 />
               </v-col>
               <v-col
@@ -107,9 +110,11 @@
               >
                 <input-staff
                   v-model="newFormCustomer.staffSecondaryId"
+                  :staffs-filter="v => v.id !== newFormCustomer.staffPrimaryId"
                   label="Assisted by"
                   hide-details
                   dense
+                  clearable
                 />
               </v-col>
             </v-row>
