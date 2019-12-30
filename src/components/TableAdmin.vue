@@ -1,6 +1,5 @@
 <template>
   <v-data-table
-    v-if="isPrivilegeFull"
     :headers="headers"
     :items="admins"
     :loading="!!loadingCount"
@@ -64,7 +63,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import DialogAdminCreate from '@/components/DialogAdminCreate.vue'
 import DialogAdminDelete from '@/components/DialogAdminDelete.vue'
 import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
@@ -92,11 +90,6 @@ export default {
     dialogCreate: false,
     dialogDelete: false
   }),
-  computed: {
-    ...mapGetters([
-      'isPrivilegeFull'
-    ])
-  },
   methods: {
     refetch () {
       this.$apollo.queries.admins.refetch()

@@ -1,6 +1,5 @@
 <template>
   <v-data-table
-    v-if="isPrivilegeFull"
     :headers="headers"
     :items="companies"
     :loading="!!loadingCount"
@@ -48,7 +47,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import DialogCompanyCreate from '@/components/DialogCompanyCreate.vue'
 import DialogCompanyDelete from '@/components/DialogCompanyDelete.vue'
 import COMPANY_GET_ALL from '@/graphql/CompanyGetAll.graphql'
@@ -76,11 +74,6 @@ export default {
     dialogCreate: false,
     dialogDelete: false
   }),
-  computed: {
-    ...mapGetters([
-      'isPrivilegeFull'
-    ])
-  },
   methods: {
     refetch () {
       this.$apollo.queries.companies.refetch()
