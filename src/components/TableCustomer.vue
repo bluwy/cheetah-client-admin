@@ -2,11 +2,13 @@
   <v-data-table
     :headers="headers"
     :items="customers"
-    :server-items-length="queryLimit"
+    :server-items-length="customerCount"
+    :items-per-page.sync="queryLimit"
     :page.sync="page"
     :sort-by.sync="sortBy"
     :sort-desc.sync="sortDesc"
     :loading="!!loadingCount"
+    :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
   >
     <template #top>
@@ -17,7 +19,7 @@
           class="mr-3"
           icon
           color="primary"
-          @click="refetch()"
+          @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
@@ -110,6 +112,7 @@ import DialogCustomerDelete from '@/components/DialogCustomerDelete.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
+import CUSTOMER_COUNT from '@/graphql/CustomerCount.graphql'
 
 export default {
   name: 'TableCustomer',
@@ -125,18 +128,15 @@ export default {
         }
       },
       loadingKey: 'loadingCount'
+    },
+    customerCount: {
+      query: CUSTOMER_COUNT
     }
   },
   components: {
     DialogCustomerCreate,
     DialogCustomerDetails,
     DialogCustomerDelete
-  },
-  props: {
-    queryLimit: {
-      type: Number,
-      default: 10
-    }
   },
   data: () => ({
     loadingCount: 0,
@@ -151,11 +151,13 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     page: 1,
+    queryLimit: 5,
     sortBy: 'id',
     sortDesc: false,
     showTemporary: undefined,
     showActive: undefined,
     customers: [],
+    customerCount: 0,
     dialogCreate: false,
     dialogDetails: false,
     dialogDelete: false

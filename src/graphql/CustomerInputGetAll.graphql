@@ -1,5 +1,5 @@
 query CustomerInputGetAll($limit: Int, $where: CustomerWhereInput) {
-  customers(first: $limit, where: $where) @connection(key: "customerInputs", filter: ["where"]) {
+  customers(first: $limit, where: $where) {
     id
     code
     name

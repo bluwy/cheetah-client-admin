@@ -2,11 +2,13 @@
   <v-data-table
     :headers="headers"
     :items="jobs"
-    :server-items-length="queryLimit"
+    :server-items-length="jobCount"
+    :items-per-page="queryLimit"
     :page.sync="page"
     :sort-by.sync="sortBy"
     :sort-desc.sync="sortDesc"
     :loading="!!loadingCount"
+    :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
   >
     <template #top>
@@ -99,6 +101,7 @@ import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import DialogJobDetails from '@/components/DialogJobDetails.vue'
 import DialogJobDelete from '@/components/DialogJobDelete.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
+import JOB_COUNT from '@/graphql/JobCount.graphql'
 
 export default {
   name: 'TableJob',
@@ -114,18 +117,15 @@ export default {
         }
       },
       loadingKey: 'loadingCount'
+    },
+    jobCount: {
+      query: JOB_COUNT
     }
   },
   components: {
     DialogJobCreate,
     DialogJobDetails,
     DialogJobDelete
-  },
-  props: {
-    queryLimit: {
-      type: Number,
-      default: 10
-    }
   },
   data: () => ({
     loadingCount: 0,
@@ -137,9 +137,11 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     page: 1,
+    queryLimit: 5,
     sortBy: 'id',
     sortDesc: false,
     jobs: [],
+    jobCount: 0,
     dialogCreate: false,
     dialogDetails: false,
     dialogDelete: false

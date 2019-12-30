@@ -11,7 +11,7 @@ query JobGetAll(
     first: $limit,
     orderBy: $orderBy,
     where: $where
-  ) @connection(key: "jobs", filter: ["orderBy", "where"]) {
+  ) {
     ...jobWithoutAssignmentsFragment
   }
 }
