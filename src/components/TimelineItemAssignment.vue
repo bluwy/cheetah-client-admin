@@ -18,12 +18,18 @@
     >
       <v-card-text>
         <v-chip
-          v-for="(staff, i) in staffs"
-          :key="i"
+          v-if="staffPrimary"
           class="mr-2"
           :color="themeColor"
         >
-          {{ staff.username }}
+          {{ staffPrimary && staffPrimary.username }}
+        </v-chip>
+        <v-chip
+          v-if="staffSecondary"
+          class="mr-2"
+          :color="themeColor"
+        >
+          {{ staffSecondary && staffSecondary.username }}
         </v-chip>
       </v-card-text>
       <v-card-text class="pt-0">
@@ -93,17 +99,20 @@ export default {
   name: 'TimelineItemAssignment',
   props: {
     checkIn: {
-      type: Number,
+      type: String,
       default: null
     },
     checkOut: {
-      type: Number,
+      type: String,
       default: null
     },
-    staffs: {
-      type: Array,
-      default: () => [],
-      validator: val => val.every(staff => 'username' in staff)
+    staffPrimary: {
+      type: Object,
+      default: null
+    },
+    staffSecondary: {
+      type: Object,
+      default: null
     },
     tasks: {
       type: Array,
@@ -114,10 +123,6 @@ export default {
       type: Array,
       default: () => [],
       validator: val => val.every(action => 'type' in action && 'remarks' in action)
-    },
-    needsFollowUp: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
@@ -128,8 +133,6 @@ export default {
       } else if (this.checkOut == null) {
         // In progress
         return 'warning'
-      } else if (this.needsFollowUp) {
-        return 'error'
       } else {
         return 'success'
       }
@@ -143,8 +146,8 @@ export default {
       }
 
       const text = [
-        format(this.checkIn, 'd MMM yyyy'),
-        format(this.checkIn, 'HH:mm'),
+        format(new Date(this.checkIn), 'd MMM yyyy'),
+        format(new Date(this.checkIn), 'HH:mm'),
         '-'
       ]
 
@@ -152,8 +155,8 @@ export default {
         text.push('now')
       } else {
         text.push(
-          isSameDay(this.checkIn, this.checkOut) ? '' : format(this.checkOut, 'd MMM yyyy'),
-          format(this.checkOut, 'HH:mm')
+          isSameDay(new Date(this.checkIn), new Date(this.checkOut)) ? '' : format(new Date(this.checkOut), 'd MMM yyyy'),
+          format(new Date(this.checkOut), 'HH:mm')
         )
       }
 

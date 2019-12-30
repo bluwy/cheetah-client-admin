@@ -4,7 +4,7 @@ mutation JobCreate(
   $customerId: ID!,
   $address: String!,
   $staffPrimaryId: ID!,
-  $staffSecondaryId: ID,
+  $staffSecondaryWhere: StaffWhereUniqueInput,
   $tasks: [TaskCreateInput!]!
 ) {
   createJob(
@@ -12,7 +12,7 @@ mutation JobCreate(
       customer: { id: $customerId },
       address: $address,
       staffPrimary: { id: $staffPrimaryId },
-      staffSecondary: { id: $staffSecondaryId },
+      staffSecondary: $staffSecondaryWhere,
       tasks: $tasks
     }
   ) {

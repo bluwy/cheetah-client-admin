@@ -1,60 +1,87 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     persistent
     width="600"
     max-width="95vw"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-form
       ref="form"
       v-model="valid"
       lazy-validation
+      @submit.prevent="createAssignment()"
     >
       <v-card>
         <v-card-title>Add Assignment</v-card-title>
-        <v-card-text>
-          <v-container fluid>
-            <input-staff
-              v-model="assignment.staffIds"
-              multiple
-              :rules="rule.staffIds"
+        <v-container>
+          <v-card-title
+            v-if="customerName"
+            class="pt-0"
+          >
+            {{ customerName }}
+          </v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+              >
+                <input-staff
+                  v-model="formAssignment.staffPrimaryId"
+                  :rules="rule.staffPrimaryId"
+                  :staffs-filter="v => v.id !== formAssignment.staffSecondaryId"
+                  label="Handled by"
+                  hide-details
+                  dense
+                  clearable
+                />
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+              >
+                <input-staff
+                  v-model="formAssignment.staffSecondaryId"
+                  :rules="rule.staffSecondaryId"
+                  :staffs-filter="v => v.id !== formAssignment.staffPrimaryId"
+                  label="Assisted by"
+                  hide-details
+                  dense
+                  clearable
+                />
+              </v-col>
+            </v-row>
+            <v-autocomplete
+              v-model="formAssignment.address"
+              :rules="rule.address"
+              :items="customerAddresses"
+              label="Address"
             />
             <input-list-task
-              ref="tasksInput"
-              :tasks="assignment.tasks"
+              :tasks="formAssignment.tasks"
+              label="Tasks"
             />
-          </v-container>
-        </v-card-text>
+          </v-card-text>
+        </v-container>
         <v-card-actions>
           <v-spacer />
           <dialog-yes-no
-            v-model="cancelDialog"
+            v-model="dialogCancel"
             header="Are you sure?"
-            message="You cannot undo this action."
-            @yes="cancel(true)"
-          >
-            <template #activator>
-              <v-btn
-                outlined
-                color="error"
-                @click.stop="cancel()"
-              >
-                Cancel
-              </v-btn>
-            </template>
-          </dialog-yes-no>
+            message="Data you have entered are not saved"
+            @yes="close(true)"
+          />
           <v-btn
+            outlined
+            color="error"
+            @click.stop="close()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            type="submit"
             color="primary"
-            @click="createAssignment()"
           >
             Create
           </v-btn>
@@ -65,108 +92,141 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual, get } from 'lodash-es'
 import { getErrorMessages } from '@/utils/apollo'
+import { cacheObjKeys, transformObj } from '@/utils/common'
 import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import InputStaff from '@/components/InputStaff.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ASSIGNMENT_CREATE from '@/graphql/AssignmentCreate.graphql'
-import JOB_GET from '@/graphql/JobGet.graphql'
-
-const formAssignmentFactory = () => ({
-  staffIds: [],
-  tasks: []
-})
+import JOB_ASSIGNMENT_CREATE_GET from '@/graphql/JobAssignmentCreateGet.graphql'
 
 export default {
   name: 'DialogAssignmentCreate',
+  apollo: {
+    job: {
+      query: JOB_ASSIGNMENT_CREATE_GET,
+      variables () {
+        return {
+          id: this.jobId
+        }
+      },
+      skip () {
+        return !this.jobId
+      }
+    }
+  },
   components: {
     DialogYesNo,
     InputListTask,
     InputStaff
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    jobId: {
-      type: String,
-      required: true
-    }
-  },
   data: () => ({
     valid: false,
-    assignment: formAssignmentFactory(),
+    job: {},
+    jobId: '',
+    formAssignmentFactory: () => ({
+      address: '',
+      staffPrimaryId: '',
+      staffSecondaryId: '',
+      tasks: [{ type: '', remarks: '' }]
+    }),
+    formAssignment: {},
     rule: {
-      staffIds: [required, minArrLength(1)],
+      customerId: [required],
+      staffPrimaryId: [required],
       tasks: [required, minArrLength(1)]
     },
-    cancelDialog: false
+    dialogCancel: false
   }),
   computed: {
     isDirty () {
-      return !!(this.assignment.staffIds.length || this.$refs.tasksInput.isDirty)
+      return !isEqual(this.formAssignment, this.formAssignmentFactory())
+    },
+    customerName () {
+      const code = get(this, 'job.customer.code')
+      const name = get(this, 'job.customer.name')
+
+      if (code && name) {
+        return code + ' - ' + name
+      } else {
+        return ''
+      }
+    },
+    customerAddresses () {
+      let addresses = get(this, 'job.customer.addresses') || []
+
+      // The address may not be in the list since it's also bound by search-input
+      // Add it if not in list, otherwise Vuetify will clear it
+      if (this.formAssignment.address && !addresses.includes(this.formAssignment.address)) {
+        addresses = [...addresses, this.formAssignment.address]
+      }
+
+      return addresses
     }
   },
+  watch: {
+    job (val) {
+      const address = get(val, 'customer.addresses[0]') || ''
+      const staffPrimaryId = get(val, 'customer.staffPrimary.id') || ''
+      const staffSecondaryId = get(val, 'customer.staffSecondary.id') || ''
+
+      this.formAssignmentFactory = () => ({
+        address,
+        staffPrimaryId,
+        staffSecondaryId,
+        tasks: [{ type: '', remarks: '' }]
+      })
+
+      this.reset()
+    }
+  },
+  created () {
+    this.reset()
+  },
   methods: {
-    cancel (force) {
+    open (jobId) {
+      this.jobId = jobId
+      this.$emit('input', true)
+    },
+    close (force) {
       if (!force && this.isDirty) {
-        this.cancelDialog = true
+        this.dialogCancel = true
       } else {
         this.reset()
         this.$emit('input', false)
       }
     },
     reset () {
-      this.$refs.form.reset()
-      this.assignment = formAssignmentFactory()
+      this.formAssignment = this.formAssignmentFactory()
+      this.$refs.form && this.$refs.form.resetValidation()
+    },
+    parseFormToVars (form) {
+      return transformObj(cloneDeep(form), [
+        { from: 'staffSecondaryId', to: 'staffSecondaryWhere', value: v => ({ id: v }) }
+      ])
     },
     async createAssignment () {
       if (this.$refs.form.validate() && this.isDirty) {
-        const cacheAssignment = cloneDeep(this.assignment)
+        const { cache, restore } = cacheObjKeys(this, ['jobId', 'formAssignment'])
 
-        this.cancel(true)
+        this.close(true)
 
         try {
           await this.$apollo.mutate({
             mutation: ASSIGNMENT_CREATE,
             variables: {
-              jobId: this.jobId,
-              staffIds: cacheAssignment.staffIds,
-              tasks: cacheAssignment.tasks
-            },
-            update: (store, { data: { createAssignment } }) => {
-              if (createAssignment != null) {
-                const data = store.readQuery({
-                  query: JOB_GET,
-                  variables: {
-                    id: this.jobId
-                  }
-                })
-
-                if (data.job) {
-                  data.job.assignments.push(createAssignment)
-
-                  store.writeQuery({
-                    query: JOB_GET,
-                    variables: {
-                      id: this.jobId
-                    },
-                    data
-                  })
-                }
-              } else {
-                throw new Error('Unable to create assignment')
-              }
+              jobId: cache.jobId,
+              ...this.parseFormToVars(cache.formAssignment)
             }
           })
 
           snackbarPush({ color: 'success', message: 'Assignment created' })
         } catch (e) {
-          this.assignment = cacheAssignment
-          this.$emit('input', true)
+          restore()
+          this.open(cache.jobId)
 
           snackbarPush({ color: 'error', message: getErrorMessages(e).join(', ') })
         }

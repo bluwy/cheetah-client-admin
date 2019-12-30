@@ -10,28 +10,24 @@
       v-bind="assignment"
     />
     <v-timeline-item
-      v-if="canAddAssignment"
       right
       fill-dot
       small
     >
-      <dialog-assignment-create
-        v-model="dialogAssignmentAdd"
-        :job-id="jobId"
+      <v-btn
+        block
+        color="primary"
+        @click.stop="$refs.dialogAssignmentCreate.open(jobId)"
       >
-        <template #activator>
-          <v-btn
-            block
-            color="primary"
-            @click.stop="dialogAssignmentAdd = true"
-          >
-            <v-icon left>
-              mdi-plus
-            </v-icon>
-            Add assignment
-          </v-btn>
-        </template>
-      </dialog-assignment-create>
+        <v-icon left>
+          mdi-plus
+        </v-icon>
+        Add assignment
+      </v-btn>
+      <dialog-assignment-create
+        ref="dialogAssignmentCreate"
+        v-model="dialogAssignmentCreate"
+      />
     </v-timeline-item>
   </v-timeline>
 </template>
@@ -57,18 +53,8 @@ export default {
     }
   },
   data: () => ({
-    dialogAssignmentAdd: false
-  }),
-  computed: {
-    canAddAssignment () {
-      if (!this.assignments.length) {
-        return true
-      } else {
-        const last = this.assignments[this.assignments.length - 1]
-        return last.checkIn != null && last.checkOut != null && last.needsFollowUp
-      }
-    }
-  }
+    dialogAssignmentCreate: false
+  })
 }
 </script>
 

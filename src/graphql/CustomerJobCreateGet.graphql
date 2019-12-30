@@ -1,0 +1,12 @@
+query CustomerJobCreateGet($id: ID!) {
+  customer(where: { id: $id }) {
+    id
+    addresses
+    staffPrimary {
+      id
+    }
+    staffSecondary {
+      id
+    }
+  }
+}

@@ -3,7 +3,7 @@
 mutation AssignmentCreate(
   $address: String!,
   $staffPrimaryId: ID!,
-  $staffSecondaryId: ID,
+  $staffSecondaryWhere: StaffWhereUniqueInput,
   $tasks: [TaskCreateInput!]!
   $jobId: ID!
 ) {
@@ -11,7 +11,7 @@ mutation AssignmentCreate(
     data: {
       address: $address,
       staffPrimary: { id: $staffPrimaryId } ,
-      staffSecondary: { id: $staffSecondaryId },
+      staffSecondary: $staffSecondaryWhere,
       tasks: $tasks
     },
     jobWhere: {

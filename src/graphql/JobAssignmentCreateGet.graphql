@@ -1,0 +1,19 @@
+#import "./fragments/Job.graphql"
+
+query JobGet($id: ID!) {
+  job(where: { id: $id }) {
+    id
+    customer {
+      id
+      code
+      name
+      addresses
+      staffPrimary {
+        id
+      }
+      staffSecondary {
+        id
+      }
+    }
+  }
+}

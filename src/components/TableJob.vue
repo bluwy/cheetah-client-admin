@@ -17,37 +17,30 @@
           class="mr-3"
           icon
           color="primary"
-          @click="refetch()"
+          @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+        <v-btn
+          color="primary"
+          @click.stop="dialogCreate = true"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Create
         </v-btn>
         <dialog-job-create
           v-model="dialogCreate"
           @create-job="refetch()"
-        >
-          <template #activator>
-            <v-btn
-              color="primary"
-              @click.stop="dialogCreate = true"
-            >
-              <v-icon left>
-                mdi-plus-circle
-              </v-icon>
-              Create
-            </v-btn>
-          </template>
-        </dialog-job-create>
-        <dialog-job-details
-          v-model="dialogDetails"
-          :job-id="targetJobId"
         />
-        <dialog-assignment-create
-          v-model="dialogAssignmentCreate"
-          :job-id="targetJobId"
+        <dialog-job-details
+          ref="dialogDetails"
+          v-model="dialogDetails"
         />
         <dialog-job-delete
+          ref="dialogDelete"
           v-model="dialogDelete"
-          :job-id="targetJobId"
           @delete-job="refetch()"
         />
       </v-toolbar>
@@ -72,27 +65,10 @@
             small
             color="primary"
             v-on="on"
-            @click="openDialogDetails(item.id)"
+            @click="$refs.dialogDetails.open(item.id)"
           >
             <v-icon small>
               mdi-information
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
-      <v-tooltip top>
-        <span>Add assignment</span>
-        <template #activator="{ on }">
-          <v-btn
-            icon
-            small
-            color="warning"
-            :disabled="!item.needsFollowUp"
-            v-on="on"
-            @click="openDialogAssignmentCreate(item.id)"
-          >
-            <v-icon small>
-              mdi-file-plus
             </v-icon>
           </v-btn>
         </template>
@@ -105,7 +81,7 @@
             small
             color="error"
             v-on="on"
-            @click="openDialogDelete(item.id)"
+            @click="$refs.dialogDelete.open(item.id)"
           >
             <v-icon small>
               mdi-delete
@@ -119,7 +95,6 @@
 
 <script>
 import { format } from 'date-fns'
-import DialogAssignmentCreate from '@/components/DialogAssignmentCreate.vue'
 import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import DialogJobDetails from '@/components/DialogJobDetails.vue'
 import DialogJobDelete from '@/components/DialogJobDelete.vue'
@@ -142,7 +117,6 @@ export default {
     }
   },
   components: {
-    DialogAssignmentCreate,
     DialogJobCreate,
     DialogJobDetails,
     DialogJobDelete
@@ -168,9 +142,7 @@ export default {
     jobs: [],
     dialogCreate: false,
     dialogDetails: false,
-    dialogAssignmentCreate: false,
-    dialogDelete: false,
-    targetJobId: ''
+    dialogDelete: false
   }),
   computed: {
     queryOffset () {
@@ -180,7 +152,7 @@ export default {
       return { [this.sortBy]: this.sortDesc ? 'desc' : 'asc' }
     },
     queryWhere () {
-      return {}
+      return undefined
     }
   },
   methods: {
@@ -189,18 +161,6 @@ export default {
     },
     formatIssueDate (issueDate) {
       return format(new Date(issueDate), 'd MMM yyyy')
-    },
-    openDialogDetails (jobId) {
-      this.targetJobId = jobId
-      this.dialogDetails = true
-    },
-    openDialogAssignmentCreate (jobId) {
-      this.targetJobId = jobId
-      this.dialogAssignmentCreate = true
-    },
-    openDialogDelete (jobId) {
-      this.targetJobId = jobId
-      this.dialogDelete = true
     }
   }
 }

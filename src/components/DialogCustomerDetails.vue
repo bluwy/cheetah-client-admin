@@ -229,8 +229,7 @@ export default {
     }
   },
   created () {
-    this.oriFormCustomer = this.formCustomerFactory()
-    this.newFormCustomer = this.formCustomerFactory()
+    this.reset()
   },
   methods: {
     open (customerId) {
@@ -248,7 +247,7 @@ export default {
     reset () {
       this.oriFormCustomer = this.formCustomerFactory()
       this.newFormCustomer = this.formCustomerFactory()
-      this.$refs.form.resetValidation()
+      this.$refs.form && this.$refs.form.resetValidation()
     },
     parseFormToVars (form) {
       return transformObj(cloneDeep(form), [

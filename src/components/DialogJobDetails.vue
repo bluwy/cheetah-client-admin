@@ -1,19 +1,10 @@
 <template>
   <v-dialog
-    :value="value"
+    v-bind="$attrs"
     width="700"
     max-width="95vw"
-    @input="$emit('input', $event)"
+    v-on="$listeners"
   >
-    <template
-      v-for="(_, slot) in $scopedSlots"
-      #[slot]="scope"
-    >
-      <slot
-        :name="slot"
-        v-bind="scope"
-      />
-    </template>
     <v-card>
       <v-card-title>
         <v-row no-gutters>
@@ -32,7 +23,7 @@
       </v-card-title>
       <v-container fluid>
         <v-card-title class="pt-0">
-          {{ customerName }}
+          {{ jobCode }} - {{ customerName }}
         </v-card-title>
         <v-card-subtitle>Issued {{ issueDate }}</v-card-subtitle>
         <v-card-text>
@@ -65,31 +56,32 @@ export default {
         }
       },
       skip () {
-        return !this.value
+        return !this.jobId
       }
     }
   },
   components: {
     TimelineAssignment
   },
-  props: {
-    value: {
-      type: Boolean
-    },
-    jobId: {
-      type: String,
-      required: true
-    }
-  },
   data: () => ({
+    jobId: '',
     job: {}
   }),
   computed: {
+    jobCode () {
+      return this.job.code
+    },
     customerName () {
       return this.job.customer && this.job.customer.name
     },
     issueDate () {
-      return this.job.dateIssued && format(this.job.dateIssued, 'd MMM yyyy')
+      return this.job.dateIssued && format(new Date(this.job.dateIssued), 'd MMM yyyy')
+    }
+  },
+  methods: {
+    open (jobId) {
+      this.jobId = jobId
+      this.$emit('input', true)
     }
   }
 }
