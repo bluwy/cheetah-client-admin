@@ -8,6 +8,7 @@ fragment assignmentFragment on Assignment {
   preferTime
   checkIn
   checkOut
+  expired
   tasks {
     ...taskFragment
   }

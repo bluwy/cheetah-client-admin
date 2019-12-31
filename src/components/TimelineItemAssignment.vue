@@ -5,7 +5,16 @@
     small
     :color="themeColor"
   >
-    <div class="py-1">
+    <div
+      v-if="expired"
+      class="py-1"
+    >
+      Expired, new assignment below
+    </div>
+    <div
+      v-else
+      class="py-1"
+    >
       {{ formatCheckTime }}
     </div>
     <v-card
@@ -106,6 +115,10 @@ export default {
       type: String,
       default: null
     },
+    expired: {
+      type: Boolean,
+      default: null
+    },
     staffPrimary: {
       type: Object,
       default: null
@@ -127,7 +140,10 @@ export default {
   },
   computed: {
     themeColor () {
-      if (this.checkIn == null) {
+      if (this.expired) {
+        // Has been re-assigned
+        return 'error'
+      } else if (this.checkIn == null) {
         // Haven't started
         return 'primary'
       } else if (this.checkOut == null) {
