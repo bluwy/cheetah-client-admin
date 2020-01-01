@@ -102,6 +102,7 @@ import InputStaff from '@/components/InputStaff.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ASSIGNMENT_CREATE from '@/graphql/AssignmentCreate.graphql'
 import JOB_ASSIGNMENT_CREATE_GET from '@/graphql/JobAssignmentCreateGet.graphql'
+import JOB_GET from '@/graphql/JobGet.graphql'
 
 export default {
   name: 'DialogAssignmentCreate',
@@ -220,6 +221,31 @@ export default {
             variables: {
               jobId: cache.jobId,
               ...this.parseFormToVars(cache.formAssignment)
+            },
+            update: (store, { data: { createAssignment } }) => {
+              const data = store.readQuery({
+                query: JOB_GET,
+                variables: { id: cache.jobId }
+              })
+
+              // All existing assignments are expired
+              const newAssignments = data.job.assignments.map((assignment) => {
+                return {
+                  ...assignment,
+                  expired: true
+                }
+              }).concat([createAssignment])
+
+              store.writeQuery({
+                query: JOB_GET,
+                variables: { id: cache.jobId },
+                data: {
+                  job: {
+                    ...data.job,
+                    assignments: newAssignments
+                  }
+                }
+              })
             }
           })
 

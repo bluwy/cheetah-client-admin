@@ -74,6 +74,7 @@
               <v-col cols="12">
                 <input-company
                   v-model="formCustomer.companyBelongId"
+                  :rules="rule.companyBelongId"
                   label="Managed by"
                   hide-details
                   dense
@@ -86,6 +87,7 @@
               >
                 <input-staff
                   v-model="formCustomer.staffPrimaryId"
+                  :rules="rule.staffPrimaryId"
                   :staffs-filter="v => v.id !== formCustomer.staffSecondaryId"
                   label="Handled by"
                   hide-details
@@ -174,7 +176,9 @@ export default {
     rule: {
       code: [required],
       name: [required],
-      email: [email]
+      email: [email],
+      companyBelongId: [required],
+      staffPrimaryId: [required]
     },
     dialogClose: false
   }),

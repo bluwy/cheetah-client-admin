@@ -3,6 +3,7 @@
     v-bind="$attrs"
     width="700"
     max-width="95vw"
+    persistent
     v-on="$listeners"
   >
     <v-form
@@ -249,6 +250,16 @@ export default {
       this.newFormCustomer = this.formCustomerFactory()
       this.$refs.form && this.$refs.form.resetValidation()
     },
+    formDiff (oriForm, newForm) {
+      const formDiff = updatedDiff(oriForm, newForm)
+
+      // Addresses are set as whole
+      if (!isEqual(oriForm.addresses, newForm.addresses)) {
+        formDiff.addresses = newForm.addresses
+      }
+
+      return formDiff
+    },
     parseFormToVars (form) {
       return transformObj(cloneDeep(form), [
         { from: 'companyBelongId', to: 'companyBelongWhere', value: v => ({ id: v }) },
@@ -260,10 +271,10 @@ export default {
       if (this.$refs.form.validate() && this.isDirty) {
         const { cache, restore } = cacheObjKeys(this, ['customerId', 'oriFormCustomer', 'newFormCustomer'])
 
-        const diff = updatedDiff(cache.oriFormCustomer, cache.newFormCustomer)
+        const formDiff = this.formDiff(cache.oriFormCustomer, cache.newFormCustomer)
 
         const optimisticResponse = {
-          updateCustomer: merge(cloneDeep(this.customer), diff)
+          updateCustomer: merge(cloneDeep(this.customer), formDiff)
         }
 
         this.close(true)
@@ -273,7 +284,7 @@ export default {
             mutation: CUSTOMER_UPDATE,
             variables: {
               id: cache.customerId,
-              ...this.parseFormToVars(diff)
+              ...this.parseFormToVars(formDiff)
             },
             optimisticResponse
           })

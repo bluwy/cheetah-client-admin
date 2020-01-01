@@ -18,7 +18,7 @@ export const cacheObjKeys = (obj, keys) => {
  */
 export const transformObj = (obj, transforms) => {
   transforms.forEach((transform) => {
-    if (transform.from in obj) {
+    if (obj[transform.from]) {
       const fromValue = obj[transform.from]
       obj[transform.to] = transform.value != null ? transform.value(fromValue) : fromValue
       delete obj[transform.from]
