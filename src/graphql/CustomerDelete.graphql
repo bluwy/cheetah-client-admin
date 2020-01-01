@@ -1,7 +1,3 @@
-#import "./fragments/Customer.graphql"
-
 mutation CustomerDelete($id: ID!) {
-  deleteCustomer(where: { id: $id }) {
-    ...customerFragment
-  }
+  deleteCustomer(where: { id: $id })
 }

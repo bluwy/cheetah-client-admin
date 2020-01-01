@@ -1,7 +1,3 @@
-#import "./fragments/Job.graphql"
-
 mutation JobDelete($id: ID!) {
-  deleteJob(where: { id: $id }) {
-    ...jobFragment
-  }
+  deleteJob(where: { id: $id })
 }

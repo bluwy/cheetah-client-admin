@@ -1,7 +1,3 @@
-#import "./fragments/Task.graphql"
-
 mutation TaskDelete($id: ID!) {
-  deleteTask(where: { id: $id }) {
-    ...taskFragment
-  }
+  deleteTask(where: { id: $id })
 }

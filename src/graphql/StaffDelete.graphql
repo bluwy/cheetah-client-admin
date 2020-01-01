@@ -1,7 +1,3 @@
-#import "./fragments/Staff.graphql"
-
 mutation StaffDelete($id: ID!) {
-  deleteStaff(where: { id: $id }) {
-    ...staffFragment
-  }
+  deleteStaff(where: { id: $id })
 }

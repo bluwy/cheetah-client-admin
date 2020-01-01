@@ -44,11 +44,11 @@ export default {
             id: cache.customerId
           },
           update: (store, { data: { deleteCustomer } }) => {
-            if (deleteCustomer != null) {
+            if (deleteCustomer) {
               console.log(store)
               storeDeleteQuery(store, /^customers/)
               console.log(store)
-              this.$emit('delte-customer')
+              this.$emit('delete-customer')
             } else {
               throw new Error('Unable to remove customer')
             }

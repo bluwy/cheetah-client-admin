@@ -45,13 +45,13 @@ export default {
             id: cache.adminId
           },
           update: (store, { data: { deleteAdmin } }) => {
-            if (deleteAdmin != null) {
+            if (deleteAdmin) {
               const data = store.readQuery({ query: ADMIN_GET_ALL })
 
               store.writeQuery({
                 query: ADMIN_GET_ALL,
                 data: {
-                  admins: data.admins.filter(v => v.id !== deleteAdmin.id)
+                  admins: data.admins.filter(v => v.id !== cache.adminId)
                 }
               })
             } else {

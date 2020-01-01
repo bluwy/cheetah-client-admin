@@ -44,7 +44,7 @@ export default {
             id: cache.jobId
           },
           update: (store, { data: { deleteJob } }) => {
-            if (deleteJob != null) {
+            if (deleteJob) {
               storeDeleteQuery(store, /^jobs/)
               console.log(store)
               this.$emit('delete-job')

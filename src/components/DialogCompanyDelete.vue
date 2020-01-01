@@ -45,13 +45,13 @@ export default {
             id: cache.companyId
           },
           update: (store, { data: { deleteCompany } }) => {
-            if (deleteCompany != null) {
+            if (deleteCompany) {
               const data = store.readQuery({ query: COMPANY_GET_ALL })
 
               store.writeQuery({
                 query: COMPANY_GET_ALL,
                 data: {
-                  companies: data.companies.filter(v => v.id !== deleteCompany.id)
+                  companies: data.companies.filter(v => v.id !== cache.companyId)
                 }
               })
             } else {

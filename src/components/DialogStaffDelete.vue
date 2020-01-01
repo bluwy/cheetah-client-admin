@@ -45,13 +45,13 @@ export default {
             id: cache.staffId
           },
           update: (store, { data: { deleteStaff } }) => {
-            if (deleteStaff != null) {
+            if (deleteStaff) {
               const data = store.readQuery({ query: STAFF_GET_ALL })
 
               store.writeQuery({
                 query: STAFF_GET_ALL,
                 data: {
-                  staffs: data.staffs.filter(v => v.id !== deleteStaff.id)
+                  staffs: data.staffs.filter(v => v.id !== cache.staffId)
                 }
               })
             } else {

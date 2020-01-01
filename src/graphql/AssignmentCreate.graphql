@@ -10,7 +10,7 @@ mutation AssignmentCreate(
   createAssignment(
     data: {
       address: $address,
-      staffPrimary: { id: $staffPrimaryId } ,
+      staffPrimary: { id: $staffPrimaryId },
       staffSecondary: $staffSecondaryWhere,
       tasks: $tasks
     },
