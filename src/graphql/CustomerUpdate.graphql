@@ -11,7 +11,7 @@ mutation CustomerUpdate(
   $temporary: Boolean,
   $active: Boolean,
   $staffPrimaryWhere: StaffWhereUniqueInput,
-  $staffSeondaryWhere: StaffWhereUniqueInput
+  $staffSecondaryWhere: StaffWhereUniqueInput
 ) {
   updateCustomer(
     data: {
@@ -24,7 +24,7 @@ mutation CustomerUpdate(
       temporary: $temporary,
       active: $active,
       staffPrimary: $staffPrimaryWhere,
-      staffSecondary: $staffSeondaryWhere
+      staffSecondary: $staffSecondaryWhere
     },
     where: {
       id: $id

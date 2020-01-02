@@ -58,6 +58,17 @@
               :items="customerAddresses"
               label="Address"
             />
+            <input-date-time
+              v-model="formAssignment.preferTime"
+              :date-props="{
+                label: 'Start date',
+                rules: rule.preferTime
+              }"
+              :time-props="{
+                label: 'Preferred time',
+                rules: rule.preferTime
+              }"
+            />
             <input-list-task
               :tasks="formAssignment.tasks"
               label="Tasks"
@@ -92,11 +103,13 @@
 </template>
 
 <script>
+import { formatISO } from 'date-fns'
 import { cloneDeep, isEqual, get } from 'lodash-es'
 import { getErrorMessages } from '@/utils/apollo'
 import { cacheObjKeys, transformObj } from '@/utils/common'
 import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
+import InputDateTime from '@/components/InputDateTime.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import InputStaff from '@/components/InputStaff.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
@@ -121,6 +134,7 @@ export default {
   },
   components: {
     DialogYesNo,
+    InputDateTime,
     InputListTask,
     InputStaff
   },
@@ -130,6 +144,7 @@ export default {
     jobId: '',
     formAssignmentFactory: () => ({
       address: '',
+      preferTime: '',
       staffPrimaryId: '',
       staffSecondaryId: '',
       tasks: [{ type: '', remarks: '' }]
@@ -137,6 +152,7 @@ export default {
     formAssignment: {},
     rule: {
       customerId: [required],
+      preferTime: [required],
       staffPrimaryId: [required],
       tasks: [required, minArrLength(1)]
     },
@@ -178,6 +194,7 @@ export default {
         address,
         staffPrimaryId,
         staffSecondaryId,
+        preferTime: formatISO(new Date()),
         tasks: [{ type: '', remarks: '' }]
       })
 
@@ -205,9 +222,13 @@ export default {
       this.$refs.form && this.$refs.form.resetValidation()
     },
     parseFormToVars (form) {
-      return transformObj(cloneDeep(form), [
+      const vars = transformObj(cloneDeep(form), [
         { from: 'staffSecondaryId', to: 'staffSecondaryWhere', value: v => ({ id: v }) }
       ])
+
+      vars.preferTime = new Date(vars.preferTime)
+
+      return vars
     },
     async createAssignment () {
       if (this.$refs.form.validate() && this.isDirty) {

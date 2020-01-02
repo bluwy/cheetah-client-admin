@@ -3,6 +3,7 @@
 mutation JobCreate(
   $customerId: ID!,
   $address: String!,
+  $preferTime: DateTime,
   $staffPrimaryId: ID!,
   $staffSecondaryWhere: StaffWhereUniqueInput,
   $tasks: [TaskCreateInput!]!
@@ -11,6 +12,7 @@ mutation JobCreate(
     data: {
       customer: { id: $customerId },
       address: $address,
+      preferTime: $preferTime,
       staffPrimary: { id: $staffPrimaryId },
       staffSecondary: $staffSecondaryWhere,
       tasks: $tasks

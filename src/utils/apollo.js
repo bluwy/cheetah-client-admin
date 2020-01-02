@@ -42,19 +42,9 @@ export function deepDeleteId (store, id) {
 export function storeDeleteQuery (store, query) {
   const rootQuery = store.data.data.ROOT_QUERY
 
-  Object.entries(rootQuery).forEach(([k, v]) => {
+  Object.keys(rootQuery).forEach((k) => {
     // If regex, use match, else direct compare
     if ((query instanceof RegExp && k.match(query)) || k === query) {
-      // If query result is array, iterate through
-      if (isArray(v)) {
-        // If children type of id, each recursively delete from store
-        v.forEach(c => c.type === 'id' && deepDeleteId(store, c.id))
-      } else if (isPlainObject(v) && v.type === 'id') {
-        // Recursively delete from store
-        deepDeleteId(store, v.id)
-      }
-
-      // Finally, remove the query
       delete rootQuery[k]
     }
   })

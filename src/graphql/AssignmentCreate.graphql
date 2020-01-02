@@ -2,6 +2,7 @@
 
 mutation AssignmentCreate(
   $address: String!,
+  $preferTime: DateTime,
   $staffPrimaryId: ID!,
   $staffSecondaryWhere: StaffWhereUniqueInput,
   $tasks: [TaskCreateInput!]!
@@ -10,6 +11,7 @@ mutation AssignmentCreate(
   createAssignment(
     data: {
       address: $address,
+      preferTime: $preferTime,
       staffPrimary: { id: $staffPrimaryId },
       staffSecondary: $staffSecondaryWhere,
       tasks: $tasks

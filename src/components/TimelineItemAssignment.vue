@@ -25,7 +25,13 @@
         'border-color': themeColorHex
       }"
     >
-      <v-card-text>
+      <v-card-text
+        v-if="formatPreferTime"
+        class="pb-0"
+      >
+        {{ formatPreferTime }}
+      </v-card-text>
+      <v-card-text class="pb-0">
         <v-chip
           v-if="staffPrimary"
           class="mr-2"
@@ -41,7 +47,7 @@
           {{ staffSecondary && staffSecondary.username }}
         </v-chip>
       </v-card-text>
-      <v-card-text class="pt-0">
+      <v-card-text class="pb-0">
         <v-card-title class="subtitle-1 black--text pa-0">
           Tasks
         </v-card-title>
@@ -69,7 +75,7 @@
           </li>
         </ul>
       </v-card-text>
-      <v-card-text class="pt-0">
+      <v-card-text>
         <v-card-title class="subtitle-1 black--text pa-0">
           Actions
         </v-card-title>
@@ -107,6 +113,10 @@ import { format, isSameDay } from 'date-fns'
 export default {
   name: 'TimelineItemAssignment',
   props: {
+    preferTime: {
+      type: String,
+      default: null
+    },
     checkIn: {
       type: String,
       default: null
@@ -155,6 +165,13 @@ export default {
     },
     themeColorHex () {
       return this.$vuetify.theme.themes.light[this.themeColor]
+    },
+    formatPreferTime () {
+      if (this.preferTime == null) {
+        return ''
+      } else {
+        return 'Preferred time: ' + format(new Date(this.preferTime), 'd MMM yyyy HH:mm')
+      }
     },
     formatCheckTime () {
       if (this.checkIn == null) {

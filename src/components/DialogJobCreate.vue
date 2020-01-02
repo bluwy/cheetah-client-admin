@@ -61,6 +61,17 @@
               hide-selected
               hide-no-data
             />
+            <input-date-time
+              v-model="formJob.preferTime"
+              :date-props="{
+                label: 'Start date',
+                rules: rule.preferTime
+              }"
+              :time-props="{
+                label: 'Preferred time',
+                rules: rule.preferTime
+              }"
+            />
             <input-list-task
               :tasks="formJob.tasks"
               label="Tasks"
@@ -95,12 +106,14 @@
 </template>
 
 <script>
+import { formatISO } from 'date-fns'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { getErrorMessages, storeDeleteQuery } from '@/utils/apollo'
 import { cacheObjKeys, transformObj } from '@/utils/common'
 import { required, minArrLength } from '@/utils/inputRules'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import InputCustomer from '@/components/InputCustomer.vue'
+import InputDateTime from '@/components/InputDateTime.vue'
 import InputStaff from '@/components/InputStaff.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
@@ -110,6 +123,7 @@ import JOB_CREATE from '@/graphql/JobCreate.graphql'
 const formJobFactory = () => ({
   customerId: '',
   address: '',
+  preferTime: formatISO(new Date()),
   staffPrimaryId: '',
   staffSecondaryId: '',
   tasks: [{ type: '', remarks: '' }]
@@ -133,6 +147,7 @@ export default {
   components: {
     DialogYesNo,
     InputCustomer,
+    InputDateTime,
     InputStaff,
     InputListTask
   },
@@ -142,6 +157,7 @@ export default {
     formJob: formJobFactory(),
     rule: {
       customerId: [required],
+      preferTime: [required],
       staffPrimaryId: [required],
       address: [required],
       tasks: [required, minArrLength(1)]
@@ -195,9 +211,13 @@ export default {
       this.$refs.form && this.$refs.form.resetValidation()
     },
     parseFormToVars (form) {
-      return transformObj(cloneDeep(form), [
+      const vars = transformObj(cloneDeep(form), [
         { from: 'staffSecondaryId', to: 'staffSecondaryWhere', value: v => ({ id: v }) }
       ])
+
+      vars.preferTime = new Date(vars.preferTime)
+
+      return vars
     },
     async createJob () {
       if (this.$refs.form.validate() && this.isDirty) {
@@ -208,7 +228,7 @@ export default {
         try {
           await this.$apollo.mutate({
             mutation: JOB_CREATE,
-            variables: cache.formJob,
+            variables: this.parseFormToVars(cache.formJob),
             update: (store, { data: { createJob } }) => {
               if (createJob != null) {
                 storeDeleteQuery(store, /^jobs/)
