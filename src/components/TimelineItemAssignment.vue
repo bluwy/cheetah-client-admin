@@ -25,27 +25,47 @@
         'border-color': themeColorHex
       }"
     >
-      <v-card-text
-        v-if="formatPreferTime"
-        class="pb-0"
-      >
-        {{ formatPreferTime }}
-      </v-card-text>
       <v-card-text class="pb-0">
-        <v-chip
-          v-if="staffPrimary"
-          class="mr-2"
-          :color="themeColor"
+        <div
+          v-if="staffs.length"
+          class="mb-2"
         >
-          {{ staffPrimary && staffPrimary.username }}
-        </v-chip>
-        <v-chip
-          v-if="staffSecondary"
-          class="mr-2"
-          :color="themeColor"
+          <v-icon
+            left
+            :color="themeColor"
+          >
+            mdi-worker
+          </v-icon>
+          <v-chip
+            v-for="(staff, i) in staffs"
+            :key="i"
+            class="mr-2"
+            :color="themeColor"
+          >
+            {{ staff }}
+          </v-chip>
+        </div>
+        <div
+          v-if="formatPreferTime"
+          class="mb-2"
         >
-          {{ staffSecondary && staffSecondary.username }}
-        </v-chip>
+          <v-icon
+            left
+            :color="themeColor"
+          >
+            mdi-timetable
+          </v-icon>
+          {{ formatPreferTime }}
+        </div>
+        <div v-if="address">
+          <v-icon
+            left
+            :color="themeColor"
+          >
+            mdi-map-marker
+          </v-icon>
+          {{ address }}
+        </div>
       </v-card-text>
       <v-card-text class="pb-0">
         <v-card-title class="subtitle-1 black--text pa-0">
@@ -113,6 +133,10 @@ import { format, isSameDay } from 'date-fns'
 export default {
   name: 'TimelineItemAssignment',
   props: {
+    address: {
+      type: String,
+      default: null
+    },
     preferTime: {
       type: String,
       default: null
@@ -166,11 +190,17 @@ export default {
     themeColorHex () {
       return this.$vuetify.theme.themes.light[this.themeColor]
     },
+    staffs () {
+      return [
+        this.staffPrimary && this.staffPrimary.username,
+        this.staffSecondary && this.staffSecondary.username
+      ].filter(v => !!v)
+    },
     formatPreferTime () {
       if (this.preferTime == null) {
         return ''
       } else {
-        return 'Preferred time: ' + format(new Date(this.preferTime), 'd MMM yyyy HH:mm')
+        return format(new Date(this.preferTime), 'd MMM yyyy HH:mm')
       }
     },
     formatCheckTime () {
