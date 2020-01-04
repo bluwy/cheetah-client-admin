@@ -13,7 +13,7 @@
       @submit.prevent="createAssignment()"
     >
       <v-card>
-        <v-card-title>Add Assignment</v-card-title>
+        <v-card-title>Re-assign</v-card-title>
         <v-container>
           <v-card-title class="pt-0">
             <v-skeleton-loader
@@ -39,7 +39,7 @@
                   :rules="rule.staffPrimaryId"
                   :staffs-filter="v => v.id !== formAssignment.staffSecondaryId"
                   :loading="!!loadingCount"
-                  label="Handled by"
+                  label="Technician 1*"
                   hide-details
                   dense
                   clearable
@@ -54,7 +54,7 @@
                   :rules="rule.staffSecondaryId"
                   :staffs-filter="v => v.id !== formAssignment.staffPrimaryId"
                   :loading="!!loadingCount"
-                  label="Assisted by"
+                  label="Technician 2"
                   hide-details
                   dense
                   clearable
@@ -66,16 +66,16 @@
               :rules="rule.address"
               :items="customerAddresses"
               :loading="!!loadingCount"
-              label="Address"
+              label="Address*"
             />
             <input-date-time
               v-model="formAssignment.preferTime"
               :date-props="{
-                label: 'Start date',
+                label: 'Start date*',
                 rules: rule.preferTime
               }"
               :time-props="{
-                label: 'Preferred time',
+                label: 'Preferred time*',
                 rules: rule.preferTime
               }"
             />
@@ -104,7 +104,7 @@
             type="submit"
             color="primary"
           >
-            Create
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

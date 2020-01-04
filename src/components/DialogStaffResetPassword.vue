@@ -19,7 +19,7 @@
             <input-password
               v-model="password"
               :rules="passwordRule"
-              label="New password"
+              label="New password*"
               spellcheck="false"
             />
           </v-container>
@@ -43,7 +43,7 @@
             type="submit"
             color="primary"
           >
-            Reset
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

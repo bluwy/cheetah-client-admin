@@ -51,7 +51,7 @@
           <v-icon left>
             mdi-plus
           </v-icon>
-          Add assignment
+          Re-assign
         </v-btn>
         <dialog-assignment-create
           ref="dialogAssignmentCreate"

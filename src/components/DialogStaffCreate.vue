@@ -19,19 +19,19 @@
             <v-text-field
               v-model="formStaff.username"
               :rules="rule.username"
-              label="Username"
+              label="Username*"
               spellcheck="false"
             />
             <v-text-field
               v-model="formStaff.fullName"
               :rules="rule.fullName"
-              label="Full Name"
+              label="Full Name*"
               spellcheck="false"
             />
             <input-password
               v-model="formStaff.password"
               :rules="rule.password"
-              label="Password"
+              label="Password*"
               spellcheck="false"
             />
           </v-container>
@@ -55,7 +55,7 @@
             type="submit"
             color="primary"
           >
-            Create
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

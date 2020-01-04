@@ -19,13 +19,13 @@
             <v-text-field
               v-model="formCompany.alias"
               :rules="rule.alias"
-              label="Alias"
+              label="Alias*"
               spellcheck="false"
             />
             <v-text-field
               v-model="formCompany.name"
               :rules="rule.name"
-              label="Full Name"
+              label="Full Name*"
               spellcheck="false"
             />
           </v-container>
@@ -49,7 +49,7 @@
             type="submit"
             color="primary"
           >
-            Create
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

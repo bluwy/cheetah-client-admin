@@ -2,7 +2,7 @@
   <dialog-yes-no
     v-bind="$attrs"
     header="Remove admin?"
-    message="You cannot undo this action."
+    message="You cannot undo this action"
     v-on="$listeners"
     @no="close"
     @yes="deleteAdmin"

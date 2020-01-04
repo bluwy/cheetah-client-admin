@@ -19,13 +19,13 @@
             <v-text-field
               v-model="formAdmin.username"
               :rules="rule.username"
-              label="Username"
+              label="Username*"
               spellcheck="false"
             />
             <input-password
               v-model="formAdmin.password"
               :rules="rule.password"
-              label="Password"
+              label="Password*"
               spellcheck="false"
             />
             <v-radio-group
@@ -52,7 +52,7 @@
           <dialog-yes-no
             v-model="dialogClose"
             header="Are you sure?"
-            message="You cannot undo this action."
+            message="Data you have entered are not saved"
             @yes="close(true)"
           />
           <v-btn
@@ -66,7 +66,7 @@
             type="submit"
             color="primary"
           >
-            Create
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

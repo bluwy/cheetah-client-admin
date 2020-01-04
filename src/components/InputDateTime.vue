@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     formatDate () {
-      return format(new Date(this.date), 'd MMM yyyy')
+      return format(new Date(this.date), 'd MMM yyyy (EEEE)')
     },
     date () {
       const match = this.value.match(/\d\d\d\d-\d\d-\d\d/)

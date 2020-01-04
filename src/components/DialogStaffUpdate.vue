@@ -20,14 +20,14 @@
               v-model="newFormStaff.username"
               :rules="rule.username"
               :loading="!!loadingCount"
-              label="Username"
+              label="Username*"
               spellcheck="false"
             />
             <v-text-field
               v-model="newFormStaff.fullName"
               :rules="rule.fullName"
               :loading="!!loadingCount"
-              label="Full Name"
+              label="Full Name*"
               spellcheck="false"
             />
           </v-container>
@@ -51,7 +51,7 @@
             type="submit"
             color="primary"
           >
-            Edit
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

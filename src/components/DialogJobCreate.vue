@@ -19,9 +19,19 @@
             <input-customer
               v-model="formJob.customerId"
               :rules="rule.customerId"
-              label="Customer"
+              label="Customer*"
               dense
               clearable
+            />
+            <v-autocomplete
+              v-model="formJob.address"
+              :search-input.sync="formJob.address"
+              :rules="rule.address"
+              :items="customerAddresses"
+              class="mb-3"
+              label="Address*"
+              hide-selected
+              hide-no-data
             />
             <v-row>
               <v-col
@@ -32,7 +42,7 @@
                   v-model="formJob.staffPrimaryId"
                   :rules="rule.staffPrimaryId"
                   :staffs-filter="v => v.id !== formJob.staffSecondaryId"
-                  label="Handled by"
+                  label="Technician 1*"
                   dense
                   clearable
                 />
@@ -45,30 +55,20 @@
                   v-model="formJob.staffSecondaryId"
                   :rules="rule.staffSecondaryId"
                   :staffs-filter="v => v.id !== formJob.staffPrimaryId"
-                  label="Assisted by"
+                  label="Technician 2"
                   dense
                   clearable
                 />
               </v-col>
             </v-row>
-            <v-autocomplete
-              v-model="formJob.address"
-              :search-input.sync="formJob.address"
-              :rules="rule.address"
-              :items="customerAddresses"
-              class="mb-3"
-              label="Address"
-              hide-selected
-              hide-no-data
-            />
             <input-date-time
               v-model="formJob.preferTime"
               :date-props="{
-                label: 'Start date',
+                label: 'Start date*',
                 rules: rule.preferTime
               }"
               :time-props="{
-                label: 'Preferred time',
+                label: 'Preferred time*',
                 rules: rule.preferTime
               }"
             />
@@ -83,7 +83,7 @@
           <dialog-yes-no
             v-model="cancelDialog"
             header="Are you sure?"
-            message="You cannot undo this action."
+            message="Data you have entered are not saved"
             @yes="cancel(true)"
           />
           <v-btn
@@ -97,7 +97,7 @@
             type="submit"
             color="primary"
           >
-            Create
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

@@ -56,11 +56,11 @@ export default {
       taskType: [required]
     },
     taskTypes: [
-      { text: 'Service', value: 'SERVICE' },
-      { text: 'Complaint', value: 'COMPLAINT' },
-      { text: 'Delivery', value: 'DELIVERY' },
-      { text: 'Transport', value: 'TRANSPORT' },
-      { text: 'Others', value: 'OTHERS' }
+      { text: 'FOLLOW-UP SERVICE', value: 'SERVICE' },
+      { text: 'COMPLAINT', value: 'COMPLAINT' },
+      { text: 'DELIVERY', value: 'DELIVERY' },
+      { text: 'TRANSPORT', value: 'TRANSPORT' },
+      { text: 'OTHERS', value: 'OTHERS' }
     ]
   })
 }

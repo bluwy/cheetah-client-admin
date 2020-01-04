@@ -50,7 +50,7 @@
             <v-text-field
               v-model="formCustomer.phoneNumber"
               prepend-icon="mdi-phone"
-              placeholder="Phone number"
+              placeholder="Phone Number"
               hide-details
               dense
               solo
@@ -75,7 +75,7 @@
                 <input-company
                   v-model="formCustomer.companyBelongId"
                   :rules="rule.companyBelongId"
-                  label="Managed by"
+                  label="Managed by*"
                   hide-details
                   dense
                   clearable
@@ -89,7 +89,7 @@
                   v-model="formCustomer.staffPrimaryId"
                   :rules="rule.staffPrimaryId"
                   :staffs-filter="v => v.id !== formCustomer.staffSecondaryId"
-                  label="Handled by"
+                  label="Technician 1*"
                   hide-details
                   dense
                   clearable
@@ -102,7 +102,7 @@
                 <input-staff
                   v-model="formCustomer.staffSecondaryId"
                   :staffs-filter="v => v.id !== formCustomer.staffPrimaryId"
-                  label="Assisted by"
+                  label="Technician 2"
                   hide-details
                   dense
                   clearable
@@ -130,7 +130,7 @@
             type="submit"
             color="primary"
           >
-            Create
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>

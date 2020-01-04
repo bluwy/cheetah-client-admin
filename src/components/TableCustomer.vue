@@ -143,9 +143,9 @@ export default {
     headers: [
       { text: 'Code', value: 'code' },
       { text: 'Name', value: 'name' },
-      { text: 'PIC', value: 'staffPrimary.username', sortable: false },
-      { text: 'Assist', value: 'staffSecondary.username', sortable: false },
-      { text: 'Handled By', value: 'companyBelong.name', sortable: false },
+      { text: 'Technician 1', value: 'staffPrimary.username', sortable: false },
+      { text: 'Technician 2', value: 'staffSecondary.username', sortable: false },
+      { text: 'Company', value: 'companyBelong.name', sortable: false },
       { text: 'Temporary', value: 'temporary', sortable: false },
       { text: 'Active', value: 'active', sortable: false },
       { text: 'Actions', value: 'action', sortable: false }
