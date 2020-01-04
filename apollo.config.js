@@ -1,7 +1,7 @@
 module.exports = {
   client: {
     service: {
-      name: 'xecom-job-server',
+      name: 'e-job-server',
       url: 'http://localhost:4000/graphql'
     }
   }
