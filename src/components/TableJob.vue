@@ -3,7 +3,7 @@
     :headers="headers"
     :items="jobs"
     :server-items-length="jobCount"
-    :items-per-page="queryLimit"
+    :items-per-page.sync="queryLimit"
     :page.sync="page"
     :sort-by.sync="sortBy"
     :sort-desc.sync="sortDesc"
