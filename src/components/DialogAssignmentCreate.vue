@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-bind="$attrs"
-    persistent
+    :persistent="isDirty"
     width="600"
     max-width="95vw"
     v-on="$listeners"

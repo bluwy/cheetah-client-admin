@@ -3,7 +3,7 @@
     v-bind="$attrs"
     width="700"
     max-width="95vw"
-    persistent
+    :persistent="isDirty"
     v-on="$listeners"
   >
     <v-form

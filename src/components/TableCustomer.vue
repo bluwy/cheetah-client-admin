@@ -74,7 +74,7 @@
           <v-btn
             icon
             small
-            color="warning"
+            color="primary"
             v-on="on"
             @click.stop="$refs.dialogDetails.open(item.id)"
           >
