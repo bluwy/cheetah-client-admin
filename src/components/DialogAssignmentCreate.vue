@@ -15,11 +15,18 @@
       <v-card>
         <v-card-title>Add Assignment</v-card-title>
         <v-container>
-          <v-card-title
-            v-if="customerName"
-            class="pt-0"
-          >
-            {{ customerName }}
+          <v-card-title class="pt-0">
+            <v-skeleton-loader
+              :loading="!!loadingCount"
+              transition="fade-transition"
+              type="heading"
+              width="100%"
+              height="32px"
+            >
+              <div>
+                {{ customerName }}
+              </div>
+            </v-skeleton-loader>
           </v-card-title>
           <v-card-text>
             <v-row>
@@ -31,6 +38,7 @@
                   v-model="formAssignment.staffPrimaryId"
                   :rules="rule.staffPrimaryId"
                   :staffs-filter="v => v.id !== formAssignment.staffSecondaryId"
+                  :loading="!!loadingCount"
                   label="Handled by"
                   hide-details
                   dense
@@ -45,6 +53,7 @@
                   v-model="formAssignment.staffSecondaryId"
                   :rules="rule.staffSecondaryId"
                   :staffs-filter="v => v.id !== formAssignment.staffPrimaryId"
+                  :loading="!!loadingCount"
                   label="Assisted by"
                   hide-details
                   dense
@@ -56,6 +65,7 @@
               v-model="formAssignment.address"
               :rules="rule.address"
               :items="customerAddresses"
+              :loading="!!loadingCount"
               label="Address"
             />
             <input-date-time
@@ -129,7 +139,8 @@ export default {
       },
       skip () {
         return !this.jobId
-      }
+      },
+      loadingKey: 'loadingCount'
     }
   },
   components: {
@@ -140,6 +151,7 @@ export default {
   },
   data: () => ({
     valid: false,
+    loadingCount: 0,
     job: {},
     jobId: '',
     formAssignmentFactory: () => ({
@@ -173,7 +185,7 @@ export default {
       }
     },
     customerAddresses () {
-      let addresses = get(this, 'job.customer.addresses') || []
+      let addresses = get(this, 'job.customer.addresses', [])
 
       // The address may not be in the list since it's also bound by search-input
       // Add it if not in list, otherwise Vuetify will clear it
@@ -186,9 +198,9 @@ export default {
   },
   watch: {
     job (val) {
-      const address = get(val, 'customer.addresses[0]') || ''
-      const staffPrimaryId = get(val, 'customer.staffPrimary.id') || ''
-      const staffSecondaryId = get(val, 'customer.staffSecondary.id') || ''
+      const address = get(val, 'customer.addresses[0]', '')
+      const staffPrimaryId = get(val, 'customer.staffPrimary.id', '')
+      const staffSecondaryId = get(val, 'customer.staffSecondary.id', '')
 
       this.formAssignmentFactory = () => ({
         address,

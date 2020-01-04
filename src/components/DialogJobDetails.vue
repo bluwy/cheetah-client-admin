@@ -23,9 +23,31 @@
       </v-card-title>
       <v-container fluid>
         <v-card-title class="pt-0">
-          {{ jobCode }} - {{ customerName }}
+          <v-skeleton-loader
+            :loading="!!loadingCount"
+            transition="fade-transition"
+            type="heading"
+            width="100%"
+            height="30px"
+          >
+            <div>
+              {{ jobCode }} - {{ customerName }}
+            </div>
+          </v-skeleton-loader>
         </v-card-title>
-        <v-card-subtitle>Issued {{ issueDate }}</v-card-subtitle>
+        <v-card-subtitle>
+          <v-skeleton-loader
+            :loading="!!loadingCount"
+            transition="fade-transition"
+            type="text"
+            width="160px"
+            max-width="100%"
+          >
+            <div>
+              Issued {{ issueDate }}
+            </div>
+          </v-skeleton-loader>
+        </v-card-subtitle>
         <v-card-text>
           <div class="subtitle-1">
             Assignments
@@ -33,6 +55,7 @@
           <timeline-assignment
             :assignments="job.assignments"
             :job-id="jobId"
+            :loading="!!loadingCount"
           />
         </v-card-text>
       </v-container>
@@ -57,13 +80,15 @@ export default {
       },
       skip () {
         return !this.jobId
-      }
+      },
+      loadingKey: 'loadingCount'
     }
   },
   components: {
     TimelineAssignment
   },
   data: () => ({
+    loadingCount: 0,
     jobId: '',
     job: {}
   }),

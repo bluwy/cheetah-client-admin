@@ -35,57 +35,106 @@
                 cols="auto"
                 style="width: 120px;"
               >
-                <v-text-field
-                  v-model="newFormCustomer.code"
-                  class="font-weight-bold"
-                  placeholder="Code*"
-                  hide-details
-                  dense
-                  solo
-                  flat
-                />
+                <v-skeleton-loader
+                  :loading="!!loadingCount"
+                  transition="fade-transition"
+                  type="heading"
+                  height="38px"
+                  width="95%"
+                >
+                  <v-text-field
+                    v-model="newFormCustomer.code"
+                    class="font-weight-bold"
+                    placeholder="Code*"
+                    hide-details
+                    dense
+                    solo
+                    flat
+                  />
+                </v-skeleton-loader>
               </v-col>
               <v-col>
-                <v-text-field
-                  v-model="newFormCustomer.name"
-                  :rules="rule.name"
-                  placeholder="Name*"
-                  hide-details
-                  dense
-                  solo
-                  flat
-                />
+                <v-skeleton-loader
+                  :loading="!!loadingCount"
+                  transition="fade-transition"
+                  type="heading"
+                  height="38px"
+                >
+                  <v-text-field
+                    v-model="newFormCustomer.name"
+                    :rules="rule.name"
+                    placeholder="Name*"
+                    hide-details
+                    dense
+                    solo
+                    flat
+                  />
+                </v-skeleton-loader>
               </v-col>
             </v-row>
           </v-card-title>
           <v-card-text>
-            <v-text-field
-              v-model="newFormCustomer.phoneNumber"
-              prepend-icon="mdi-phone"
-              placeholder="Phone number"
-              hide-details
-              dense
-              solo
-              flat
-            />
-            <v-text-field
-              v-model="newFormCustomer.email"
-              :rules="rule.email"
-              prepend-icon="mdi-email"
-              placeholder="Email"
-              hide-details
-              dense
-              solo
-              flat
-            />
-            <input-addresses
-              :addresses="newFormCustomer.addresses"
-              prepend-icon="mdi-map-marker"
-            />
+            <v-skeleton-loader
+              class="skeleton-icon-field"
+              :loading="!!loadingCount"
+              :types="{ skeleton: 'avatar, text' }"
+              transition="fade-transition"
+              type="skeleton"
+              height="38px"
+              width="400px"
+              max-width="100%"
+            >
+              <v-text-field
+                v-model="newFormCustomer.phoneNumber"
+                prepend-icon="mdi-phone"
+                placeholder="Phone number"
+                hide-details
+                dense
+                solo
+                flat
+              />
+            </v-skeleton-loader>
+            <v-skeleton-loader
+              class="skeleton-icon-field"
+              :loading="!!loadingCount"
+              :types="{ skeleton: 'avatar, text' }"
+              transition="fade-transition"
+              type="skeleton"
+              height="38px"
+              width="400px"
+              max-width="100%"
+            >
+              <v-text-field
+                v-model="newFormCustomer.email"
+                :rules="rule.email"
+                prepend-icon="mdi-email"
+                placeholder="Email"
+                hide-details
+                dense
+                solo
+                flat
+              />
+            </v-skeleton-loader>
+            <v-skeleton-loader
+              class="skeleton-icon-field"
+              :loading="!!loadingCount"
+              :types="{ skeleton: 'avatar, text' }"
+              transition="fade-transition"
+              type="skeleton"
+              height="88px"
+              width="400px"
+              max-width="100%"
+            >
+              <input-addresses
+                :addresses="newFormCustomer.addresses"
+                prepend-icon="mdi-map-marker"
+              />
+            </v-skeleton-loader>
             <v-row>
               <v-col cols="12">
                 <input-company
                   v-model="newFormCustomer.companyBelongId"
+                  :loading="!!loadingCount"
                   label="Managed by"
                   hide-details
                   dense
@@ -99,6 +148,7 @@
                 <input-staff
                   v-model="newFormCustomer.staffPrimaryId"
                   :staffs-filter="v => v.id !== newFormCustomer.staffSecondaryId"
+                  :loading="!!loadingCount"
                   label="Handled by"
                   hide-details
                   dense
@@ -112,6 +162,7 @@
                 <input-staff
                   v-model="newFormCustomer.staffSecondaryId"
                   :staffs-filter="v => v.id !== newFormCustomer.staffPrimaryId"
+                  :loading="!!loadingCount"
                   label="Assisted by"
                   hide-details
                   dense
@@ -174,7 +225,8 @@ export default {
       },
       skip () {
         return !this.customerId
-      }
+      },
+      loadingKey: 'loadingCount'
     }
   },
   components: {
@@ -185,6 +237,7 @@ export default {
   },
   data: () => ({
     valid: false,
+    loadingCount: 0,
     // Customer from server
     customerId: '',
     customer: {},
@@ -302,6 +355,19 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.skeleton-icon-field {
+  display: flex;
+}
 
+.skeleton-icon-field >>> .v-skeleton-loader__text {
+  margin: 0;
+  margin-top: 13px;
+}
+
+.skeleton-icon-field >>> .v-skeleton-loader__avatar {
+  width: 32px;
+  height: 32px;
+  margin-right: 6px;
+}
 </style>

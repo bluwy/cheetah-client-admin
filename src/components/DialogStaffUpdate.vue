@@ -19,12 +19,14 @@
             <v-text-field
               v-model="newFormStaff.username"
               :rules="rule.username"
+              :loading="!!loadingCount"
               label="Username"
               spellcheck="false"
             />
             <v-text-field
               v-model="newFormStaff.fullName"
               :rules="rule.fullName"
+              :loading="!!loadingCount"
               label="Full Name"
               spellcheck="false"
             />
@@ -80,7 +82,8 @@ export default {
       },
       skip () {
         return !this.staffId
-      }
+      },
+      loadingKey: 'loadingCount'
     }
   },
   components: {
@@ -88,6 +91,7 @@ export default {
   },
   data: () => ({
     valid: false,
+    loadingCount: 0,
     // Staff from server
     staffId: '',
     staff: {},
