@@ -151,8 +151,8 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     page: 1,
-    queryLimit: 5,
-    sortBy: 'id',
+    queryLimit: 20,
+    sortBy: 'code',
     sortDesc: false,
     showTemporary: undefined,
     showActive: undefined,

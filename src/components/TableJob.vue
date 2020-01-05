@@ -10,6 +10,7 @@
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
+    @click.
   >
     <template #top>
       <v-toolbar flat>
@@ -137,9 +138,9 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     page: 1,
-    queryLimit: 5,
-    sortBy: 'id',
-    sortDesc: false,
+    queryLimit: 20,
+    sortBy: 'dateIssued',
+    sortDesc: true,
     jobs: [],
     jobCount: 0,
     dialogCreate: false,
