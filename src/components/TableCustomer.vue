@@ -141,7 +141,7 @@ export default {
     ],
     page: 1,
     queryLimit: 20,
-    sortBy: 'code',
+    sortBy: 'name',
     sortDesc: false,
     showActive: undefined,
     customers: [],

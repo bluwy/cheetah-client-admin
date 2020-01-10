@@ -3,7 +3,9 @@
     :headers="headers"
     :items="companies"
     :loading="!!loadingCount"
+    sort-by="name"
     hide-default-footer
+    must-sort
   >
     <template #top>
       <v-toolbar flat>

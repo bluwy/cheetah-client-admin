@@ -10,7 +10,6 @@
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
-    @click.
   >
     <template #top>
       <v-toolbar flat>

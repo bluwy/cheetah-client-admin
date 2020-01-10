@@ -3,7 +3,9 @@
     :headers="headers"
     :items="staffs"
     :loading="!!loadingCount"
+    sort-by="username"
     hide-default-footer
+    must-sort
   >
     <template #top>
       <v-toolbar flat>
