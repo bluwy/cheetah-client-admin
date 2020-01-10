@@ -7,7 +7,6 @@ mutation CustomerCreate(
   $phoneNumber: String,
   $companyBelongId: ID!
   $email: String,
-  $temporary: Boolean,
   $active: Boolean,
   $staffPrimaryId: ID!,
   $staffSecondaryWhere: StaffWhereUniqueInput
@@ -20,7 +19,6 @@ mutation CustomerCreate(
       phoneNumber: $phoneNumber,
       companyBelong: { id: $companyBelongId },
       email: $email,
-      temporary: $temporary,
       active: $active,
       staffPrimary: { id: $staffPrimaryId },
       staffSecondary: $staffSecondaryWhere

@@ -217,10 +217,7 @@ export default {
         try {
           await this.$apollo.mutate({
             mutation: CUSTOMER_CREATE,
-            variables: {
-              ...this.parseFormToVars(cache.formCustomer),
-              temporary: this.isPrivilegeBasic
-            },
+            variables: this.parseFormToVars(cache.formCustomer),
             update: (store, { data: { createCustomer } }) => {
               if (createCustomer != null) {
                 console.log(store)

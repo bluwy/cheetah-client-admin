@@ -3,4 +3,5 @@ fragment staffFragment on Staff {
   username
   fullName
   passwordForgotten
+  active
 }

@@ -60,6 +60,15 @@
         </template>
       </v-tooltip>
     </template>
+    <template #item.active="{ item }">
+      <v-checkbox
+        class="my-0 py-0"
+        :input-value="item.active"
+        hide-details
+        dense
+        @change="toggleActive(item)"
+      />
+    </template>
     <template #item.action="{ item }">
       <v-tooltip top>
         <span>Update staff</span>
@@ -118,7 +127,9 @@ import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
 import DialogStaffUpdate from '@/components/DialogStaffUpdate.vue'
 import DialogStaffDelete from '@/components/DialogStaffDelete.vue'
 import DialogStaffResetPassword from '@/components/DialogStaffResetPassword.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
+import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
 
 export default {
   name: 'TableStaff',
@@ -139,6 +150,7 @@ export default {
     headers: [
       { text: 'Username', value: 'username' },
       { text: 'Full Name', value: 'fullName' },
+      { text: 'Active', value: 'active' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
     staffs: [],
@@ -150,6 +162,19 @@ export default {
   methods: {
     refetch () {
       this.$apollo.queries.staffs.refetch()
+    },
+    async toggleActive (staff) {
+      const { id, active } = staff
+
+      try {
+        await this.$apollo.mutate({
+          mutation: STAFF_UPDATE,
+          variables: { id, active: !active }
+        })
+      } catch (e) {
+        console.log(e)
+        snackbarPush({ color: 'error', message: 'Unable to toggle active' })
+      }
     }
   }
 }

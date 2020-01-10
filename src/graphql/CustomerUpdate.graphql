@@ -8,7 +8,6 @@ mutation CustomerUpdate(
   $phoneNumber: String,
   $companyBelongWhere: CompanyWhereUniqueInput,
   $email: String,
-  $temporary: Boolean,
   $active: Boolean,
   $staffPrimaryWhere: StaffWhereUniqueInput,
   $staffSecondaryWhere: StaffWhereUniqueInput
@@ -21,7 +20,6 @@ mutation CustomerUpdate(
       addresses: $addresses,
       phoneNumber: $phoneNumber,
       companyBelong: $companyBelongWhere,
-      temporary: $temporary,
       active: $active,
       staffPrimary: $staffPrimaryWhere,
       staffSecondary: $staffSecondaryWhere

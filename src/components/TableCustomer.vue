@@ -48,16 +48,6 @@
         />
       </v-toolbar>
     </template>
-    <template #item.temporary="{ item }">
-      <v-checkbox
-        class="my-0 py-0"
-        :input-value="item.temporary"
-        :readonly="isPrivilegeBasic"
-        hide-details
-        dense
-        @change="toggleTemporary(item)"
-      />
-    </template>
     <template #item.active="{ item }">
       <v-checkbox
         class="my-0 py-0"
@@ -146,7 +136,6 @@ export default {
       { text: 'Technician 1', value: 'staffPrimary.username', sortable: false },
       { text: 'Technician 2', value: 'staffSecondary.username', sortable: false },
       { text: 'Company', value: 'companyBelong.name', sortable: false },
-      { text: 'Temporary', value: 'temporary', sortable: false },
       { text: 'Active', value: 'active', sortable: false },
       { text: 'Actions', value: 'action', sortable: false }
     ],
@@ -154,7 +143,6 @@ export default {
     queryLimit: 20,
     sortBy: 'code',
     sortDesc: false,
-    showTemporary: undefined,
     showActive: undefined,
     customers: [],
     customerCount: 0,
@@ -174,29 +162,13 @@ export default {
     },
     queryWhere () {
       return {
-        AND: [
-          { temporary: { equals: this.showTemporary } },
-          { active: { equals: this.showActive } }
-        ]
+        active: { equals: this.showActive }
       }
     }
   },
   methods: {
     refetch () {
       this.$apollo.queries.customers.refetch()
-    },
-    async toggleTemporary (customer) {
-      const { id, temporary } = customer
-
-      try {
-        await this.$apollo.mutate({
-          mutation: CUSTOMER_UPDATE,
-          variables: { id, temporary: !temporary }
-        })
-      } catch (e) {
-        console.log(e)
-        snackbarPush({ color: 'error', message: 'Unable to toggle temporary' })
-      }
     },
     async toggleActive (customer) {
       const { id, active } = customer
