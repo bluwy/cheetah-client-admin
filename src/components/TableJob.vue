@@ -13,8 +13,16 @@
   >
     <template #top>
       <v-toolbar flat>
-        <v-toolbar-title>Jobs</v-toolbar-title>
+        <v-toolbar-title>{{ tableTitle }}</v-toolbar-title>
         <v-spacer />
+        <v-text-field
+          v-if="searchable"
+          v-model="searchQuery"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        />
         <v-btn
           class="mr-3"
           icon
@@ -23,19 +31,6 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <v-btn
-          color="primary"
-          @click.stop="dialogCreate = true"
-        >
-          <v-icon left>
-            mdi-plus-circle
-          </v-icon>
-          Create
-        </v-btn>
-        <dialog-job-create
-          v-model="dialogCreate"
-          @create-job="refetch()"
-        />
         <dialog-job-details
           ref="dialogDetails"
           v-model="dialogDetails"
@@ -97,7 +92,6 @@
 
 <script>
 import { format } from 'date-fns'
-import DialogJobCreate from '@/components/DialogJobCreate.vue'
 import DialogJobDetails from '@/components/DialogJobDetails.vue'
 import DialogJobDelete from '@/components/DialogJobDelete.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
@@ -119,13 +113,31 @@ export default {
       loadingKey: 'loadingCount'
     },
     jobCount: {
-      query: JOB_COUNT
+      query: JOB_COUNT,
+      variables () {
+        return {
+          where: this.queryWhere
+        }
+      }
     }
   },
   components: {
-    DialogJobCreate,
     DialogJobDetails,
     DialogJobDelete
+  },
+  props: {
+    tableTitle: {
+      type: String,
+      default: 'Jobs'
+    },
+    searchable: {
+      type: Boolean,
+      default: false
+    },
+    extraQueryWhere: {
+      type: Object,
+      default: () => undefined
+    }
   },
   data: () => ({
     loadingCount: 0,
@@ -133,16 +145,15 @@ export default {
       { text: 'Code', value: 'code' },
       { text: 'Customer', value: 'customer.name', sortable: false },
       { text: 'Date Issued', value: 'dateIssued' },
-      { text: 'Follow Up', value: 'needsFollowUp' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
     page: 1,
     queryLimit: 20,
     sortBy: 'dateIssued',
     sortDesc: true,
+    searchQuery: '',
     jobs: [],
     jobCount: 0,
-    dialogCreate: false,
     dialogDetails: false,
     dialogDelete: false
   }),
@@ -154,7 +165,22 @@ export default {
       return { [this.sortBy]: this.sortDesc ? 'desc' : 'asc' }
     },
     queryWhere () {
-      return undefined
+      const andWheres = []
+
+      if (this.extraQueryWhere) {
+        andWheres.push(this.extraQueryWhere)
+      }
+
+      if (this.searchable && this.searchQuery) {
+        andWheres.push({
+          OR: [
+            { code: { contains: this.searchQuery } },
+            { customer: { name: { contains: this.searchQuery } } }
+          ]
+        })
+      }
+
+      return andWheres.length > 0 ? { AND: andWheres } : undefined
     }
   },
   methods: {

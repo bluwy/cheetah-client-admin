@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      elevation="0"
+      elevate-on-scroll
     >
       <v-toolbar-title class="app-bar__title">
         e-Job Sheet

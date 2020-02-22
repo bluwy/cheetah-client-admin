@@ -13,8 +13,16 @@
   >
     <template #top>
       <v-toolbar flat>
-        <v-toolbar-title>Customers</v-toolbar-title>
+        <v-toolbar-title>{{ tableTitle }}</v-toolbar-title>
         <v-spacer />
+        <v-text-field
+          v-if="searchable"
+          v-model="searchQuery"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        />
         <v-btn
           class="mr-3"
           icon
@@ -23,20 +31,6 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <v-btn
-          color="primary"
-          @click.stop="dialogCreate = true"
-        >
-          <v-icon left>
-            mdi-plus-circle
-          </v-icon>
-          Create
-        </v-btn>
-        <dialog-customer-create
-          ref="dialogCreate"
-          v-model="dialogCreate"
-          @create-customer="refetch()"
-        />
         <dialog-customer-details
           ref="dialogDetails"
           v-model="dialogDetails"
@@ -96,7 +90,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import DialogCustomerCreate from '@/components/DialogCustomerCreate.vue'
 import DialogCustomerDetails from '@/components/DialogCustomerDetails.vue'
 import DialogCustomerDelete from '@/components/DialogCustomerDelete.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
@@ -120,13 +113,31 @@ export default {
       loadingKey: 'loadingCount'
     },
     customerCount: {
-      query: CUSTOMER_COUNT
+      query: CUSTOMER_COUNT,
+      variables () {
+        return {
+          where: this.queryWhere
+        }
+      }
     }
   },
   components: {
-    DialogCustomerCreate,
     DialogCustomerDetails,
     DialogCustomerDelete
+  },
+  props: {
+    tableTitle: {
+      type: String,
+      default: 'Customers'
+    },
+    searchable: {
+      type: Boolean,
+      default: false
+    },
+    extraQueryWhere: {
+      type: Object,
+      default: () => undefined
+    }
   },
   data: () => ({
     loadingCount: 0,
@@ -143,6 +154,7 @@ export default {
     queryLimit: 20,
     sortBy: 'name',
     sortDesc: false,
+    searchQuery: '',
     showActive: undefined,
     customers: [],
     customerCount: 0,
@@ -161,9 +173,19 @@ export default {
       return { [this.sortBy]: this.sortDesc ? 'desc' : 'asc' }
     },
     queryWhere () {
-      return {
-        active: { equals: this.showActive }
+      const andWheres = []
+
+      if (this.extraQueryWhere) {
+        andWheres.push(this.extraQueryWhere)
       }
+
+      if (this.searchable && this.searchQuery) {
+        andWheres.push({
+          active: { equals: this.showActive }
+        })
+      }
+
+      return andWheres.length > 0 ? { AND: andWheres } : undefined
     }
   },
   methods: {

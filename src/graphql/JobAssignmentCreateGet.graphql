@@ -1,6 +1,6 @@
 #import "./fragments/Job.graphql"
 
-query JobGet($id: ID!) {
+query JobAssignmentCreateGet($id: ID!) {
   job(where: { id: $id }) {
     id
     customer {
