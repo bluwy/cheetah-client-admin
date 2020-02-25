@@ -1,0 +1,23 @@
+mutation StaffUpdate(
+  $id: ID!,
+  $username: String,
+  $fullName: String,
+  $active
+) {
+  updateStaff(
+    id: $id,
+    data: {
+      username: $username,
+      fullName: $fullName,
+      active: $active
+    }
+  ) {
+    id
+    createdAt
+    updatedAt
+    username
+    fullName
+    active
+    linked
+  }
+}

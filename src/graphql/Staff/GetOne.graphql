@@ -1,0 +1,11 @@
+query StaffGetOne($id: ID!) {
+  staff(id: $id) {
+    id
+    createdAt
+    updatedAt
+    username
+    fullName
+    active
+    linked
+  }
+}

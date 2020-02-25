@@ -1,0 +1,11 @@
+query StaffGetAll($where: StaffWhereInput) {
+  staffs(where: $where) {
+    id
+    createdAt
+    updatedAt
+    username
+    fullName
+    active
+    linked
+  }
+}

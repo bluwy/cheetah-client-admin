@@ -1,0 +1,3 @@
+mutation StaffResetDevice($id: ID!) {
+  resetStaffDeviceId(id: $id)
+}
