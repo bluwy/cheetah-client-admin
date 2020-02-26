@@ -1,0 +1,3 @@
+mutation StaffResetPairing($id: ID!) {
+  resetStaffPairing(id: $id)
+}

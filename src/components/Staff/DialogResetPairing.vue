@@ -1,7 +1,7 @@
 <template>
   <dialog-yes-no
-    header="Reset staff device pairing?"
-    message="If this staff has a new phone, reset this pairing to allow the staff to pair to this account. The previous pairing will be logged out."
+    header="Reset staff pairing?"
+    message="If this staff has a new phone, reset this pairing to allow the staff to re-pair to this account. The previous pairing will be logged out."
     @no="close()"
     @yes="resetStaffDeviceId()"
   />
@@ -11,7 +11,7 @@
 import { cacheObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/DialogYesNo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import STAFF_RESET_DEVICE from '@/graphql/Staff/ResetDevice.graphql'
+import STAFF_RESET_PAIRING from '@/graphql/Staff/ResetPairing.graphql'
 
 export default {
   name: 'StaffDialogResetDevice',
@@ -34,11 +34,11 @@ export default {
 
       this.close()
 
-      snackbarPush({ color: 'success', message: 'Resetted staff device' })
+      snackbarPush({ color: 'success', message: 'Resetted staff pairing' })
 
       try {
         await this.$apollo.mutate({
-          mutation: STAFF_RESET_DEVICE,
+          mutation: STAFF_RESET_PAIRING,
           variables: {
             id: cache.staffId
           }
@@ -50,7 +50,7 @@ export default {
 
         this.open(cache.staffId)
 
-        snackbarPush({ color: 'error', message: 'Unable to reset staff device' })
+        snackbarPush({ color: 'error', message: 'Unable to reset staff pairing' })
       }
     }
   }
