@@ -3,7 +3,7 @@
     ref="form"
     v-model="valid"
     lazy-validation
-    @submit.prevent="createStaff()"
+    @submit.prevent="updateStaff()"
   >
     <v-dialog
       :persistent="isDirty"

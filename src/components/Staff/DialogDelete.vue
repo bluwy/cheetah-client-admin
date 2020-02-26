@@ -2,8 +2,8 @@
   <dialog-yes-no
     header="Remove staff?"
     message="You cannot undo this action"
-    @no="close"
-    @yes="deleteStaff"
+    @no="close()"
+    @yes="deleteStaff()"
   />
 </template>
 

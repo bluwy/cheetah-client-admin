@@ -6,6 +6,7 @@
     sort-by="username"
     hide-default-footer
     must-sort
+    @click:row="$refs.dialogUpdate.open($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -28,39 +29,36 @@
           </v-icon>
           Create
         </v-btn>
-        <dialog-staff-create v-model="dialogCreate" />
-        <dialog-staff-update
+        <staff-dialog-create v-model="dialogCreate" />
+        <staff-dialog-update
           ref="dialogUpdate"
           v-model="dialogUpdate"
         />
-        <dialog-staff-reset-password
-          ref="dialogResetPassword"
-          v-model="dialogResetPassword"
+        <staff-dialog-reset-device
+          ref="dialogResetDevice"
+          v-model="dialogResetDevice"
         />
-        <dialog-staff-delete
+        <staff-dialog-delete
           ref="dialogDelete"
           v-model="dialogDelete"
         />
       </v-toolbar>
     </template>
-    <template #item.username="{ item }">
-      <span>{{ item.username }}</span>
-      <v-tooltip
-        v-if="item.passwordForgotten"
-        top
+    <template #item.linked="{ item }">
+      <v-icon
+        v-if="item.linked"
+        small
+        color="success"
       >
-        <span>Staff has forgotten his/her password</span>
-        <template #activator="{ on }">
-          <v-icon
-            right
-            dense
-            color="warning"
-            v-on="on"
-          >
-            mdi-alert-circle
-          </v-icon>
-        </template>
-      </v-tooltip>
+        mdi-check
+      </v-icon>
+      <v-icon
+        v-else
+        small
+        color="error"
+      >
+        mdi-close
+      </v-icon>
     </template>
     <template #item.active="{ item }">
       <v-checkbox
@@ -71,64 +69,53 @@
         @change="toggleActive(item)"
       />
     </template>
-    <template #item.action="{ item }">
-      <v-tooltip top>
-        <span>Update staff</span>
-        <template #activator="{ on }">
+    <template #item.menu="{ item }">
+      <v-menu>
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
-            small
+            color="primary"
+            v-on="on"
+          >
+            <v-icon>
+              mdi-dots-horizontal
+            </v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
             color="warning"
-            v-on="on"
-            @click.stop="$refs.dialogUpdate.open(item.id)"
+            @click.stop="$refs.dialogResetDevice.open(item.id)"
           >
-            <v-icon small>
-              mdi-pencil
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
-      <v-tooltip top>
-        <span>Reset password</span>
-        <template #activator="{ on }">
-          <v-btn
-            icon
-            small
+            <v-list-item-icon>
+              <v-icon>mdi-lock</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Reset device</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
             color="error"
-            v-on="on"
-            @click.stop="$refs.dialogResetPassword.open(item.id)"
-          >
-            <v-icon small>
-              mdi-lock
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
-      <v-tooltip top>
-        <span>Remove staff</span>
-        <template #activator="{ on }">
-          <v-btn
-            icon
-            small
-            color="error"
-            v-on="on"
             @click.stop="$refs.dialogDelete.open(item.id)"
           >
-            <v-icon small>
-              mdi-delete
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
+            <v-list-item-icon>
+              <v-icon>mdi-delete</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Remove staff</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
   </v-data-table>
 </template>
 
 <script>
-import DialogStaffCreate from '@/components/DialogStaffCreate.vue'
-import DialogStaffUpdate from '@/components/DialogStaffUpdate.vue'
-import DialogStaffDelete from '@/components/DialogStaffDelete.vue'
-import DialogStaffResetPassword from '@/components/DialogStaffResetPassword.vue'
+import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
+import StaffDialogUpdate from '@/components/Staff/DialogUpdate.vue'
+import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
+import StaffDialogResetDevice from '@/components/Staff/DialogResetDevice.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
@@ -142,23 +129,24 @@ export default {
     }
   },
   components: {
-    DialogStaffCreate,
-    DialogStaffUpdate,
-    DialogStaffResetPassword,
-    DialogStaffDelete
+    StaffDialogCreate,
+    StaffDialogUpdate,
+    StaffDialogDelete,
+    StaffDialogResetDevice
   },
   data: () => ({
     loadingCount: 0,
     headers: [
       { text: 'Username', value: 'username' },
       { text: 'Full Name', value: 'fullName' },
+      { text: 'Device Linked', value: 'linked' },
       { text: 'Active', value: 'active' },
-      { text: 'Actions', value: 'action', sortable: false }
+      { text: '', value: 'menu', sortable: false }
     ],
     staffs: [],
     dialogCreate: false,
     dialogUpdate: false,
-    dialogResetPassword: false,
+    dialogResetDevice: false,
     dialogDelete: false
   }),
   methods: {
@@ -174,7 +162,8 @@ export default {
           variables: { id, active: !active }
         })
       } catch (e) {
-        console.log(e)
+        console.error(e)
+
         snackbarPush({ color: 'error', message: 'Unable to toggle active' })
       }
     }

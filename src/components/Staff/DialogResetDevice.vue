@@ -2,8 +2,8 @@
   <dialog-yes-no
     header="Reset staff device?"
     message="If this staff had a new phone, reset the device to allow the staff to pair to this account"
-    @no="close"
-    @yes="deleteStaff"
+    @no="close()"
+    @yes="resetStaffDeviceId()"
   />
 </template>
 
@@ -14,7 +14,7 @@ import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_RESET_DEVICE from '@/graphql/Staff/ResetDevice.graphql'
 
 export default {
-  name: 'StaffDialogDelete',
+  name: 'StaffDialogResetDevice',
   components: {
     DialogYesNo
   },
