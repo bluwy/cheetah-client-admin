@@ -44,6 +44,13 @@
         />
       </v-toolbar>
     </template>
+    <template #item.fullName="{ item }">
+      <input-data-text
+        :value="item.fullName"
+        :rules="rules.fullName"
+        @update="updateFullName(item.id, $event)"
+      />
+    </template>
     <template #item.linked="{ item }">
       <v-icon
         v-if="item.linked"
@@ -66,7 +73,7 @@
         :input-value="item.active"
         hide-details
         dense
-        @change="toggleActive(item)"
+        @change="updateActive(item.id, $event.target.checked)"
       />
     </template>
     <template #item.menu="{ item }">
@@ -112,10 +119,12 @@
 </template>
 
 <script>
+import { required, maxStrLength } from '@/utils/inputRules'
 import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
 import StaffDialogUpdate from '@/components/Staff/DialogUpdate.vue'
 import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
 import StaffDialogResetDevice from '@/components/Staff/DialogResetDevice.vue'
+import InputDataText from '@/components/InputDataText.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
@@ -132,7 +141,8 @@ export default {
     StaffDialogCreate,
     StaffDialogUpdate,
     StaffDialogDelete,
-    StaffDialogResetDevice
+    StaffDialogResetDevice,
+    InputDataText
   },
   data: () => ({
     loadingCount: 0,
@@ -144,6 +154,9 @@ export default {
       { text: '', value: 'menu', sortable: false }
     ],
     staffs: [],
+    rules: {
+      fullName: [required, maxStrLength(128)]
+    },
     dialogCreate: false,
     dialogUpdate: false,
     dialogResetDevice: false,
@@ -153,13 +166,23 @@ export default {
     refetch () {
       this.$apollo.queries.staffs.refetch()
     },
-    async toggleActive (staff) {
-      const { id, active } = staff
-
+    async updateFullName (staffId, newFullName) {
       try {
         await this.$apollo.mutate({
           mutation: STAFF_UPDATE,
-          variables: { id, active: !active }
+          variables: { id: staffId, fullName: newFullName }
+        })
+      } catch (e) {
+        console.error(e)
+
+        snackbarPush({ color: 'error', message: 'Unable to update full name' })
+      }
+    },
+    async updateActive (staffId, newActive) {
+      try {
+        await this.$apollo.mutate({
+          mutation: STAFF_UPDATE,
+          variables: { id: staffId, active: newActive }
         })
       } catch (e) {
         console.error(e)

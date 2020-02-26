@@ -29,22 +29,36 @@
             <v-text-field
               v-model="formStaff.username"
               :rules="rule.username"
-              label="Username"
               spellcheck="false"
-            />
+            >
+              <template>
+                Username
+                <tooltip-info>
+                  Used to identify a staff. This field cannot be changed later on.
+                </tooltip-info>
+              </template>
+            </v-text-field>
             <v-text-field
               v-model="formStaff.fullName"
               :rules="rule.fullName"
-              label="Full Name"
               spellcheck="false"
-            />
-            <input-password
-              v-model="formStaff.password"
-              :rules="rule.password"
-              label="Password"
-              spellcheck="false"
-            />
+            >
+              <template>
+                Full Name
+                <tooltip-info>
+                  Used for searching a staff. This field can be changed anytime.
+                </tooltip-info>
+              </template>
+            </v-text-field>
           </v-container>
+          <v-alert
+            outlined
+            color="primary"
+          >
+            After creating a new staff, request the staff to <strong>login</strong>
+            to the app and <strong>enter the username</strong> above. This will
+            link the staff's device to this account.
+          </v-alert>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -77,8 +91,8 @@
 import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
+import TooltipInfo from '@/components/TooltipInfo.vue'
 import DialogYesNo from '@/components/DialogYesNo.vue'
-import InputPassword from '@/components/InputPassword.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_CREATE from '@/graphql/Staff/Create.graphql'
 import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
@@ -93,7 +107,7 @@ export default {
   name: 'StaffDialogCreate',
   components: {
     DialogYesNo,
-    InputPassword
+    TooltipInfo
   },
   inheritAttrs: false,
   data: () => ({

@@ -1,17 +1,5 @@
-mutation StaffUpdate(
-  $id: ID!,
-  $username: String,
-  $fullName: String,
-  $active
-) {
-  updateStaff(
-    id: $id,
-    data: {
-      username: $username,
-      fullName: $fullName,
-      active: $active
-    }
-  ) {
+mutation StaffUpdate($id: ID!, $fullName: String, $active: Boolean!) {
+  updateStaff(id: $id, data: { fullName: $fullName, active: $active }) {
     id
     createdAt
     updatedAt
