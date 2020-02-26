@@ -1,0 +1,9 @@
+query CompanyGetOne($id: ID!) {
+  company(id: $id) {
+    id
+    createdAt
+    updatedAt
+    name
+    alias
+  }
+}

@@ -1,0 +1,9 @@
+mutation CompanyCreate($name: String!, $alias: String!) {
+  createCompany(data: { name: $name, alias: $aliasz }) {
+    id
+    createdAt
+    updatedAt
+    name
+    alias
+  }
+}
