@@ -1,0 +1,9 @@
+query AdminGetOne($id: ID!) {
+  admin(id: $id) {
+    id
+    createdAt
+    updatedAt
+    username
+    privilege
+  }
+}

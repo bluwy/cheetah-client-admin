@@ -1,0 +1,9 @@
+query AdminGetAll($where: AdminWhereInput) {
+  admins(where: $where) {
+    id
+    createdAt
+    updatedAt
+    username
+    privilege
+  }
+}
