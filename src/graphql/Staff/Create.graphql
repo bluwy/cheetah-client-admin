@@ -6,6 +6,6 @@ mutation StaffCreate($username: String!, $fullName: String!) {
     username
     fullName
     active
-    linked
+    paired
   }
 }

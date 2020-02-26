@@ -34,9 +34,9 @@
           ref="dialogUpdate"
           v-model="dialogUpdate"
         />
-        <staff-dialog-reset-device
-          ref="dialogResetDevice"
-          v-model="dialogResetDevice"
+        <staff-dialog-reset-pairing
+          ref="dialogResetPairing"
+          v-model="dialogResetPairing"
         />
         <staff-dialog-delete
           ref="dialogDelete"
@@ -51,9 +51,9 @@
         @update="updateFullName(item.id, $event)"
       />
     </template>
-    <template #item.linked="{ item }">
+    <template #item.paired="{ item }">
       <v-icon
-        v-if="item.linked"
+        v-if="item.paired"
         small
         color="success"
       >
@@ -92,13 +92,13 @@
         <v-list>
           <v-list-item
             color="warning"
-            @click.stop="$refs.dialogResetDevice.open(item.id)"
+            @click.stop="$refs.dialogResetPairing.open(item.id)"
           >
             <v-list-item-icon>
               <v-icon>mdi-lock</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Reset device</v-list-item-title>
+              <v-list-item-title>Reset pairing</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item
@@ -123,7 +123,7 @@ import { required, maxStrLength } from '@/utils/inputRules'
 import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
 import StaffDialogUpdate from '@/components/Staff/DialogUpdate.vue'
 import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
-import StaffDialogResetDevice from '@/components/Staff/DialogResetDevice.vue'
+import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
 import InputDataText from '@/components/InputDataText.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
@@ -141,7 +141,7 @@ export default {
     StaffDialogCreate,
     StaffDialogUpdate,
     StaffDialogDelete,
-    StaffDialogResetDevice,
+    StaffDialogResetPairing,
     InputDataText
   },
   data: () => ({
@@ -149,7 +149,7 @@ export default {
     headers: [
       { text: 'Username', value: 'username' },
       { text: 'Full Name', value: 'fullName' },
-      { text: 'Device Linked', value: 'linked' },
+      { text: 'Device Paired', value: 'paired' },
       { text: 'Active', value: 'active' },
       { text: '', value: 'menu', sortable: false }
     ],
@@ -159,7 +159,7 @@ export default {
     },
     dialogCreate: false,
     dialogUpdate: false,
-    dialogResetDevice: false,
+    dialogResetPairing: false,
     dialogDelete: false
   }),
   methods: {

@@ -6,6 +6,6 @@ query StaffGetOne($id: ID!) {
     username
     fullName
     active
-    linked
+    paired
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <dialog-yes-no
-    header="Reset staff device?"
-    message="If this staff has a new phone, reset the device to allow the staff to pair to this account"
+    header="Reset staff device pairing?"
+    message="If this staff has a new phone, reset this pairing to allow the staff to pair to this account. The previous pairing will be logged out."
     @no="close()"
     @yes="resetStaffDeviceId()"
   />

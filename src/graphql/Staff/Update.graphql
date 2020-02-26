@@ -6,6 +6,6 @@ mutation StaffUpdate($id: ID!, $fullName: String, $active: Boolean!) {
     username
     fullName
     active
-    linked
+    paired
   }
 }

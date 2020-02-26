@@ -57,7 +57,7 @@
           >
             After creating a new staff, request the staff to <strong>login</strong>
             to the app and <strong>enter the username</strong> above. This will
-            link the staff's device to this account.
+            pair the staff's device to this account.
           </v-alert>
         </v-card-text>
         <v-card-actions>

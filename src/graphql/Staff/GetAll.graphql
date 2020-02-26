@@ -6,6 +6,6 @@ query StaffGetAll($where: StaffWhereInput) {
     username
     fullName
     active
-    linked
+    paired
   }
 }
