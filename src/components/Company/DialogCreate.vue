@@ -18,8 +18,9 @@
           <v-btn
             icon
             color="primary"
+            @click="close()"
           >
-            <v-icon @click="close()">
+            <v-icon>
               mdi-close
             </v-icon>
           </v-btn>
