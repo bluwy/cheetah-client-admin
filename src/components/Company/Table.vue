@@ -6,6 +6,7 @@
     sort-by="name"
     hide-default-footer
     must-sort
+    @click:row="$refs.dialogInfo.open($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -33,6 +34,10 @@
           ref="dialogDelete"
           v-model="dialogDelete"
         />
+        <company-dialog-info
+          ref="dialogInfo"
+          v-model="dialogInfo"
+        />
       </v-toolbar>
     </template>
     <template #item.menu="{ item }">
@@ -49,6 +54,17 @@
           </v-btn>
         </template>
         <v-list>
+          <v-list-item
+            color="primary"
+            @click.stop="$refs.dialogInfo.open(item.id)"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-information</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Info</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item
             color="error"
             @click.stop="$refs.dialogDelete.open(item.id)"
@@ -69,6 +85,7 @@
 <script>
 import CompanyDialogCreate from '@/components/Company/DialogCreate.vue'
 import CompanyDialogDelete from '@/components/Company/DialogDelete.vue'
+import CompanyDialogInfo from '@/components/Company/DialogInfo.vue'
 import COMPANY_GET_ALL from '@/graphql/CompanyGetAll.graphql'
 
 export default {
@@ -81,7 +98,8 @@ export default {
   },
   components: {
     CompanyDialogCreate,
-    CompanyDialogDelete
+    CompanyDialogDelete,
+    CompanyDialogInfo
   },
   data: () => ({
     loadingCount: 0,
@@ -92,7 +110,8 @@ export default {
     ],
     companies: [],
     dialogCreate: false,
-    dialogDelete: false
+    dialogDelete: false,
+    dialogInfo: false
   }),
   methods: {
     refetch () {
