@@ -17,6 +17,8 @@ import Admins from '@/views/Admins.vue'
 
 import Null from '@/views/Null.vue'
 
+const AUTH_BYPASS = !!process.env.AUTH_BYPASS
+
 Vue.use(Router)
 
 const router = new Router({
@@ -89,6 +91,10 @@ const router = new Router({
 })
 
 router.beforeEach(async (to, from, next) => {
+  if (AUTH_BYPASS) {
+    next()
+  }
+
   if (to.matched.some(v => v.meta.requiresAuth)) {
     await store.dispatch('checkUser').catch(() => {})
 
