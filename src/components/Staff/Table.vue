@@ -6,7 +6,7 @@
     sort-by="username"
     hide-default-footer
     must-sort
-    @click:row="$refs.dialogUpdate.open($event.id)"
+    @click:row="$refs.dialogInfo.open($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -30,9 +30,9 @@
           Create
         </v-btn>
         <staff-dialog-create v-model="dialogCreate" />
-        <staff-dialog-update
-          ref="dialogUpdate"
-          v-model="dialogUpdate"
+        <staff-dialog-info
+          ref="dialogInfo"
+          v-model="dialogInfo"
         />
         <staff-dialog-reset-pairing
           ref="dialogResetPairing"
@@ -84,6 +84,17 @@
         </template>
         <v-list>
           <v-list-item
+            color="primary"
+            @click.stop="$refs.dialogInfo.open(item.id)"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-information</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Info</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
             color="warning"
             @click.stop="$refs.dialogResetPairing.open(item.id)"
           >
@@ -91,7 +102,7 @@
               <v-icon>mdi-lock</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Reset pairing</v-list-item-title>
+              <v-list-item-title>Reset Pairing</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item
@@ -102,7 +113,7 @@
               <v-icon>mdi-delete</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Remove staff</v-list-item-title>
+              <v-list-item-title>Remove</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -114,8 +125,8 @@
 <script>
 import { required, maxStrLength } from '@/utils/inputRules'
 import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
-import StaffDialogUpdate from '@/components/Staff/DialogUpdate.vue'
 import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
+import StaffDialogInfo from '@/components/Staff/DialogInfo.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
@@ -131,8 +142,8 @@ export default {
   },
   components: {
     StaffDialogCreate,
-    StaffDialogUpdate,
     StaffDialogDelete,
+    StaffDialogInfo,
     StaffDialogResetPairing
   },
   data: () => ({
@@ -149,7 +160,7 @@ export default {
       fullName: [required, maxStrLength(128)]
     },
     dialogCreate: false,
-    dialogUpdate: false,
+    dialogInfo: false,
     dialogResetPairing: false,
     dialogDelete: false
   }),
