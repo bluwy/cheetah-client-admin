@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
+    v-bind="$attrs"
     header="Remove company?"
     message="This is catastrophic!"
-    @no="close()"
+    v-on="$listeners"
     @yes="deleteCompany()"
   />
 </template>
@@ -27,13 +28,10 @@ export default {
       this.companyId = companyId
       this.$emit('input', true)
     },
-    close () {
-      this.$emit('input', false)
-    },
     async deleteCompany () {
       const { cache, restore } = cacheObjKeys(this, ['companyId'])
 
-      this.close()
+      this.$emit('input', false)
 
       snackbarPush({ color: 'success', message: 'Removed company' })
 
@@ -69,7 +67,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

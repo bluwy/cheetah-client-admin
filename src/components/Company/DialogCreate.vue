@@ -1,90 +1,33 @@
 <template>
-  <v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
-    @submit.prevent="createCompany()"
+  <base-dialog
+    ref="dialog"
+    v-bind="$attrs"
+    :is-dirty="isDirty"
+    show-actions
+    dialog-title="Add New Company"
+    v-on="$listeners"
+    @close="resetForm()"
+    @ok="createCompany()"
   >
-    <v-dialog
-      v-bind="$attrs"
-      :persistent="isDirty"
-      width="400"
-      max-width="95vw"
-    >
-      <v-card>
-        <v-toolbar flat>
-          <v-toolbar-title>Add New Company</v-toolbar-title>
-          <v-spacer />
-          <v-btn
-            icon
-            color="primary"
-            @click="close()"
-          >
-            <v-icon>
-              mdi-close
-            </v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text>
-          <v-container fluid>
-            <v-text-field
-              v-model="formCompany.name"
-              :rules="rule.name"
-              spellcheck="false"
-            >
-              <template>
-                Name
-                <tooltip-info>
-                  Used for searching a company name.
-                </tooltip-info>
-              </template>
-            </v-text-field>
-            <v-text-field
-              v-model="formCompany.alias"
-              :rules="rule.alias"
-              spellcheck="false"
-            >
-              <template>
-                Alias
-                <tooltip-info>
-                  Used for generating the job code.
-                </tooltip-info>
-              </template>
-            </v-text-field>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <dialog-yes-no
-            v-model="dialogClose"
-            header="Are you sure?"
-            message="Data you have entered are not saved"
-            @yes="close(true)"
-          />
-          <v-btn
-            outlined
-            color="error"
-            @click.stop="close()"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            type="submit"
-            color="primary"
-          >
-            OK
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-form>
+    <v-text-field
+      v-model="formCompany.name"
+      :rules="rule.name"
+      spellcheck="false"
+    />
+    <v-text-field
+      v-model="formCompany.alias"
+      :rules="rule.alias"
+      spellcheck="false"
+      hint="Used for job code prefix"
+    />
+  </base-dialog>
 </template>
 
 <script>
 import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, maxStrLength } from '@/utils/inputRules'
-import DialogYesNo from '@/components/DialogYesNo.vue'
+import BaseDialog from '@/components/BaseDialog.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import COMPANY_CREATE from '@/graphql/Company/Create.graphql'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
@@ -97,17 +40,14 @@ const formCompanyFactory = () => ({
 export default {
   name: 'CompanyDialogCreate',
   components: {
-    DialogYesNo
+    BaseDialog
   },
-  inheritAttrs: false,
   data: () => ({
-    valid: false,
     formCompany: formCompanyFactory(),
     rule: {
       name: [required, maxStrLength(16)],
       alias: [required, maxStrLength(1)]
-    },
-    dialogClose: false
+    }
   }),
   computed: {
     isDirty () {
@@ -115,23 +55,16 @@ export default {
     }
   },
   methods: {
-    close (force) {
-      if (!force && this.isDirty) {
-        this.dialogClose = true
-      } else {
-        this.reset()
-        this.$emit('input', false)
-      }
-    },
-    reset () {
+    resetForm () {
       this.formCompany = formCompanyFactory()
-      this.$refs.form.resetValidation()
+      this.$refs.dialog.$refs.form.resetValidation()
     },
     async createCompany () {
       if (this.$refs.form.validate() && this.isDirty) {
         const { cache, restore } = cacheObjKeys(this, ['formCompany'])
 
-        this.close(true)
+        // This will reset form, as triggered by dialog close event
+        this.$emit('input', false)
 
         snackbarPush({ color: 'success', message: `Added new company "${cache.name}"` })
 
@@ -164,6 +97,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

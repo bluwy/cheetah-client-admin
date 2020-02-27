@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
+    v-bind="$attrs"
     header="Remove admin?"
     message="This account will be deleted and logged out from all device"
-    @no="close()"
+    v-on="$listeners"
     @yes="deleteAdmin()"
   />
 </template>
@@ -27,13 +28,10 @@ export default {
       this.adminId = adminId
       this.$emit('input', true)
     },
-    close () {
-      this.$emit('input', false)
-    },
     async deleteAdmin () {
       const { cache, restore } = cacheObjKeys(this, ['adminId'])
 
-      this.close()
+      this.$emit('input', false)
 
       snackbarPush({ color: 'success', message: 'Removed admin' })
 
@@ -69,7 +67,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
+    v-bind="$attrs"
     header="Remove staff?"
     message="You cannot undo this action"
-    @no="close()"
+    v-on="$listeners"
     @yes="deleteStaff()"
   />
 </template>
@@ -27,13 +28,10 @@ export default {
       this.staffId = staffId
       this.$emit('input', true)
     },
-    close () {
-      this.$emit('input', false)
-    },
     async deleteStaff () {
       const { cache, restore } = cacheObjKeys(this, ['staffId'])
 
-      this.close()
+      this.$emit('input', false)
 
       snackbarPush({ color: 'success', message: 'Removed staff' })
 
@@ -69,7 +67,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

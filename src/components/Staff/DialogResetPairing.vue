@@ -1,8 +1,9 @@
 <template>
   <dialog-yes-no
+    v-bind="$attrs"
     header="Reset staff pairing?"
     message="If this staff has a new phone, reset this pairing to allow the staff to re-pair to this account. The previous pairing will be logged out."
-    @no="close()"
+    v-on="$listeners"
     @yes="resetStaffDeviceId()"
   />
 </template>
@@ -26,13 +27,10 @@ export default {
       this.staffId = staffId
       this.$emit('input', true)
     },
-    close () {
-      this.$emit('input', false)
-    },
     async resetStaffDeviceId () {
       const { cache, restore } = cacheObjKeys(this, ['staffId'])
 
-      this.close()
+      this.$emit('input', false)
 
       snackbarPush({ color: 'success', message: 'Resetted staff pairing' })
 
@@ -56,7 +54,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
