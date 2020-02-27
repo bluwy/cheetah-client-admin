@@ -44,13 +44,6 @@
         />
       </v-toolbar>
     </template>
-    <template #item.fullName="{ item }">
-      <input-data-text
-        :value="item.fullName"
-        :rules="rules.fullName"
-        @update="updateFullName(item.id, $event)"
-      />
-    </template>
     <template #item.paired="{ item }">
       <v-icon
         v-if="item.paired"
@@ -124,7 +117,6 @@ import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
 import StaffDialogUpdate from '@/components/Staff/DialogUpdate.vue'
 import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
-import InputDataText from '@/components/InputDataText.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
@@ -141,8 +133,7 @@ export default {
     StaffDialogCreate,
     StaffDialogUpdate,
     StaffDialogDelete,
-    StaffDialogResetPairing,
-    InputDataText
+    StaffDialogResetPairing
   },
   data: () => ({
     loadingCount: 0,
@@ -165,18 +156,6 @@ export default {
   methods: {
     refetch () {
       this.$apollo.queries.staffs.refetch()
-    },
-    async updateFullName (staffId, newFullName) {
-      try {
-        await this.$apollo.mutate({
-          mutation: STAFF_UPDATE,
-          variables: { id: staffId, fullName: newFullName }
-        })
-      } catch (e) {
-        console.error(e)
-
-        snackbarPush({ color: 'error', message: 'Unable to update full name' })
-      }
     },
     async updateActive (staffId, newActive) {
       try {
