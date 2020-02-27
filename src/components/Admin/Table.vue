@@ -6,6 +6,7 @@
     sort-by="username"
     hide-default-footer
     must-sort
+    @click:row="$refs.dialogInfo.open($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -32,6 +33,10 @@
         <admin-dialog-delete
           ref="dialogDelete"
           v-model="dialogDelete"
+        />
+        <admin-dialog-info
+          ref="dialogInfo"
+          v-model="dialogInfo"
         />
       </v-toolbar>
     </template>
@@ -66,6 +71,17 @@
         </template>
         <v-list>
           <v-list-item
+            color="primary"
+            @click.stop="$refs.dialogInfo.open(item.id)"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-information</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Info</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
             color="error"
             @click.stop="$refs.dialogDelete.open(item.id)"
           >
@@ -73,7 +89,7 @@
               <v-icon>mdi-delete</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Remove admin</v-list-item-title>
+              <v-list-item-title>Remove</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -85,7 +101,8 @@
 <script>
 import AdminDialogCreate from '@/components/Admin/DialogCreate.vue'
 import AdminDialogDelete from '@/components/Admin/DialogDelete.vue'
-import ADMIN_GET_ALL from '@/graphql/AdminGetAll.graphql'
+import AdminDialogInfo from '@/components/Admin/DialogInfo.vue'
+import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 
 export default {
   name: 'TableAdmin',
@@ -97,7 +114,8 @@ export default {
   },
   components: {
     AdminDialogCreate,
-    AdminDialogDelete
+    AdminDialogDelete,
+    AdminDialogInfo
   },
   data: () => ({
     loadingCount: 0,
@@ -108,7 +126,8 @@ export default {
     ],
     admins: [],
     dialogCreate: false,
-    dialogDelete: false
+    dialogDelete: false,
+    dialogInfo: false
   }),
   methods: {
     refetch () {
