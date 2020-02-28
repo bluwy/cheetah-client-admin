@@ -9,7 +9,7 @@
     @close="resetForm()"
     @ok="createAdmin()"
   >
-    <v-text-field
+    <admin-input-username
       v-model="formAdmin.username"
       :rules="rule.username"
       label="Username"
@@ -35,6 +35,7 @@ import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
+import AdminInputUsername from '@/components/Admin/InputUsername.vue'
 import InputPassword from '@/components/InputPassword.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import ADMIN_CREATE from '@/graphql/Admin/Create.graphql'
@@ -50,7 +51,8 @@ export default {
   name: 'AdminDialogCreate',
   components: {
     BaseDialog,
-    InputPassword
+    InputPassword,
+    AdminInputUsername
   },
   data: () => ({
     formAdmin: formAdminFactory(),

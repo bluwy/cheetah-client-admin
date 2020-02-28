@@ -1,0 +1,3 @@
+query CompanyCount($where: CompanyWhereInput) {
+  companyCount(where: $where)
+}

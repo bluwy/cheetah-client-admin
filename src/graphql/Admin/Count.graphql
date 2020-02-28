@@ -1,0 +1,3 @@
+query AdminCount($where: AdminWhereInput) {
+  adminCount(where: $where)
+}

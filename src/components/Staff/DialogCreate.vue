@@ -9,14 +9,14 @@
     @close="resetForm()"
     @ok="createStaff()"
   >
-    <v-text-field
+    <staff-input-username
       v-model="formStaff.username"
       :rules="rule.username"
       label="Username"
       spellcheck="false"
       hint="This cannot be changed again"
     />
-    <v-text-field
+    <staff-input-full-name
       v-model="formStaff.fullName"
       :rules="rule.fullName"
       label="Full Name"
@@ -38,6 +38,8 @@ import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
+import StaffInputUsername from '@/components/Staff/InputUsername.vue'
+import StaffInputFullName from '@/components/Staff/InputFullName.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import STAFF_CREATE from '@/graphql/Staff/Create.graphql'
 import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
@@ -51,7 +53,9 @@ const formStaffFactory = () => ({
 export default {
   name: 'StaffDialogCreate',
   components: {
-    BaseDialog
+    BaseDialog,
+    StaffInputUsername,
+    StaffInputFullName
   },
   inheritAttrs: false,
   data: () => ({

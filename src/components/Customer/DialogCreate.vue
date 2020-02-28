@@ -14,7 +14,7 @@
         cols="auto"
         style="width: 120px;"
       >
-        <v-text-field
+        <customer-input-code
           v-model="formCustomer.code"
           :rules="rule.code"
           label="Code"
@@ -22,9 +22,9 @@
         />
       </v-col>
       <v-col>
-        <v-text-field
+        <customer-input-name
           v-model="formCustomer.name"
-          :rules="rule.code"
+          :rules="rule.name"
           label="Name"
           spellcheck="false"
         />
@@ -97,6 +97,8 @@ import { storeDeleteQuery } from '@/utils/apollo'
 import { cacheObjKeys } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
+import CustomerInputCode from '@/components/Company/InputCode.vue'
+import CustomerInputName from '@/components/Company/InputName.vue'
 import InputAddresses from '@/components/InputAddresses.vue'
 import InputCompany from '@/components/InputCompany.vue'
 import InputStaff from '@/components/InputStaff'
@@ -118,6 +120,8 @@ export default {
   name: 'CustomerDialogCreate',
   components: {
     BaseDialog,
+    CustomerInputCode,
+    CustomerInputName,
     InputAddresses,
     InputCompany,
     InputStaff

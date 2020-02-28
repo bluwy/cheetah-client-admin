@@ -16,7 +16,7 @@
         cols="auto"
         style="width: 120px;"
       >
-        <v-text-field
+        <customer-input-code
           v-model="newFormCustomer.code"
           :rules="rule.code"
           :readonly="!isEditing"
@@ -25,7 +25,7 @@
         />
       </v-col>
       <v-col>
-        <v-text-field
+        <customer-input-name
           v-model="newFormCustomer.name"
           :rules="rule.name"
           :readonly="!isEditing"
@@ -113,6 +113,8 @@ import { updatedDiff } from 'deep-object-diff'
 import { cacheObjKeys, formatDate } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
+import CustomerInputCode from '@/components/Company/InputCode.vue'
+import CustomerInputName from '@/components/Company/InputName.vue'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
@@ -129,7 +131,9 @@ export default {
     }
   },
   components: {
-    BaseDialog
+    BaseDialog,
+    CustomerInputCode,
+    CustomerInputName
   },
   data: () => ({
     isEditing: false,

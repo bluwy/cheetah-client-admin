@@ -1,0 +1,3 @@
+query StaffCount($where: StaffWhereInput) {
+  staffCount(where: $where)
+}

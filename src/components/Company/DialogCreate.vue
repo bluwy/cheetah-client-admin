@@ -9,14 +9,16 @@
     @close="resetForm()"
     @ok="createCompany()"
   >
-    <v-text-field
+    <company-input-name
       v-model="formCompany.name"
       :rules="rule.name"
+      label="Name"
       spellcheck="false"
     />
-    <v-text-field
+    <company-input-alias
       v-model="formCompany.alias"
       :rules="rule.alias"
+      label="Alias"
       spellcheck="false"
       hint="Used for job code prefix"
     />
@@ -28,6 +30,8 @@ import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, maxStrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
+import CompanyInputName from '@/components/Company/InputName.vue'
+import CompanyInputAlias from '@/components/Company/InputAlias.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import COMPANY_CREATE from '@/graphql/Company/Create.graphql'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
@@ -40,7 +44,9 @@ const formCompanyFactory = () => ({
 export default {
   name: 'CompanyDialogCreate',
   components: {
-    BaseDialog
+    BaseDialog,
+    CompanyInputName,
+    CompanyInputAlias
   },
   data: () => ({
     formCompany: formCompanyFactory(),
