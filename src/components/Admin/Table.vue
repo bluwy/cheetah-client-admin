@@ -12,6 +12,14 @@
       <v-toolbar flat>
         <v-toolbar-title>Admins</v-toolbar-title>
         <v-spacer />
+        <v-text-field
+          v-if="searchable"
+          v-model="searchQuery"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        />
         <v-btn
           class="mr-3"
           icon
@@ -105,10 +113,16 @@ import AdminDialogInfo from '@/components/Admin/DialogInfo.vue'
 import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 
 export default {
-  name: 'TableAdmin',
+  name: 'AdminTable',
   apollo: {
     admins: {
       query: ADMIN_GET_ALL,
+      variables () {
+        return {
+          query: this.searchable ? this.searchQuery : undefined
+        }
+      },
+      debounce: 300,
       loadingKey: 'loadingCount'
     }
   },
@@ -117,6 +131,12 @@ export default {
     AdminDialogDelete,
     AdminDialogInfo
   },
+  props: {
+    searchable: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     loadingCount: 0,
     headers: [
@@ -124,6 +144,7 @@ export default {
       { text: 'Full Access', value: 'privilege' },
       { text: '', value: 'menu', sortable: false }
     ],
+    searchQuery: '',
     admins: [],
     dialogCreate: false,
     dialogDelete: false,

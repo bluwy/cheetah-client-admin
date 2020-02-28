@@ -1,5 +1,5 @@
-query CompanyGetAll($where: CompanyWhereInput) {
-  companies(where: $where) {
+query CompanyGetAll($query: String!, $where: CompanyWhereInput) {
+  companies(query: $query, where: $where) {
     id
     createdAt
     updatedAt

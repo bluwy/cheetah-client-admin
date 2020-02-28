@@ -104,7 +104,7 @@ import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 import CUSTOMER_COUNT from '@/graphql/CustomerCount.graphql'
 
 export default {
-  name: 'TableCustomer',
+  name: 'CustomerTable',
   apollo: {
     customers: {
       query: CUSTOMER_GET_ALL,
@@ -116,6 +116,7 @@ export default {
           where: this.queryWhere
         }
       },
+      debounce: 300,
       loadingKey: 'loadingCount'
     },
     customerCount: {

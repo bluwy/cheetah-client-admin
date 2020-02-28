@@ -1,5 +1,5 @@
-query AdminGetAll($where: AdminWhereInput) {
-  admins(where: $where) {
+query AdminGetAll($query: String, $where: AdminWhereInput) {
+  admins(query: $query, where: $where) {
     id
     createdAt
     updatedAt

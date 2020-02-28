@@ -12,6 +12,14 @@
       <v-toolbar flat>
         <v-toolbar-title>Companies</v-toolbar-title>
         <v-spacer />
+        <v-text-field
+          v-if="searchable"
+          v-model="searchQuery"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        />
         <v-btn
           class="mr-3"
           icon
@@ -89,10 +97,16 @@ import CompanyDialogInfo from '@/components/Company/DialogInfo.vue'
 import COMPANY_GET_ALL from '@/graphql/CompanyGetAll.graphql'
 
 export default {
-  name: 'TableCompany',
+  name: 'CompanyTable',
   apollo: {
     companies: {
       query: COMPANY_GET_ALL,
+      variables () {
+        return {
+          query: this.searchable ? this.searchQuery : undefined
+        }
+      },
+      debounce: 300,
       loadingKey: 'loadingCount'
     }
   },
@@ -101,6 +115,12 @@ export default {
     CompanyDialogDelete,
     CompanyDialogInfo
   },
+  props: {
+    searchable: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     loadingCount: 0,
     headers: [
@@ -108,6 +128,7 @@ export default {
       { text: 'Alias', value: 'alias' },
       { text: '', value: 'menu', sortable: false }
     ],
+    searchQuery: '',
     companies: [],
     dialogCreate: false,
     dialogDelete: false,
