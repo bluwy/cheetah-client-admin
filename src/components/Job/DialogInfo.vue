@@ -11,6 +11,21 @@
     v-on="$listeners"
     @close="resetForm"
   >
+    <template #toolbar>
+      <template v-if="canReassign">
+        <job-dialog-reassign
+          ref="dialogReassign"
+          v-model="dialogReassign"
+          @reassign-job="$emit('reassign-job')"
+        />
+        <v-btn
+          color="primary"
+          @click="$refs.dialogReassign.open(item.id)"
+        >
+          Reassign
+        </v-btn>
+      </template>
+    </template>
     <customer-autocomplete
       v-model="newFormJob.customerId"
       :rules="rule.customerId"
@@ -87,6 +102,7 @@ import { required, email } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
+import JobDialogReassign from '@/components/Job/DialogReassign.vue'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
@@ -106,7 +122,8 @@ export default {
   components: {
     BaseDialog,
     CustomerAutocomplete,
-    StaffAutocomplete
+    StaffAutocomplete,
+    JobDialogReassign
   },
   data: () => ({
     isEditing: false,
@@ -123,7 +140,8 @@ export default {
       email: [email],
       companyBelongId: [required],
       staffPrimaryId: [required]
-    }
+    },
+    dialogReassign: true
   }),
   computed: {
     isDirty () {
@@ -134,6 +152,10 @@ export default {
     },
     isTasksDirty () {
       return !isEqual(this.newFormTasks, this.formTasksFactory())
+    },
+    canReassign () {
+      // Haven't check out means haven't done
+      return this.job.checkOut == null
     }
   },
   watch: {

@@ -1,0 +1,26 @@
+query JobReassignGetOne(id: ID!) {
+  job(id: $id) {
+    id
+    code
+    address
+    startDate
+    customer {
+      id
+      addresses
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+    tasks {
+      id
+      type
+      remarks
+      done
+    }
+  }
+}

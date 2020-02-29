@@ -45,6 +45,12 @@
         <job-dialog-info
           ref="dialogInfo"
           v-model="dialogInfo"
+          @reassign-job="refetch()"
+        />
+        <job-dialog-reassign
+          ref="dialogReassign"
+          v-model="dialogReassign"
+          @reassign-job="refetch()"
         />
       </v-toolbar>
     </template>
@@ -83,6 +89,17 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
+            color="warning"
+            @click.stop="$refs.dialogReassign.open(item.id)"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-clipboard-text</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Reassign</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
             color="error"
             @click.stop="$refs.dialogDelete.open(item.id)"
           >
@@ -104,6 +121,7 @@ import { isEmpty, set } from 'lodash-es'
 import JobDialogCreate from '@/components/Job/DialogCreate.vue'
 import JobDialogDelete from '@/components/Job/DialogDelete.vue'
 import JobDialogInfo from '@/components/Job/DialogInfo.vue'
+import JobDialogReassign from '@/components/Job/DialogReassign.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 import JOB_UPDATE from '@/graphql/JobUpdate.graphql'
@@ -137,7 +155,8 @@ export default {
   components: {
     JobDialogCreate,
     JobDialogDelete,
-    JobDialogInfo
+    JobDialogInfo,
+    JobDialogReassign
   },
   props: {
     tableTitle: {
@@ -170,7 +189,8 @@ export default {
     jobCount: 0,
     dialogCreate: false,
     dialogDelete: false,
-    dialogInfo: false
+    dialogInfo: false,
+    dialogReassign: false
   }),
   computed: {
     queryOffset () {
