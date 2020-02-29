@@ -11,7 +11,7 @@
     v-on="$listeners"
     @close="resetForm"
   >
-    <input-customer
+    <customer-autocomplete
       v-model="newFormJob.customerId"
       :rules="rule.customerId"
       label="Customer"
@@ -32,7 +32,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="newFormJob.staffPrimaryId"
           :rules="rule.staffPrimaryId"
           :filter="v => v.id !== newFormJob.staffSecondaryId"
@@ -45,7 +45,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="newFormJob.staffSecondaryId"
           :rules="rule.staffSecondaryId"
           :filter="v => v.id !== newFormJob.staffPrimaryId"
@@ -85,6 +85,8 @@ import { updatedDiff } from 'deep-object-diff'
 import { cacheObjKeys, formatDate } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
+import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
+import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
@@ -102,7 +104,9 @@ export default {
     }
   },
   components: {
-    BaseDialog
+    BaseDialog,
+    CustomerAutocomplete,
+    StaffAutocomplete
   },
   data: () => ({
     isEditing: false,

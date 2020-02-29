@@ -58,7 +58,7 @@
     />
     <v-row>
       <v-col cols="12">
-        <input-company
+        <company-autocomplete
           v-model="newFormCustomer.companyBelongId"
           :rules="rule.companyBelongId"
           :readonly="!isEditing"
@@ -72,7 +72,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="newFormCustomer.staffPrimaryId"
           :rules="rule.staffPrimaryId"
           :readonly="!isEditing"
@@ -87,7 +87,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="newFormCustomer.staffSecondaryId"
           :readonly="!isEditing"
           :filter="v => v.id !== newFormCustomer.staffPrimaryId"
@@ -115,6 +115,8 @@ import { required, email } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
 import CustomerInputCode from '@/components/Company/InputCode.vue'
 import CustomerInputName from '@/components/Company/InputName.vue'
+import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
+import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
@@ -133,7 +135,9 @@ export default {
   components: {
     BaseDialog,
     CustomerInputCode,
-    CustomerInputName
+    CustomerInputName,
+    CompanyAutocomplete,
+    StaffAutocomplete
   },
   data: () => ({
     isEditing: false,

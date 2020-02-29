@@ -1,7 +1,7 @@
 <template>
   <v-autocomplete
     v-bind="$attrs"
-    :items="mapCompanies"
+    :items="mapStaffs"
     v-on="$listeners"
   >
     <template
@@ -17,13 +17,13 @@
 </template>
 
 <script>
-import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
+import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
 
 export default {
-  name: 'InputCompany',
+  name: 'StaffAutocomplete',
   apollo: {
-    companies: {
-      query: COMPANY_GET_ALL
+    staffs: {
+      query: STAFF_GET_ALL
     }
   },
   props: {
@@ -33,11 +33,11 @@ export default {
     }
   },
   data: () => ({
-    companies: []
+    staffs: []
   }),
   computed: {
-    mapCompanies () {
-      return this.companies.filter(this.filter).map(v => ({ text: v.name, value: v.id }))
+    mapStaffs () {
+      return this.staffs.filter(this.filter).map(v => ({ text: v.username, value: v.id }))
     }
   }
 }

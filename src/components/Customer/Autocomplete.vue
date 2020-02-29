@@ -21,7 +21,7 @@
 import CUSTOMER_INPUT_GET_ALL from '@/graphql/Customer/InputGetAll.graphql'
 
 export default {
-  name: 'InputCustomer',
+  name: 'CustomerAutocomplete',
   apollo: {
     customers: {
       query: CUSTOMER_INPUT_GET_ALL,

@@ -9,7 +9,7 @@
     @close="resetForm()"
     @ok="createJob()"
   >
-    <input-customer
+    <customer-autocomplete
       v-model="formJob.customerId"
       :rules="rule.customerId"
       label="Customer"
@@ -30,7 +30,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="formJob.staffPrimaryId"
           :rules="rule.staffPrimaryId"
           :filter="v => v.id !== formJob.staffSecondaryId"
@@ -43,7 +43,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="formJob.staffSecondaryId"
           :rules="rule.staffSecondaryId"
           :filter="v => v.id !== formJob.staffPrimaryId"
@@ -78,9 +78,9 @@ import { storeDeleteQuery } from '@/utils/apollo'
 import { cacheObjKeys } from '@/utils/common'
 import { required, minArrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/BaseDialog.vue'
-import InputCustomer from '@/components/InputCustomer.vue'
+import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
+import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/InputDateTime.vue'
-import InputStaff from '@/components/InputStaff.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import JOB_CREATE from '@/graphql/Job/Create.graphql'
@@ -112,9 +112,9 @@ export default {
   },
   components: {
     BaseDialog,
-    InputCustomer,
+    CustomerAutocomplete,
+    StaffAutocomplete,
     InputDateTime,
-    InputStaff,
     InputListTask
   },
   data: () => ({

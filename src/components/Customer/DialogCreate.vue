@@ -51,7 +51,7 @@
     />
     <v-row>
       <v-col cols="12">
-        <input-company
+        <company-autocomplete
           v-model="formCustomer.companyBelongId"
           :rules="rule.companyBelongId"
           label="Managed by"
@@ -64,7 +64,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="formCustomer.staffPrimaryId"
           :rules="rule.staffPrimaryId"
           :filter="v => v.id !== formCustomer.staffSecondaryId"
@@ -78,7 +78,7 @@
         cols="12"
         sm="6"
       >
-        <input-staff
+        <staff-autocomplete
           v-model="formCustomer.staffSecondaryId"
           :filter="v => v.id !== formCustomer.staffPrimaryId"
           label="Technician 2 (optional)"
@@ -100,8 +100,8 @@ import BaseDialog from '@/components/BaseDialog.vue'
 import CustomerInputCode from '@/components/Company/InputCode.vue'
 import CustomerInputName from '@/components/Company/InputName.vue'
 import InputAddresses from '@/components/InputAddresses.vue'
-import InputCompany from '@/components/InputCompany.vue'
-import InputStaff from '@/components/InputStaff'
+import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
+import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import CUSTOMER_CREATE from '@/graphql/Customer/Create.graphql'
 
@@ -123,8 +123,8 @@ export default {
     CustomerInputCode,
     CustomerInputName,
     InputAddresses,
-    InputCompany,
-    InputStaff
+    StaffAutocomplete,
+    CompanyAutocomplete
   },
   data: () => ({
     formCustomer: formCustomerFactory(),
