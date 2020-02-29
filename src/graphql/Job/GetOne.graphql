@@ -1,0 +1,35 @@
+query JobGetOne(id: ID!) {
+  job(id: $id) {
+    id
+    createdAt
+    updatedAt
+    code
+    address
+    startDate
+    checkIn
+    checkOut
+    state
+    customer {
+      id
+      name
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+    tasks {
+      id
+      type
+      remarks
+      done
+    }
+    actions {
+      id
+      remarks
+    }
+  }
+}

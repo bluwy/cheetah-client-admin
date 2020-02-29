@@ -1,8 +1,8 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="customers"
-    :server-items-length="customerCount"
+    :items="jobs"
+    :server-items-length="jobCount"
     :items-per-page.sync="queryLimit"
     :page.sync="page"
     :sort-by.sync="sortBy"
@@ -32,17 +32,17 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <customer-dialog-create
+        <job-dialog-create
           ref="dialogCreate"
           v-model="dialogCreate"
-          @create-customer="refetch()"
+          @create-job="refetch()"
         />
-        <customer-dialog-delete
+        <job-dialog-delete
           ref="dialogDelete"
           v-model="dialogDelete"
-          @delete-customer="refetch()"
+          @delete-job="refetch()"
         />
-        <customer-dialog-info
+        <job-dialog-info
           ref="dialogInfo"
           v-model="dialogInfo"
         />
@@ -101,19 +101,19 @@
 
 <script>
 import { isEmpty, set } from 'lodash-es'
-import CustomerDialogCreate from '@/components/Customer/DialogCreate.vue'
-import CustomerDialogDelete from '@/components/Customer/DialogDelete.vue'
-import CustomerDialogInfo from '@/components/Customer/DialogInfo.vue'
+import JobDialogCreate from '@/components/Job/DialogCreate.vue'
+import JobDialogDelete from '@/components/Job/DialogDelete.vue'
+import JobDialogInfo from '@/components/Job/DialogInfo.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
-import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
-import CUSTOMER_COUNT from '@/graphql/CustomerCount.graphql'
+import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
+import JOB_UPDATE from '@/graphql/JobUpdate.graphql'
+import JOB_COUNT from '@/graphql/JobCount.graphql'
 
 export default {
-  name: 'CustomerTable',
+  name: 'JobTable',
   apollo: {
-    customers: {
-      query: CUSTOMER_GET_ALL,
+    jobs: {
+      query: JOB_GET_ALL,
       variables () {
         return {
           offset: this.queryOffset,
@@ -125,8 +125,8 @@ export default {
       debounce: 300,
       loadingKey: 'loadingCount'
     },
-    customerCount: {
-      query: CUSTOMER_COUNT,
+    jobCount: {
+      query: JOB_COUNT,
       variables () {
         return {
           where: this.queryWhere
@@ -135,14 +135,14 @@ export default {
     }
   },
   components: {
-    CustomerDialogCreate,
-    CustomerDialogDelete,
-    CustomerDialogInfo
+    JobDialogCreate,
+    JobDialogDelete,
+    JobDialogInfo
   },
   props: {
     tableTitle: {
       type: String,
-      default: 'Customers'
+      default: 'Jobs'
     },
     searchable: {
       type: Boolean,
@@ -157,20 +157,17 @@ export default {
     loadingCount: 0,
     headers: [
       { text: 'Code', value: 'code' },
-      { text: 'Name', value: 'name' },
-      { text: 'Technician 1', value: 'staffPrimary.username' },
-      { text: 'Technician 2', value: 'staffSecondary.username' },
-      { text: 'Company', value: 'companyBelong.name' },
-      { text: 'Active', value: 'active' },
+      { text: 'Customer', value: 'customer.name' },
+      { text: 'Issue Date', value: 'createdAt' },
       { text: '', value: 'menu', sortable: false }
     ],
     page: 1,
     queryLimit: 20,
-    sortBy: ['name'],
-    sortDesc: [false],
+    sortBy: ['dateIssued'],
+    sortDesc: [true],
     searchQuery: '',
-    customers: [],
-    customerCount: 0,
+    jobs: [],
+    jobCount: 0,
     dialogCreate: false,
     dialogDelete: false,
     dialogInfo: false
@@ -199,14 +196,13 @@ export default {
       if (this.searchable && this.searchQuery) {
         andWheres.push({
           code: { equals: this.searchQuery },
-          name: { equals: this.searchQuery },
           staffPrimary: {
             username: { equals: this.searchQuery }
           },
           staffSecondary: {
             username: { equals: this.searchQuery }
           },
-          companyBelong: {
+          company: {
             name: { equals: this.searchQuery }
           }
         })
@@ -217,13 +213,13 @@ export default {
   },
   methods: {
     refetch () {
-      this.$apollo.queries.customers.refetch()
+      this.$apollo.queries.jobs.refetch()
     },
-    async updateActive (customerId, newActive) {
+    async updateActive (jobId, newActive) {
       try {
         await this.$apollo.mutate({
-          mutation: CUSTOMER_UPDATE,
-          variables: { id: customerId, active: newActive }
+          mutation: JOB_UPDATE,
+          variables: { id: jobId, active: newActive }
         })
       } catch (e) {
         console.error(e)

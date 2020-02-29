@@ -1,0 +1,200 @@
+<template>
+  <base-dialog
+    ref="dialog"
+    v-bind="$attrs"
+    :is-dirty="isDirty"
+    show-actions
+    dialog-title="Add New Job"
+    v-on="$listeners"
+    @close="resetForm()"
+    @ok="createJob()"
+  >
+    <input-customer
+      v-model="formJob.customerId"
+      :rules="rule.customerId"
+      label="Customer"
+      dense
+      clearable
+    />
+    <v-autocomplete
+      v-model="formJob.address"
+      :rules="rule.address"
+      :items="customerAddresses"
+      class="mb-3"
+      label="Address"
+      hide-selected
+      hide-no-data
+    />
+    <v-row>
+      <v-col
+        cols="12"
+        sm="6"
+      >
+        <input-staff
+          v-model="formJob.staffPrimaryId"
+          :rules="rule.staffPrimaryId"
+          :staffs-filter="v => v.id !== formJob.staffSecondaryId"
+          label="Technician 1"
+          dense
+          clearable
+        />
+      </v-col>
+      <v-col
+        cols="12"
+        sm="6"
+      >
+        <input-staff
+          v-model="formJob.staffSecondaryId"
+          :rules="rule.staffSecondaryId"
+          :staffs-filter="v => v.id !== formJob.staffPrimaryId"
+          label="Technician 2"
+          dense
+          clearable
+        />
+      </v-col>
+    </v-row>
+    <input-date-time
+      v-model="formJob.startDate"
+      :date-props="{
+        label: 'Start date',
+        rules: rule.startDate
+      }"
+      :time-props="{
+        label: 'Start time',
+        rules: rule.startDate
+      }"
+    />
+    <input-list-task
+      :tasks="formJob.tasks"
+      label="Tasks"
+    />
+  </base-dialog>
+</template>
+
+<script>
+import { formatISO } from 'date-fns'
+import { get, isEqual, cloneDeep } from 'lodash-es'
+import { storeDeleteQuery } from '@/utils/apollo'
+import { cacheObjKeys } from '@/utils/common'
+import { required, minArrLength } from '@/utils/inputRules'
+import BaseDialog from '@/components/BaseDialog.vue'
+import InputCustomer from '@/components/InputCustomer.vue'
+import InputDateTime from '@/components/InputDateTime.vue'
+import InputStaff from '@/components/InputStaff.vue'
+import InputListTask from '@/components/InputListTask.vue'
+import { snackbarPush } from '@/components/SnackbarGlobal.vue'
+import JOB_CREATE from '@/graphql/Job/Create.graphql'
+import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
+
+const formJobFactory = () => ({
+  customerId: '',
+  address: '',
+  startDate: formatISO(new Date()),
+  staffPrimaryId: '',
+  staffSecondaryId: '',
+  tasks: [{ type: '', remarks: '' }]
+})
+
+export default {
+  name: 'JobDialogCreate',
+  apollo: {
+    customer: {
+      query: CUSTOMER_GET_ONE,
+      variables () {
+        return {
+          id: this.formJob.customerId
+        }
+      },
+      skip () {
+        return !(this.formJob && this.formJob.customerId)
+      }
+    }
+  },
+  components: {
+    BaseDialog,
+    InputCustomer,
+    InputDateTime,
+    InputStaff,
+    InputListTask
+  },
+  data: () => ({
+    customer: {},
+    formJob: formJobFactory(),
+    rule: {
+      customerId: [required],
+      preferTime: [required],
+      staffPrimaryId: [required],
+      address: [required],
+      tasks: [required, minArrLength(1)]
+    }
+  }),
+  computed: {
+    isDirty () {
+      return !isEqual(this.formJob, formJobFactory())
+    },
+    customerAddresses () {
+      return get(this.customer, 'addresses', [])
+    }
+  },
+  watch: {
+    customer (val) {
+      if (val) {
+        if (val.staffPrimary && val.staffPrimary.id) {
+          this.formJob.staffPrimaryId = val.staffPrimary.id
+        }
+
+        if (val.staffSecondary && val.staffSecondary.id) {
+          this.formJob.staffSecondaryId = val.staffSecondary.id
+        }
+
+        if (val.addresses && val.addresses.length) {
+          this.formJob.address = val.addresses[0]
+        }
+      }
+    }
+  },
+  methods: {
+    resetForm () {
+      this.formJob = formJobFactory()
+      this.$refs.dialog.$refs.form.resetValidation()
+    },
+    parseFormToVars (form) {
+      const vars = cloneDeep(form)
+
+      vars.startDate = new Date(vars.startDate)
+
+      return vars
+    },
+    async createJob () {
+      const { cache, restore } = cacheObjKeys(this, ['formJob'])
+
+      // This will reset form, as triggered by dialog close event
+      this.$emit('input', false)
+
+      snackbarPush({ color: 'success', message: 'Added new job' })
+
+      try {
+        await this.$apollo.mutate({
+          mutation: JOB_CREATE,
+          variables: this.parseFormToVars(cache.formJob),
+          update: (store, { data: { createJob } }) => {
+            if (createJob != null) {
+              storeDeleteQuery(store, /^jobs/)
+            }
+          }
+        })
+
+        this.$emit('create-job')
+      } catch (e) {
+        console.error(e)
+
+        restore()
+
+        this.$emit('input', true)
+
+        snackbarPush({ color: 'error', message: 'Unable to add new job' })
+      }
+    }
+  }
+}
+</script>

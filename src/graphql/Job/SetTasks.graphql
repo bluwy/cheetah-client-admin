@@ -1,0 +1,3 @@
+mutation JobSetTasks($id: ID!, $tasks: [TaskInput!]!) {
+  setTasks(jobId: $id, data: $tasks)
+}

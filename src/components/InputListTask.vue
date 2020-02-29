@@ -72,12 +72,6 @@ export default {
       default: true
     }
   },
-  computed: {
-    isDirty () {
-      // Every task object is not empty
-      return this.tasks.length && this.tasks.some(task => Object.values(task).some(v => !!v))
-    }
-  },
   watch: {
     tasks: {
       handler (val) {
