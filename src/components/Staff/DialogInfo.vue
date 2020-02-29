@@ -26,6 +26,19 @@
       :readonly="!isEditing"
       dense
     />
+    <v-input :prepend-icon="staff.paired ? 'mdi-check' : 'mdi-close'">
+      {{ staff.paired ? 'Paired' : 'Not paired' }}
+      <staff-dialog-reset-pairing
+        ref="dialogResetPairing"
+        v-model="dialogResetPairing"
+      />
+      <v-btn
+        color="primary"
+        @click="$refs.dialogResetPairing.open(staffId)"
+      >
+        Reset Pairing
+      </v-btn>
+    </v-input>
     <v-input prepend-icon="mdi-cake-variant">
       {{ formatDate(staff.createdAt) }}
     </v-input>
@@ -40,6 +53,7 @@ import { isEqual } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
 import { cacheObjKeys, formatDate } from '@/utils/common'
 import BaseDialog from '@/components/BaseDialog.vue'
+import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import STAFF_GET_ONE from '@/graphql/Staff/GetOne.graphql'
 import STAFF_UPDATE from '@/graphql/Staff/Update.graphql'
@@ -56,7 +70,8 @@ export default {
     }
   },
   components: {
-    BaseDialog
+    BaseDialog,
+    StaffDialogResetPairing
   },
   data: () => ({
     isEditing: false,
@@ -64,7 +79,8 @@ export default {
     staff: {},
     staffId: '',
     formStaffFactory: () => ({}),
-    newFormStaff: {}
+    newFormStaff: {},
+    dialogResetPairing: false
   }),
   computed: {
     isDirty () {
