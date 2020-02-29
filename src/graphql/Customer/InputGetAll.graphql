@@ -1,0 +1,11 @@
+query CustomerGetAll(
+  $first: Int
+  $query: String
+  $orderBy: CustomerOrderByInput
+) {
+  customers(first: $first, query: $query, orderBy: $orderBy) {
+    id
+    code
+    name
+  }
+}

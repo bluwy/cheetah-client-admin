@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
+import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
 
 export default {
   name: 'InputStaff',
@@ -27,23 +27,18 @@ export default {
     }
   },
   props: {
-    staffsFilter: {
+    filter: {
       type: Function,
       default: () => true
     }
   },
   data: () => ({
-    query: '',
     staffs: []
   }),
   computed: {
     mapStaffs () {
-      return this.staffs.filter(this.staffsFilter).map(v => ({ text: v.username, value: v.id }))
+      return this.staffs.filter(this.filter).map(v => ({ text: v.username, value: v.id }))
     }
   }
 }
 </script>
-
-<style>
-
-</style>

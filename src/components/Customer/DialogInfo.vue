@@ -76,7 +76,7 @@
           v-model="newFormCustomer.staffPrimaryId"
           :rules="rule.staffPrimaryId"
           :readonly="!isEditing"
-          :staffs-filter="v => v.id !== newFormCustomer.staffSecondaryId"
+          :filter="v => v.id !== newFormCustomer.staffSecondaryId"
           label="Technician 1"
           hide-details
           dense
@@ -90,7 +90,7 @@
         <input-staff
           v-model="newFormCustomer.staffSecondaryId"
           :readonly="!isEditing"
-          :staffs-filter="v => v.id !== newFormCustomer.staffPrimaryId"
+          :filter="v => v.id !== newFormCustomer.staffPrimaryId"
           label="Technician 2 (optional)"
           hide-details
           dense

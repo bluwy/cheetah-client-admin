@@ -35,7 +35,7 @@
         <input-staff
           v-model="newFormJob.staffPrimaryId"
           :rules="rule.staffPrimaryId"
-          :staffs-filter="v => v.id !== newFormJob.staffSecondaryId"
+          :filter="v => v.id !== newFormJob.staffSecondaryId"
           label="Technician 1"
           dense
           clearable
@@ -48,7 +48,7 @@
         <input-staff
           v-model="newFormJob.staffSecondaryId"
           :rules="rule.staffSecondaryId"
-          :staffs-filter="v => v.id !== newFormJob.staffPrimaryId"
+          :filter="v => v.id !== newFormJob.staffPrimaryId"
           label="Technician 2"
           dense
           clearable

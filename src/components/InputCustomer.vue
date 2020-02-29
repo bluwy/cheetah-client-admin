@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import CUSTOMER_INPUT_GET_ALL from '@/graphql/CustomerInputGetAll.graphql'
+import CUSTOMER_INPUT_GET_ALL from '@/graphql/Customer/InputGetAll.graphql'
 
 export default {
   name: 'InputCustomer',
@@ -27,18 +27,15 @@ export default {
       query: CUSTOMER_INPUT_GET_ALL,
       variables () {
         return {
-          limit: this.queryLimit,
-          where: this.queryWhere
+          first: this.queryLimit,
+          query: this.searchQuery
         }
       },
-      skip () {
-        return this.$attrs.multiple ? false : this.$attrs.value
-      },
-      debounce: 500
+      debounce: 300
     }
   },
   props: {
-    customersFilter: {
+    filter: {
       type: Function,
       default: () => true
     },
@@ -48,20 +45,12 @@ export default {
     }
   },
   data: () => ({
-    query: '',
+    searchQuery: '',
     customers: []
   }),
   computed: {
-    queryWhere () {
-      return this.query ? {
-        OR: [
-          { code: { contains: this.query } },
-          { name: { contains: this.query } }
-        ]
-      } : undefined
-    },
     mapCustomers () {
-      return this.customers.filter(this.customersFilter).map(v => ({
+      return this.customers.filter(this.filter).map(v => ({
         text: `${v.code} - ${v.name}`,
         value: v.id
       }))
@@ -69,7 +58,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

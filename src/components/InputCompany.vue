@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import COMPANY_GET_ALL from '@/graphql/CompanyGetAll.graphql'
+import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 
 export default {
   name: 'InputCompany',
@@ -27,7 +27,7 @@ export default {
     }
   },
   props: {
-    companiesFilter: {
+    filter: {
       type: Function,
       default: () => true
     }
@@ -37,12 +37,8 @@ export default {
   }),
   computed: {
     mapCompanies () {
-      return this.companies.filter(this.companiesFilter).map(v => ({ text: v.name, value: v.id }))
+      return this.companies.filter(this.filter).map(v => ({ text: v.name, value: v.id }))
     }
   }
 }
 </script>
-
-<style>
-
-</style>
