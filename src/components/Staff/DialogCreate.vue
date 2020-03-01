@@ -40,7 +40,7 @@ import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/Common/BaseDialog.vue'
 import StaffInputUsername from '@/components/Staff/InputUsername.vue'
 import StaffInputFullName from '@/components/Staff/InputFullName.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_CREATE from '@/graphql/Staff/Create.graphql'
 import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
 
@@ -81,7 +81,7 @@ export default {
 
       this.close(true)
 
-      snackbarPush({ color: 'success', message: `Added new staff "${cache.username}"` })
+      pushSnack({ color: 'success', message: `Added new staff "${cache.username}"` })
 
       try {
         await this.$apollo.mutate({
@@ -105,7 +105,7 @@ export default {
 
         this.$emit('input', true)
 
-        snackbarPush({ color: 'error', message: 'Unable to add new staff' })
+        pushSnack({ color: 'error', message: 'Unable to add new staff' })
       }
     }
   }

@@ -104,7 +104,7 @@ import { isEmpty, set } from 'lodash-es'
 import CustomerDialogCreate from '@/components/Customer/DialogCreate.vue'
 import CustomerDialogDelete from '@/components/Customer/DialogDelete.vue'
 import CustomerDialogInfo from '@/components/Customer/DialogInfo.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 import CUSTOMER_COUNT from '@/graphql/CustomerCount.graphql'
@@ -228,7 +228,7 @@ export default {
       } catch (e) {
         console.error(e)
 
-        snackbarPush({ color: 'error', message: 'Unable to toggle active' })
+        pushSnack({ color: 'error', message: 'Unable to toggle active' })
       }
     }
   }

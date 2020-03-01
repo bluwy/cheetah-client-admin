@@ -32,7 +32,7 @@ import { required, maxStrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/Common/BaseDialog.vue'
 import CompanyInputName from '@/components/Company/InputName.vue'
 import CompanyInputAlias from '@/components/Company/InputAlias.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import COMPANY_CREATE from '@/graphql/Company/Create.graphql'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 
@@ -72,7 +72,7 @@ export default {
         // This will reset form, as triggered by dialog close event
         this.$emit('input', false)
 
-        snackbarPush({ color: 'success', message: `Added new company "${cache.name}"` })
+        pushSnack({ color: 'success', message: `Added new company "${cache.name}"` })
 
         try {
           await this.$apollo.mutate({
@@ -96,7 +96,7 @@ export default {
 
           this.$emit('input', true)
 
-          snackbarPush({ color: 'error', message: 'Unable to add new company' })
+          pushSnack({ color: 'error', message: 'Unable to add new company' })
         }
       }
     }

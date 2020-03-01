@@ -11,7 +11,7 @@
 <script>
 import { cacheObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/Common/DialogYesNo.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import COMPANY_DELETE from '@/graphql/Company/Delete.graphql'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 
@@ -33,7 +33,7 @@ export default {
 
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Removed company' })
+      pushSnack({ color: 'success', message: 'Removed company' })
 
       try {
         await this.$apollo.mutate({
@@ -61,7 +61,7 @@ export default {
 
         this.open(cache.companyId)
 
-        snackbarPush({ color: 'error', message: 'Unable to remove company' })
+        pushSnack({ color: 'error', message: 'Unable to remove company' })
       }
     }
   }

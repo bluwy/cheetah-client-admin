@@ -137,7 +137,7 @@ import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
 import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
 import StaffDialogInfo from '@/components/Staff/DialogInfo.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
 
@@ -199,7 +199,7 @@ export default {
       } catch (e) {
         console.error(e)
 
-        snackbarPush({ color: 'error', message: 'Unable to toggle active' })
+        pushSnack({ color: 'error', message: 'Unable to toggle active' })
       }
     }
   }

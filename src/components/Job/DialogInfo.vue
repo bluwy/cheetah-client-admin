@@ -103,7 +103,7 @@ import BaseDialog from '@/components/Common/BaseDialog.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import JobDialogReassign from '@/components/Job/DialogReassign.vue'
-import { snackbarPush } from './SnackbarGlobal.vue'
+import { pushSnack } from './SnackbarGlobal.vue'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
 import JOB_SET_TASKS from '@/graphql/Job/SetTasks.graphql'
@@ -189,7 +189,7 @@ export default {
       // Switch to view mode
       this.isEditing = false
 
-      snackbarPush({ color: 'success', messge: 'Updated job' })
+      pushSnack({ color: 'success', messge: 'Updated job' })
 
       try {
         const updateJob = this.isJobDirty && this.$apollo.mutate({
@@ -213,7 +213,7 @@ export default {
         this.open(cache.jobId)
         this.isEditing = true
 
-        snackbarPush({ color: 'error', message: 'Unable to update job' })
+        pushSnack({ color: 'error', message: 'Unable to update job' })
       }
     }
   }

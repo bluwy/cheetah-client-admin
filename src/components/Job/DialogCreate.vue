@@ -82,7 +82,7 @@ import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/Common/InputDateTime.vue'
 import InputListTask from '@/components/Common/InputListTask.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_CREATE from '@/graphql/Job/Create.graphql'
 import JOB_FOLLOW_UP_GET_ONE from '@/graphql/Job/FollowUpGetOne.graphql'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
@@ -204,7 +204,7 @@ export default {
       // This will reset form, as triggered by dialog close event
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Added new job' })
+      pushSnack({ color: 'success', message: 'Added new job' })
 
       try {
         await this.$apollo.mutate({
@@ -225,7 +225,7 @@ export default {
 
         this.$emit('input', true)
 
-        snackbarPush({ color: 'error', message: 'Unable to add new job' })
+        pushSnack({ color: 'error', message: 'Unable to add new job' })
       }
     }
   }

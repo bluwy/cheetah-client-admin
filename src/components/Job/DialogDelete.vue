@@ -11,7 +11,7 @@
 <script>
 import { storeDeleteQuery } from '@/utils/apollo'
 import { cacheObjKeys } from '@/utils/common'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import DialogYesNo from '@/components/Common/DialogYesNo.vue'
 import JOB_DELETE from '@/graphql/Job/Delete.graphql'
 
@@ -33,7 +33,7 @@ export default {
 
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Removed job' })
+      pushSnack({ color: 'success', message: 'Removed job' })
 
       try {
         await this.$apollo.mutate({
@@ -56,7 +56,7 @@ export default {
 
         this.open(cache.adminId)
 
-        snackbarPush({ color: 'error', message: 'Unable to remove job' })
+        pushSnack({ color: 'error', message: 'Unable to remove job' })
       }
     }
   }

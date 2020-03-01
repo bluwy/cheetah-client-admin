@@ -11,7 +11,7 @@
 <script>
 import { cacheObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/Common/DialogYesNo.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_RESET_PAIRING from '@/graphql/Staff/ResetPairing.graphql'
 
 export default {
@@ -32,7 +32,7 @@ export default {
 
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Resetted staff pairing' })
+      pushSnack({ color: 'success', message: 'Resetted staff pairing' })
 
       try {
         await this.$apollo.mutate({
@@ -48,7 +48,7 @@ export default {
 
         this.open(cache.staffId)
 
-        snackbarPush({ color: 'error', message: 'Unable to reset staff pairing' })
+        pushSnack({ color: 'error', message: 'Unable to reset staff pairing' })
       }
     }
   }

@@ -117,7 +117,7 @@ import CustomerInputCode from '@/components/Company/InputCode.vue'
 import CustomerInputName from '@/components/Company/InputName.vue'
 import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
-import { snackbarPush } from './SnackbarGlobal.vue'
+import { pushSnack } from './SnackbarGlobal.vue'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
 
@@ -203,7 +203,7 @@ export default {
       // Switch to view mode
       this.isEditing = false
 
-      snackbarPush({ color: 'success', messge: 'Updated customer' })
+      pushSnack({ color: 'success', messge: 'Updated customer' })
 
       try {
         await this.$apollo.mutate({
@@ -219,7 +219,7 @@ export default {
         this.open(cache.customerId)
         this.isEditing = true
 
-        snackbarPush({ color: 'error', message: 'Unable to update customer' })
+        pushSnack({ color: 'error', message: 'Unable to update customer' })
       }
     }
   }

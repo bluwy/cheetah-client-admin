@@ -37,7 +37,7 @@ import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
 import BaseDialog from '@/components/Common/BaseDialog.vue'
 import AdminInputUsername from '@/components/Admin/InputUsername.vue'
 import InputPassword from '@/components/Common/InputPassword.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import ADMIN_CREATE from '@/graphql/Admin/Create.graphql'
 import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 
@@ -83,7 +83,7 @@ export default {
       // This will reset form, as triggered by dialog close event
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: `Added new admin "${cache.username}"` })
+      pushSnack({ color: 'success', message: `Added new admin "${cache.username}"` })
 
       try {
         await this.$apollo.mutate({
@@ -107,7 +107,7 @@ export default {
 
         this.$emit('input', true)
 
-        snackbarPush({ color: 'error', message: 'Unable to add new admin' })
+        pushSnack({ color: 'error', message: 'Unable to add new admin' })
       }
     }
   }

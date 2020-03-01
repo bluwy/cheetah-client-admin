@@ -82,7 +82,7 @@ import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/Common/InputDateTime.vue'
 import InputListTask from '@/components/Common/InputListTask.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_REASSIGN from '@/graphql/Job/REASSIGN.graphql'
 import JOB_REASSIGN_GET_ONE from '@/graphql/Job/ReassignGetOne.graphql'
 
@@ -169,7 +169,7 @@ export default {
       // This will reset form, as triggered by dialog close event
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Reassigned job' })
+      pushSnack({ color: 'success', message: 'Reassigned job' })
 
       try {
         await this.$apollo.mutate({
@@ -193,7 +193,7 @@ export default {
 
         this.$emit('input', true)
 
-        snackbarPush({ color: 'error', message: 'Unable to reassign job' })
+        pushSnack({ color: 'error', message: 'Unable to reassign job' })
       }
     }
   }

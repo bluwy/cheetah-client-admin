@@ -18,16 +18,17 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import collectInstanceMixin from '@/mixins/collect-instance'
 
-export const snackbarBus = new Vue()
+const instances = []
 
-export const snackbarPush = ({ message, color, timeout }) => {
-  snackbarBus.$emit('push', { message, color, timeout })
+export const pushSnack = ({ message, color, timeout }) => {
+  instances.forEach(v => v.pushSnack({ message, color, timeout }))
 }
 
 export default {
   name: 'SnackbarGlobal',
+  mixins: [collectInstanceMixin(instances)],
   props: {
     transitionDuration: {
       type: Number,
@@ -56,9 +57,6 @@ export default {
         }, this.transitionDuration)
       }
     }
-  },
-  mounted () {
-    snackbarBus.$on('push', this.pushSnack)
   },
   methods: {
     pushSnack ({ message, color = 'info', timeout = 6000 }) {

@@ -135,7 +135,7 @@ import JobDialogCreate from '@/components/Job/DialogCreate.vue'
 import JobDialogDelete from '@/components/Job/DialogDelete.vue'
 import JobDialogInfo from '@/components/Job/DialogInfo.vue'
 import JobDialogReassign from '@/components/Job/DialogReassign.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 import JOB_UPDATE from '@/graphql/JobUpdate.graphql'
 import JOB_COUNT from '@/graphql/JobCount.graphql'
@@ -264,7 +264,7 @@ export default {
       } catch (e) {
         console.error(e)
 
-        snackbarPush({ color: 'error', message: 'Unable to toggle active' })
+        pushSnack({ color: 'error', message: 'Unable to toggle active' })
       }
     }
   }

@@ -11,7 +11,7 @@
 <script>
 import { cacheObjKeys } from '@/utils/common'
 import DialogYesNo from '@/components/Common/DialogYesNo.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import ADMIN_DELETE from '@/graphql/Admin/Delete.graphql'
 import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 
@@ -33,7 +33,7 @@ export default {
 
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Removed admin' })
+      pushSnack({ color: 'success', message: 'Removed admin' })
 
       try {
         await this.$apollo.mutate({
@@ -61,7 +61,7 @@ export default {
 
         this.open(cache.adminId)
 
-        snackbarPush({ color: 'error', message: 'Unable to remove admin' })
+        pushSnack({ color: 'error', message: 'Unable to remove admin' })
       }
     }
   }

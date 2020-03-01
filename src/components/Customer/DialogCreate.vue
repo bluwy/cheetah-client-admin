@@ -102,7 +102,7 @@ import CustomerInputName from '@/components/Company/InputName.vue'
 import InputAddresses from '@/components/Common/InputAddresses.vue'
 import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
-import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_CREATE from '@/graphql/Customer/Create.graphql'
 
 const formCustomerFactory = () => ({
@@ -152,7 +152,7 @@ export default {
       // This will reset form, as triggered by dialog close event
       this.$emit('input', false)
 
-      snackbarPush({ color: 'success', message: 'Added new customer' })
+      pushSnack({ color: 'success', message: 'Added new customer' })
 
       try {
         await this.$apollo.mutate({
@@ -173,7 +173,7 @@ export default {
 
         this.$emit('input', true)
 
-        snackbarPush({ color: 'error', message: 'Unable to add new customer' })
+        pushSnack({ color: 'error', message: 'Unable to add new customer' })
       }
     }
   }

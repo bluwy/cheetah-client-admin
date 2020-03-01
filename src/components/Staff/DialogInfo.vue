@@ -54,7 +54,7 @@ import { updatedDiff } from 'deep-object-diff'
 import { cacheObjKeys, formatDate } from '@/utils/common'
 import BaseDialog from '@/components/Common/BaseDialog.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
-import { snackbarPush } from './SnackbarGlobal.vue'
+import { pushSnack } from './SnackbarGlobal.vue'
 import STAFF_GET_ONE from '@/graphql/Staff/GetOne.graphql'
 import STAFF_UPDATE from '@/graphql/Staff/Update.graphql'
 
@@ -115,7 +115,7 @@ export default {
       // Switch to view mode
       this.isEditing = false
 
-      snackbarPush({ color: 'success', messge: 'Updated staff' })
+      pushSnack({ color: 'success', messge: 'Updated staff' })
 
       try {
         await this.$apollo.mutate({
@@ -131,7 +131,7 @@ export default {
         this.open(cache.staffId)
         this.isEditing = true
 
-        snackbarPush({ color: 'error', message: 'Unable to update staff' })
+        pushSnack({ color: 'error', message: 'Unable to update staff' })
       }
     }
   }
