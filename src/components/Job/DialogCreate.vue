@@ -84,6 +84,7 @@ import InputDateTime from '@/components/InputDateTime.vue'
 import InputListTask from '@/components/InputListTask.vue'
 import { snackbarPush } from '@/components/SnackbarGlobal.vue'
 import JOB_CREATE from '@/graphql/Job/Create.graphql'
+import JOB_FOLLOW_UP_GET_ONE from '@/graphql/Job/FollowUpGetOne.graphql'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 
 const formJobFactory = () => ({
@@ -108,6 +109,18 @@ export default {
       skip () {
         return !(this.formJob && this.formJob.customerId)
       }
+    },
+    followUpJob: {
+      query: JOB_FOLLOW_UP_GET_ONE,
+      variables () {
+        return {
+          id: this.followUpJobId
+        }
+      },
+      update: v => v.job,
+      skip () {
+        return !this.followUpJobId
+      }
     }
   },
   components: {
@@ -118,7 +131,9 @@ export default {
     InputListTask
   },
   data: () => ({
+    followUpJobId: '',
     customer: {},
+    followUpJob: {},
     formJob: formJobFactory(),
     rule: {
       customerId: [required],
@@ -138,7 +153,8 @@ export default {
   },
   watch: {
     customer (val) {
-      if (val) {
+      // If is a follow up, that will take precendence (function below)
+      if (val && !this.followUpJobId) {
         if (val.staffPrimary && val.staffPrimary.id) {
           this.formJob.staffPrimaryId = val.staffPrimary.id
         }
@@ -151,10 +167,27 @@ export default {
           this.formJob.address = val.addresses[0]
         }
       }
+    },
+    followUpJob (val) {
+      if (val) {
+        this.formJob.customerId = val.customer.id
+        this.formJob.address = val.address
+        this.formJob.staffPrimaryId = val.staffPrimary.id
+        this.formJob.staffSecondaryId = val.staffSecondary.id
+        this.formJob.tasks = val.actions.map(v => ({
+          type: '',
+          remarks: v.remarks
+        }))
+      }
     }
   },
   methods: {
+    open (followUpJobId) {
+      this.followUpJobId = followUpJobId
+    },
     resetForm () {
+      this.followUpJobId = ''
+      this.followUpJob = {}
       this.formJob = formJobFactory()
       this.$refs.dialog.$refs.form.resetValidation()
     },
@@ -166,7 +199,7 @@ export default {
       return vars
     },
     async createJob () {
-      const { cache, restore } = cacheObjKeys(this, ['formJob'])
+      const { cache, restore } = cacheObjKeys(this, ['followUpJob', 'followUpJobId', 'formJob'])
 
       // This will reset form, as triggered by dialog close event
       this.$emit('input', false)

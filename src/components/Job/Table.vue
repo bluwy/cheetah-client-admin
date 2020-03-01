@@ -89,6 +89,7 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
+            v-if="canReassign(item)"
             color="warning"
             @click.stop="$refs.dialogReassign.open(item.id)"
           >
@@ -97,6 +98,18 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Reassign</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            v-if="canFollowUp(item)"
+            color="warning"
+            @click.stop="$refs.dialogCreate.open(item.id)"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-clipboard-text</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Follow Up</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item
@@ -234,6 +247,13 @@ export default {
   methods: {
     refetch () {
       this.$apollo.queries.jobs.refetch()
+    },
+    canReassign (job) {
+      // Haven't check out means haven't done
+      return job.checkOut == null
+    },
+    canFollowUp (job) {
+      return job.state === 'FOLLOW_UP'
     },
     async updateActive (jobId, newActive) {
       try {
