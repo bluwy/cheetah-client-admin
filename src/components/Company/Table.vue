@@ -3,6 +3,7 @@
     :headers="headers"
     :items="companies"
     :loading="!!loadingCount"
+    :search="searchQuery"
     sort-by="name"
     hide-default-footer
     must-sort

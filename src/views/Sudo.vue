@@ -1,15 +1,11 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        404
-      </v-col>
-    </v-row>
+    WIP
   </v-container>
 </template>
 
 <script>
 export default {
-  name: 'Null'
+  name: 'Sudo'
 }
 </script>

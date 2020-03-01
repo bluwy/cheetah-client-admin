@@ -2,20 +2,17 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store'
 
-import BoxLayout from '@/layouts/Box.vue'
-import DashLayout from '@/layouts/Dash.vue'
+const BoxLayout = import('@/layouts/Box.vue')
+const DashLayout = import('@/layouts/Dash.vue')
 
-import Login from '@/views/Login.vue'
-import Forgot from '@/views/Forgot.vue'
-import Reset from '@/views/Reset.vue'
+const Login = import('@/views/Login.vue')
+const Reset = import('@/views/Reset.vue')
 
-import Jobs from '@/views/Jobs.vue'
-import Customers from '@/views/Customers.vue'
-import Companies from '@/views/Companies.vue'
-import Staffs from '@/views/Staffs.vue'
-import Admins from '@/views/Admins.vue'
+const Home = import('@/views/Home.vue')
+const Manage = import('@/views/Manage.vue')
+const Sudo = import('@/views/Sudo.vue')
 
-import Null from '@/views/Null.vue'
+const Null = import('@/views/Null.vue')
 
 const AUTH_BYPASS = !!process.env.AUTH_BYPASS
 
@@ -27,36 +24,19 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/jobs',
+      redirect: '/home',
       component: DashLayout,
       meta: { requiresAuth: true },
       children: [
         {
-          path: 'jobs',
-          name: 'jobs',
-          component: Jobs
+          path: 'home',
+          name: 'home',
+          component: Home
         },
         {
-          path: 'customers',
-          name: 'customers',
-          component: Customers
-        },
-        {
-          path: 'companies',
-          name: 'companies',
-          component: Companies,
-          meta: { requiresPrivilegeFull: true }
-        },
-        {
-          path: 'staffs',
-          name: 'staffs',
-          component: Staffs,
-          meta: { requiresPrivilegeFull: true }
-        },
-        {
-          path: 'admins',
-          name: 'admins',
-          component: Admins,
+          path: 'manage',
+          name: 'manage',
+          component: Manage,
           meta: { requiresPrivilegeFull: true }
         }
       ]
@@ -71,14 +51,14 @@ const router = new Router({
           component: Login
         },
         {
-          path: 'forgot',
-          name: 'forgot',
-          component: Forgot
-        },
-        {
           path: 'reset',
           name: 'reset',
           component: Reset
+        },
+        {
+          path: 'sudo',
+          name: 'sudo',
+          component: Sudo
         }
       ]
     },
@@ -96,7 +76,8 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.matched.some(v => v.meta.requiresAuth)) {
-    await store.dispatch('checkUser').catch(() => {})
+    // Make sure user data is checked
+    await store.dispatch('getUserData').catch(() => {})
 
     if (store.getters.isAuthed) {
       if (to.matched.some(v => v.meta.requiresPrivilegeFull) && !store.getters.isPrivilegeFull) {

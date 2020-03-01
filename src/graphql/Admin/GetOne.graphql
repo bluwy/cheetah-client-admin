@@ -1,4 +1,4 @@
-query AdminGetOne($id: ID!) {
+query AdminGetOne($id: ID) {
   admin(id: $id) {
     id
     createdAt

@@ -3,6 +3,7 @@
     :headers="headers"
     :items="admins"
     :loading="!!loadingCount"
+    :search="searchQuery"
     sort-by="username"
     hide-default-footer
     must-sort

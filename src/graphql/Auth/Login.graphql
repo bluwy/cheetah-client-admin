@@ -1,0 +1,3 @@
+mutation AuthLogin($username: String!, $password: String!) {
+  loginAdmin(username: $username, password: $password)
+}

@@ -72,27 +72,26 @@ export default {
   },
   methods: {
     async resetPassword () {
-      if (this.$refs.form.validate() && this.token && !this.loading) {
+      if (this.$refs.form.validate() && this.valid && this.token && !this.loading) {
         try {
           this.loading = true
 
           const { data: { resetAdminPassword } } = await this.$apollo.mutate({
             mutation: ADMIN_RESET_PASSWORD,
             variables: {
-              token: this.token,
-              password: this.password
+              resetToken: this.token,
+              newPassword: this.password
             }
           })
 
-          if (resetAdminPassword.success) {
+          if (resetAdminPassword) {
             this.messageType = 'success'
-            this.messageText = resetAdminPassword.message
+            this.messageText = 'Successfully resetted password'
 
             await this.$router.push({ path: '/login' })
-
-            this.processDone = true
           } else {
-            throw new Error(resetAdminPassword.message)
+            this.messageType = 'error'
+            this.messageText = 'Unable to reset password'
           }
         } catch (e) {
           this.messageType = 'error'
@@ -106,6 +105,3 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
