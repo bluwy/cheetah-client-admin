@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from './store'
+import { apolloClient } from './plugins/apollo'
+import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 
 const BoxLayout = import('@/layouts/Box.vue')
 const DashLayout = import('@/layouts/Dash.vue')
@@ -72,25 +73,38 @@ const router = new Router({
 
 router.beforeEach(async (to, from, next) => {
   if (AUTH_BYPASS) {
-    next()
+    return next()
   }
 
   if (to.matched.some(v => v.meta.requiresAuth)) {
-    // Make sure user data is checked
-    await store.dispatch('getUserData').catch(() => {})
+    const userData = await getUserData()
 
-    if (store.getters.isAuthed) {
-      if (to.matched.some(v => v.meta.requiresPrivilegeFull) && !store.getters.isPrivilegeFull) {
-        next('/')
-      } else {
-        next()
+    if (userData != null) {
+      if (to.matched.some(v => v.meta.requiresPrivilegeFull) && userData.privilege !== 'FULL') {
+        return next('/')
       }
-    } else {
-      next('/login')
+
+      return next()
     }
-  } else {
-    next()
+
+    return next('/login')
   }
+
+  return next()
 })
+
+/** Gets the session user data, multiple calls is fine since apollo caches it */
+async function getUserData () {
+  try {
+    // Get self data, calling AMIN_GET_ONE without id gets current session data
+    const { data: { admin } } = await apolloClient.mutate({
+      mutation: ADMIN_GET_ONE
+    })
+
+    return admin
+  } catch {
+    return undefined
+  }
+}
 
 export default router

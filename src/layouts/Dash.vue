@@ -48,8 +48,8 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
-            color="primary"
-            @click="handleLogout()"
+            color="error"
+            @click="logout()"
           >
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
@@ -71,9 +71,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { get } from 'lodash-es'
 import SnackbarGlobal from '@/components/Common/SnackbarGlobal.vue'
 import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
+import AUTH_LOGOUT from '@/graphql/Auth/Logout.graphql'
 
 export default {
   name: 'Dash',
@@ -90,18 +91,27 @@ export default {
     admin: {}
   }),
   computed: {
-    ...mapGetters([
-      'isPrivilegeFull'
-    ])
+    isPrivilegeFull () {
+      return get(this.admin, 'privilege') === 'FULL'
+    }
   },
   methods: {
-    ...mapActions([
-      'logout'
-    ]),
-    async handleLogout () {
-      if (await this.logout()) {
-        this.$router.push({ path: '/login' })
+    async logout () {
+      try {
+        const { data: { logoutAdmin } } = await this.$apollo.mutate({
+          mutation: AUTH_LOGOUT
+        })
+
+        if (!logoutAdmin) {
+          throw new Error('Unable to logout')
+        }
+      } catch (e) {
+        // If logout failed, just log to console, no need to prevent client.
+        // This is because the session if not logout will also expire anyway.
+        console.error(e)
       }
+
+      this.$router.push({ path: '/login' })
     }
   }
 }

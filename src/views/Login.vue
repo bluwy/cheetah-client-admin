@@ -3,7 +3,7 @@
     ref="form"
     v-model="valid"
     lazy-validation
-    @submit.prevent="handleLogin()"
+    @submit.prevent="login()"
   >
     <v-card
       :loading="loading"
@@ -45,18 +45,16 @@
       </v-card-actions>
     </v-card>
     <div class="text-center mt-3">
-      <router-link to="/forgot">
-        Forgot password
-      </router-link>
+      Forgot password? Contact developer
     </div>
   </v-form>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import { getErrorMessages } from '@/utils/apollo'
 import { required } from '@/utils/inputRules'
 import InputPassword from '@/components/Common/InputPassword.vue'
+import AUTH_LOGIN from '@/graphql/Auth/Login.graphql'
 
 const formUserFactory = () => ({
   username: '',
@@ -80,16 +78,20 @@ export default {
     loading: false
   }),
   methods: {
-    ...mapActions([
-      'login'
-    ]),
-    async handleLogin () {
+    async login () {
       if (this.$refs.form.validate() && !this.loading) {
         try {
           this.loading = true
 
-          if (await this.login(this.user)) {
+          const { data: { loginAdmin } } = await this.$apollo.mutate({
+            mutation: AUTH_LOGIN,
+            variables: this.user
+          })
+
+          if (loginAdmin) {
             await this.$router.push({ path: '/' })
+          } else {
+            throw new Error('Unable to login')
           }
         } catch (e) {
           this.messageType = 'error'
