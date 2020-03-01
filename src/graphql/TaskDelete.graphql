@@ -1,3 +1,0 @@
-mutation TaskDelete($id: ID!) {
-  deleteTask(where: { id: $id })
-}

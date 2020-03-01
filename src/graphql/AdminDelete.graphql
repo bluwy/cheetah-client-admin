@@ -1,3 +1,0 @@
-mutation AdminDelete($id: ID!) {
-  deleteAdmin(where: { id: $id })
-}

@@ -1,7 +1,0 @@
-#import "./fragments/Admin.graphql"
-
-query AdminGet($id: ID!) {
-  admin(where: { id: $id }) {
-    ...adminFragment
-  }
-}

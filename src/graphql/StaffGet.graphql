@@ -1,7 +1,0 @@
-#import "./fragments/Staff.graphql"
-
-query StaffGet($id: ID!) {
-  staff(where: { id: $id }) {
-    ...staffFragment
-  }
-}

@@ -1,3 +1,0 @@
-mutation JobDelete($id: ID!) {
-  deleteJob(where: { id: $id })
-}

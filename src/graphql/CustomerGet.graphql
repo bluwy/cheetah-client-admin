@@ -1,7 +1,0 @@
-#import "./fragments/Customer.graphql"
-
-query CustomerGet($id: ID!) {
-  customer(where: { id: $id }) {
-    ...customerFragment
-  }
-}
