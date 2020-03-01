@@ -29,10 +29,10 @@
 import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, maxStrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/BaseDialog.vue'
+import BaseDialog from '@/components/Common/BaseDialog.vue'
 import CompanyInputName from '@/components/Company/InputName.vue'
 import CompanyInputAlias from '@/components/Company/InputAlias.vue'
-import { snackbarPush } from '@/components/SnackbarGlobal.vue'
+import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
 import COMPANY_CREATE from '@/graphql/Company/Create.graphql'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 

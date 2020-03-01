@@ -111,7 +111,7 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
-import SnackbarGlobal from '@/components/SnackbarGlobal.vue'
+import SnackbarGlobal from '@/components/Common/SnackbarGlobal.vue'
 import ADMIN_GET from '@/graphql/AdminGet.graphql'
 
 export default {

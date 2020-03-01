@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import InputTask from '@/components/InputTask.vue'
+import InputTask from '@/components/Common/InputTask.vue'
 
 export default {
   name: 'InputListTask',

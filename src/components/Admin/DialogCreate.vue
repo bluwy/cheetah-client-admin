@@ -34,10 +34,10 @@
 import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/BaseDialog.vue'
+import BaseDialog from '@/components/Common/BaseDialog.vue'
 import AdminInputUsername from '@/components/Admin/InputUsername.vue'
-import InputPassword from '@/components/InputPassword.vue'
-import { snackbarPush } from '@/components/SnackbarGlobal.vue'
+import InputPassword from '@/components/Common/InputPassword.vue'
+import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
 import ADMIN_CREATE from '@/graphql/Admin/Create.graphql'
 import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 

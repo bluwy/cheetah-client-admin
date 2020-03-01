@@ -10,8 +10,8 @@
 
 <script>
 import { cacheObjKeys } from '@/utils/common'
-import DialogYesNo from '@/components/DialogYesNo.vue'
-import { snackbarPush } from '@/components/SnackbarGlobal.vue'
+import DialogYesNo from '@/components/Common/DialogYesNo.vue'
+import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_DELETE from '@/graphql/Staff/Delete.graphql'
 import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
 

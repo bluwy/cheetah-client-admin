@@ -11,8 +11,8 @@
 <script>
 import { storeDeleteQuery } from '@/utils/apollo'
 import { cacheObjKeys } from '@/utils/common'
-import { snackbarPush } from '@/components/SnackbarGlobal.vue'
-import DialogYesNo from '@/components/DialogYesNo.vue'
+import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
+import DialogYesNo from '@/components/Common/DialogYesNo.vue'
 import JOB_DELETE from '@/graphql/Job/Delete.graphql'
 
 export default {

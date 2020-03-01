@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import InputTextUnique from '@/components/InputTextUnique.vue'
+import InputTextUnique from '@/components/Common/InputTextUnique.vue'
 import COMPANY_COUNT from '@/graphql/Company/Count.graphql'
 
 export default {

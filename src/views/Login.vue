@@ -56,7 +56,7 @@
 import { mapActions } from 'vuex'
 import { getErrorMessages } from '@/utils/apollo'
 import { required } from '@/utils/inputRules'
-import InputPassword from '@/components/InputPassword.vue'
+import InputPassword from '@/components/Common/InputPassword.vue'
 
 const formUserFactory = () => ({
   username: '',

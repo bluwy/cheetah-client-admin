@@ -37,10 +37,10 @@
 import { isEqual } from 'lodash-es'
 import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/BaseDialog.vue'
+import BaseDialog from '@/components/Common/BaseDialog.vue'
 import StaffInputUsername from '@/components/Staff/InputUsername.vue'
 import StaffInputFullName from '@/components/Staff/InputFullName.vue'
-import { snackbarPush } from '@/components/SnackbarGlobal.vue'
+import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_CREATE from '@/graphql/Staff/Create.graphql'
 import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
 

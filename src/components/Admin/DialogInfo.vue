@@ -23,7 +23,7 @@
 
 <script>
 import { formatDate } from '@/utils/common'
-import BaseDialog from '@/components/BaseDialog.vue'
+import BaseDialog from '@/components/Common/BaseDialog.vue'
 import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 
 export default {

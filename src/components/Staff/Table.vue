@@ -137,7 +137,7 @@ import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
 import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
 import StaffDialogInfo from '@/components/Staff/DialogInfo.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
-import { snackbarPush } from '@/components/SnackbarGlobal.vue'
+import { snackbarPush } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
 

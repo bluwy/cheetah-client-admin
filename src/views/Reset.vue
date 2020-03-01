@@ -45,7 +45,7 @@
 <script>
 import { getErrorMessages } from '@/utils/apollo'
 import { required, minStrLength } from '@/utils/inputRules'
-import InputPassword from '@/components/InputPassword.vue'
+import InputPassword from '@/components/Common/InputPassword.vue'
 import ADMIN_RESET_PASSWORD from '@/graphql/AdminResetPassword.graphql'
 
 export default {
@@ -104,4 +104,3 @@ export default {
   }
 }
 </script>
-

@@ -52,7 +52,7 @@
 import { isEqual } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
 import { cacheObjKeys, formatDate } from '@/utils/common'
-import BaseDialog from '@/components/BaseDialog.vue'
+import BaseDialog from '@/components/Common/BaseDialog.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
 import { snackbarPush } from './SnackbarGlobal.vue'
 import STAFF_GET_ONE from '@/graphql/Staff/GetOne.graphql'
