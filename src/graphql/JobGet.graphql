@@ -1,7 +1,0 @@
-#import "./fragments/Job.graphql"
-
-query JobGet($id: ID!) {
-  job(where: { id: $id }) {
-    ...jobFragment
-  }
-}

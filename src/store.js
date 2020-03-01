@@ -2,93 +2,84 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { isEmpty } from 'lodash-es'
 import { apolloClient } from './plugins/apollo'
-import { authToken } from './utils/localStorage'
-
-import ADMIN_VERIFY_TOKEN from '@/graphql/AdminVerifyToken.graphql'
-import ADMIN_LOGIN from '@/graphql/AdminLogin.graphql'
+import AUTH_LOGIN from '@/graphql/Auth/Login.graphql'
+import AUTH_LOGOUT from '@/graphql/Auth/Logout.graphql'
+import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userChecked: false,
     userData: {}
   },
   mutations: {
-    SET_USER_CHECKED (state, { val }) {
-      state.userChecked = !!val
-    },
     SET_USER_DATA (state, { data }) {
       state.userData = data || {}
     }
   },
   actions: {
-    // Used by router
-    async checkUser ({ state, commit }, { force = false } = {}) {
-      if (!force && state.userChecked) { return }
+    /** Gets the user data if doesn't exist, unless force */
+    async getUserData ({ state, commit }, { force = false } = {}) {
+      if (!force && state.userData != null) { return }
 
-      commit('SET_USER_CHECKED', { val: true })
+      // Get self data, calling AMIN_GET_ONE without id gets current session data
+      const { data: { admin } } = await apolloClient.mutate({
+        mutation: ADMIN_GET_ONE
+      })
 
-      const token = authToken()
+      if (admin != null) {
+        commit('SET_USER_DATA', { data: admin })
 
-      if (token) {
-        try {
-          const { data: { verifyAdminToken } } = await apolloClient.query({
-            query: ADMIN_VERIFY_TOKEN,
-            variables: { token }
-          })
+        return true
+      } else {
+        commit('SET_USER_DATA', { data: undefined })
 
-          if (verifyAdminToken != null) {
-            commit('SET_USER_DATA', {
-              data: {
-                id: verifyAdminToken.adminId,
-                privilege: verifyAdminToken.adminPrivilege
-              }
-            })
-          } else {
-            throw new Error('Invalid token')
-          }
-        } catch (e) {
-          commit('SET_USER_DATA', { data: null })
-          throw e
-        }
+        throw new Error('Invalid session')
       }
     },
-    uncheckUser ({ commit }) {
-      commit('SET_USER_CHECKED', { val: false })
+    removeUserData ({ commit }) {
+      commit('SET_USER_DATA', { data: undefined })
     },
-    async login ({ commit }, { username, password }) {
+    async login ({ commit, dispatch }, { username, password }) {
       try {
         const { data: { loginAdmin } } = await apolloClient.mutate({
-          mutation: ADMIN_LOGIN,
+          mutation: AUTH_LOGIN,
           variables: { username, password }
         })
 
-        if (loginAdmin != null) {
-          authToken(loginAdmin.token)
+        if (loginAdmin) {
+          await dispatch('getUserData')
 
-          commit('SET_USER_DATA', {
-            data: {
-              id: loginAdmin.adminId,
-              privilege: loginAdmin.adminPrivilege
-            }
-          })
-
-          commit('SET_USER_CHECKED', { val: true })
           return true
         } else {
-          throw new Error('Unable to login user')
+          throw new Error('Unable to login')
         }
       } catch (e) {
-        commit('SET_USER_DATA', { data: null })
+        commit('SET_USER_DATA', { data: undefined })
+
         throw e
       }
     },
-    logout ({ commit }) {
-      authToken(null)
-      commit('SET_USER_DATA', { data: null })
+    async logout ({ commit }) {
+      try {
+        const { data: { logoutAdmin } } = await apolloClient.mutate({
+          mutation: AUTH_LOGOUT
+        })
+
+        if (!logoutAdmin) {
+          throw new Error('Unable to logout')
+        }
+      } catch (e) {
+        // If logout failed, just log to console, no need to prevent client.
+        // This is because the session if not logout will also expire anyway.
+        console.error(e)
+      }
+
+      commit('SET_USER_DATA', { data: undefined })
+
       return true
     }
+
   },
   getters: {
     isAuthed (state) {

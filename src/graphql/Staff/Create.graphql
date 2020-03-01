@@ -1,0 +1,11 @@
+mutation StaffCreate($username: String!, $fullName: String!) {
+  createStaff(data: { username: $username, fullName: $fullName }) {
+    id
+    createdAt
+    updatedAt
+    username
+    fullName
+    active
+    paired
+  }
+}

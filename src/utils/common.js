@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { cloneDeep, get, set, pick } from 'lodash-es'
 
 /**
@@ -25,4 +26,8 @@ export const transformObj = (obj, transforms) => {
     }
   })
   return obj
+}
+
+export const formatDate = (isoDate) => {
+  return format(new Date(isoDate), 'd MMM yyyy')
 }

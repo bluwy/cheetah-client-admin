@@ -1,0 +1,23 @@
+mutation JobCreate(
+  $customerId: ID!,
+  $address: String!,
+  $startDate: DateTime!,
+  $staffPrimaryId: ID!,
+  $staffSecondaryId: ID,
+  $tasks: [TaskCreateInput!]!
+) {
+  createJob(
+    data: {
+      customerId: $customerId,
+      address: $address,
+      startDate: $startDate,
+      staffPrimaryId: $staffPrimaryId,
+      staffSecondaryId: $staffSecondaryId,
+      tasks: $tasks
+    }
+  ) {
+    id
+    createdAt
+    updatedAt
+  }
+}

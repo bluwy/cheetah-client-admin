@@ -1,0 +1,45 @@
+mutation CustomerCreate(
+  $code: String!
+  $name: String!
+  $addresses: [String!]!
+  $email: String
+  $phoneNumber: String
+  $companyBelongId: ID!
+  $staffPrimaryId: ID!
+  $staffSecondaryId: ID
+) {
+  createCustomer(
+    data: {
+      code: $code
+      name: $name
+      addresses: $addresses
+      email: $email
+      phoneNumber: $phoneNumber
+      companyBelongId: $companyBelongId
+      staffPrimaryId: $staffPrimaryId
+      staffSecondaryId: $staffSecondaryId
+    }
+  ) {
+    id
+    createdAt
+    updatedAt
+    code
+    name
+    active
+    email
+    addresses
+    phoneNumber
+    companyBelong {
+      id
+      name
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+  }
+}

@@ -1,0 +1,11 @@
+mutation StaffUpdate($id: ID!, $fullName: String, $active: Boolean!) {
+  updateStaff(id: $id, data: { fullName: $fullName, active: $active }) {
+    id
+    createdAt
+    updatedAt
+    username
+    fullName
+    active
+    paired
+  }
+}

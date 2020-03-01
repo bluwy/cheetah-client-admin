@@ -1,0 +1,25 @@
+query CustomerGetOne($id: id!) {
+  customer(id: $id) {
+    id
+    createdAt
+    updatedAt
+    code
+    name
+    active
+    email
+    addresses
+    phoneNumber
+    companyBelong {
+      id
+      name
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+  }
+}

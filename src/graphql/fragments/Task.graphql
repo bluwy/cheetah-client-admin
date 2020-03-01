@@ -1,5 +1,0 @@
-fragment taskFragment on Task {
-  id
-  type
-  remarks
-}

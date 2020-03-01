@@ -1,3 +1,0 @@
-mutation CustomerDelete($id: ID!) {
-  deleteCustomer(where: { id: $id })
-}

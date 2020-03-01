@@ -1,7 +1,0 @@
-#import "./fragments/Admin.graphql"
-
-query AdminGetAll {
-  admins {
-    ...adminFragment
-  }
-}

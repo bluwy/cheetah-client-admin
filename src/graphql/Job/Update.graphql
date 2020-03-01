@@ -1,0 +1,47 @@
+mutation JobUpdate(
+  $id: ID!
+  $customerId: ID
+  $address: String
+  $startDate: DateTime
+  $checkIn: DateTime
+  $checkOut: DateTime
+  $state: JobState
+  $staffPrimaryId: ID
+  $staffSecondaryId: ID
+) {
+  adminUpdateJob(
+    id: $id
+    data: {
+      customerId: $customerId
+      address: $address
+      startDate: $startDate
+      checkIn: $checkIn
+      checkOut: $checkOut
+      state: $state
+      staffPrimaryId: $staffPrimaryId
+      staffSecondaryId: $staffSecondaryId
+    }
+  ) {
+    id
+    createdAt
+    updatedAt
+    code
+    address
+    startDate
+    checkIn
+    checkOut
+    state
+    customer {
+      id
+      name
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+  }
+}

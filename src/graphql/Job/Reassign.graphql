@@ -1,0 +1,13 @@
+mutation JobReassign($id: ID!, $data: ReassignJobInput!) {
+  reassignJob(id: $id, data: $data) {
+    oriJob {
+      id
+      state
+    }
+    newJob {
+      id
+      createdAt
+      updatedAt
+    }
+  }
+}

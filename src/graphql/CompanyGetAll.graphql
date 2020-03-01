@@ -1,7 +1,0 @@
-#import "./fragments/Company.graphql"
-
-query CompanyGetAll {
-  companies {
-    ...companyFragment
-  }
-}

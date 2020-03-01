@@ -1,5 +1,0 @@
-fragment companyFragment on Company {
-  id
-  name
-  alias
-}

@@ -1,0 +1,30 @@
+query CustomerGetAll(
+  $skip: Int
+  $first: Int
+  $where: CustomerWhereInput
+  $orderBy: CustomerOrderByInput
+) {
+  customers(skip: $skip, first: $first, where: $where, orderBy: $orderBy) {
+    id
+    createdAt
+    updatedAt
+    code
+    name
+    active
+    email
+    addresses
+    phoneNumber
+    companyBelong {
+      id
+      name
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+  }
+}

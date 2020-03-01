@@ -1,0 +1,3 @@
+mutation StaffDelete($id: ID!) {
+  deleteStaff(id: $id)
+}

@@ -1,6 +1,0 @@
-query AdminVerifyToken($token: String!) {
-  verifyAdminToken(token: $token) {
-    adminId
-    adminPrivilege
-  }
-}

@@ -4,28 +4,15 @@
       app
       elevate-on-scroll
     >
-      <v-toolbar-title class="app-bar__title">
-        e-Job Sheet
+      <v-toolbar-title>
+        <v-btn
+          text
+          to="/"
+        >
+          E-JOB
+        </v-btn>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn
-        class="mr-2"
-        large
-        text
-        color="primary"
-        to="jobs"
-      >
-        Jobs
-      </v-btn>
-      <v-btn
-        class="mr-2"
-        large
-        text
-        color="primary"
-        to="customers"
-      >
-        Customers
-      </v-btn>
       <v-menu offset-y>
         <template #activator="{ on }">
           <v-btn
@@ -50,40 +37,14 @@
           <v-list-item
             v-if="isPrivilegeFull"
             color="primary"
-            to="companies"
+            to="/manage"
             link
           >
             <v-list-item-icon>
-              <v-icon>mdi-factory</v-icon>
+              <v-icon>mdi-shield</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>View companies</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            v-if="isPrivilegeFull"
-            color="primary"
-            to="staffs"
-            link
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-worker</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>View staffs</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            v-if="isPrivilegeFull"
-            color="primary"
-            to="admins"
-            link
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-shield-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>View admins</v-list-item-title>
+              <v-list-item-title>Manage</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item
@@ -110,23 +71,16 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from 'vuex'
-import SnackbarGlobal from '@/components/SnackbarGlobal.vue'
-import ADMIN_GET from '@/graphql/AdminGet.graphql'
+import { mapActions, mapGetters } from 'vuex'
+import SnackbarGlobal from '@/components/Common/SnackbarGlobal.vue'
+import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 
 export default {
   name: 'Dash',
   apollo: {
     admin: {
-      query: ADMIN_GET,
-      variables () {
-        return {
-          id: this.userData.id
-        }
-      },
-      skip () {
-        return !this.userData.id
-      }
+      // Get session admin
+      query: ADMIN_GET_ONE
     }
   },
   components: {
@@ -136,9 +90,6 @@ export default {
     admin: {}
   }),
   computed: {
-    ...mapState([
-      'userData'
-    ]),
     ...mapGetters([
       'isPrivilegeFull'
     ])
@@ -163,17 +114,5 @@ export default {
 
 .v-enter, .v-leave-to {
   opacity: 0;
-}
-
-.app-bar__title {
-  text-transform: capitalize;
-}
-
-.nav-list__item--inactive {
-  opacity: .8;
-}
-
-.nav-list__item--active {
-  opacity: 1;
 }
 </style>

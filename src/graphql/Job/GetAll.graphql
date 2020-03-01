@@ -1,0 +1,29 @@
+query JobGetAll(
+  $skip: Int
+  $first: Int
+  $where: JobWhereInput
+  $orderBy: JobOrderByInput
+) {
+  jobs(skip: $skip, first: $first, where: $where, orderBy: $orderBy) {
+    id
+    createdAt
+    updatedAt
+    code
+    startDate
+    checkIn
+    checkOut
+    state
+    customer {
+      id
+      name
+    }
+    staffPrimary {
+      id
+      username
+    }
+    staffSecondary {
+      id
+      username
+    }
+  }
+}

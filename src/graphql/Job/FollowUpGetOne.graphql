@@ -1,0 +1,21 @@
+query JobFollowUpGetOne(id: ID!) {
+  job(id: $id) {
+    id
+    code
+    address
+    startDate
+    customer {
+      id
+    }
+    staffPrimary {
+      id
+    }
+    staffSecondary {
+      id
+    }
+    actions {
+      id
+      remarks
+    }
+  }
+}

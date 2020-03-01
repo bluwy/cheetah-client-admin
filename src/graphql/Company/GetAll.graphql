@@ -1,0 +1,9 @@
+query CompanyGetAll($query: String!, $where: CompanyWhereInput) {
+  companies(query: $query, where: $where) {
+    id
+    createdAt
+    updatedAt
+    name
+    alias
+  }
+}

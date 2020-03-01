@@ -1,4 +1,14 @@
-# xecom-job-client-admin
+# e-job-client-admin
+
+This project is destined to be rewriten once Vue 3 hits to accustom for
+TypeScript support and Composition API.
+
+The next project should be using:
+* TypeScript
+* Composition API
+* Fetch API, no axios
+* Prettier, no standard
+* No Vuex (?)
 
 ## Project setup
 ```
