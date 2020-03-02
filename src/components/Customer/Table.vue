@@ -10,7 +10,7 @@
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
-    @click:row="$refs.dialogInfo.open($event.id)"
+    @click:row="openSidebarItemInfo()"
   >
     <template #top>
       <v-toolbar flat>
@@ -32,20 +32,6 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <customer-dialog-create
-          ref="dialogCreate"
-          v-model="dialogCreate"
-          @create-customer="refetch()"
-        />
-        <customer-dialog-delete
-          ref="dialogDelete"
-          v-model="dialogDelete"
-          @delete-customer="refetch()"
-        />
-        <customer-dialog-info
-          ref="dialogInfo"
-          v-model="dialogInfo"
-        />
       </v-toolbar>
     </template>
     <template #item.active="{ item }">
@@ -58,52 +44,15 @@
       />
     </template>
     <template #item.menu="{ item }">
-      <v-menu>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            color="primary"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-dots-horizontal
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            color="primary"
-            @click.stop="$refs.dialogInfo.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-information</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Info</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            color="error"
-            @click.stop="$refs.dialogDelete.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-delete</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Remove</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <table-item-menu :customer-id="item.id" />
     </template>
   </v-data-table>
 </template>
 
 <script>
 import { isEmpty, set } from 'lodash-es'
-import CustomerDialogCreate from '@/components/Customer/DialogCreate.vue'
-import CustomerDialogDelete from '@/components/Customer/DialogDelete.vue'
-import CustomerDialogInfo from '@/components/Customer/DialogInfo.vue'
+import TableItemMenu from '@/components/Customer/TableItemMenu.vue'
+import CustomerSidebarItemInfo from '@/components/Customer/SidebarItemInfo.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
@@ -135,9 +84,7 @@ export default {
     }
   },
   components: {
-    CustomerDialogCreate,
-    CustomerDialogDelete,
-    CustomerDialogInfo
+    TableItemMenu
   },
   props: {
     tableTitle: {
@@ -170,10 +117,7 @@ export default {
     sortDesc: [false],
     searchQuery: '',
     customers: [],
-    customerCount: 0,
-    dialogCreate: false,
-    dialogDelete: false,
-    dialogInfo: false
+    customerCount: 0
   }),
   computed: {
     queryOffset () {
@@ -218,6 +162,9 @@ export default {
   methods: {
     refetch () {
       this.$apollo.queries.customers.refetch()
+    },
+    openSidebarItemInfo () {
+      this.addSidebarItem({ component: CustomerSidebarItemInfo })
     },
     async updateActive (customerId, newActive) {
       try {

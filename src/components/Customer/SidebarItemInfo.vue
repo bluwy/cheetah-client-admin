@@ -1,13 +1,13 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :card-props="{ loading: !!loadingCount }"
     :is-editing.sync="isEditing"
     :show-actions="isEditing"
     :is-dirty="isDirty"
     is-editable
-    dialog-title="Customer Info"
+    item-title="Customer Info"
     v-on="$listeners"
     @close="resetForm"
   >
@@ -104,15 +104,15 @@
     <v-input prepend-icon="mdi-update">
       {{ formatDate(customer.updatedAt) }}
     </v-input>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual, cloneDeep } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
-import { cacheObjKeys, formatDate } from '@/utils/common'
+import { formatDate } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import CustomerInputCode from '@/components/Company/InputCode.vue'
 import CustomerInputName from '@/components/Company/InputName.vue'
 import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
@@ -122,7 +122,7 @@ import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
 
 export default {
-  name: 'CustomerDialogInfo',
+  name: 'CustomerSidebarItemInfo',
   apollo: {
     customer: {
       query: CUSTOMER_GET_ONE,
@@ -133,17 +133,22 @@ export default {
     }
   },
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     CustomerInputCode,
     CustomerInputName,
     CompanyAutocomplete,
     StaffAutocomplete
   },
+  props: {
+    customerId: {
+      type: String,
+      required: true
+    }
+  },
   data: () => ({
     isEditing: false,
     loadingCount: 0,
     customer: {},
-    customerId: '',
     formCustomerFactory: () => ({}),
     newFormCustomer: {},
     rule: {
@@ -177,10 +182,6 @@ export default {
   },
   methods: {
     formatDate,
-    open (customerId) {
-      this.customerId = customerId
-      this.$emit('input', true)
-    },
     resetForm () {
       this.newFormCustomer = this.formCustomerFactory()
       this.$refs.dialog.$refs.form.resetValidation()
@@ -196,11 +197,8 @@ export default {
       return formDiff
     },
     async updateCustomer () {
-      const { cache, restore } = cacheObjKeys(this, ['customerId', 'formCustomerFactory', 'newFormCustomer'])
+      const formDiff = this.formDiff(this.formCustomerFactory(), this.newFormCustomer)
 
-      const formDiff = this.formDiff(cache.formCustomerFactory(), cache.newFormCustomer)
-
-      // Switch to view mode
       this.isEditing = false
 
       pushSnack({ color: 'success', messge: 'Updated customer' })
@@ -208,15 +206,11 @@ export default {
       try {
         await this.$apollo.mutate({
           mutation: CUSTOMER_UPDATE,
-          variables: { id: cache.customerId, ...formDiff }
+          variables: { id: this.customerId, ...formDiff }
         })
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        // Re-open since user might close dialog
-        this.open(cache.customerId)
         this.isEditing = true
 
         pushSnack({ color: 'error', message: 'Unable to update customer' })

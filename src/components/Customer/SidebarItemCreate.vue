@@ -1,12 +1,11 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :is-dirty="isDirty"
     show-actions
-    dialog-title="Add New Customer"
+    item-title="Add New Customer"
     v-on="$listeners"
-    @close="resetForm()"
     @ok="createCustomer()"
   >
     <v-row no-gutters>
@@ -88,15 +87,14 @@
         />
       </v-col>
     </v-row>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual } from 'lodash-es'
 import { storeDeleteQuery } from '@/utils/apollo'
-import { cacheObjKeys } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import CustomerInputCode from '@/components/Company/InputCode.vue'
 import CustomerInputName from '@/components/Company/InputName.vue'
 import InputAddresses from '@/components/Common/InputAddresses.vue'
@@ -117,9 +115,9 @@ const formCustomerFactory = () => ({
 })
 
 export default {
-  name: 'CustomerDialogCreate',
+  name: 'CustomerSidebarItemCreate',
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     CustomerInputCode,
     CustomerInputName,
     InputAddresses,
@@ -144,20 +142,17 @@ export default {
   methods: {
     resetForm () {
       this.formCustomer = formCustomerFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     async createCustomer () {
-      const { cache, restore } = cacheObjKeys(this, ['formCustomer'])
-
-      // This will reset form, as triggered by dialog close event
-      this.$emit('input', false)
+      this.$refs.item.hide()
 
       pushSnack({ color: 'success', message: 'Added new customer' })
 
       try {
         await this.$apollo.mutate({
           mutation: CUSTOMER_CREATE,
-          variables: cache.formCustomer,
+          variables: this.formCustomer,
           update: (store, { data: { createCustomer } }) => {
             if (createCustomer != null) {
               storeDeleteQuery(store, /^customers/)
@@ -165,13 +160,11 @@ export default {
           }
         })
 
-        this.$emit('create-customer')
+        this.$refs.item.close()
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        this.$emit('input', true)
+        this.$refs.item.unhide()
 
         pushSnack({ color: 'error', message: 'Unable to add new customer' })
       }

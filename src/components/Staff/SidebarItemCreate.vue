@@ -71,7 +71,7 @@ export default {
   methods: {
     resetForm () {
       this.formStaff = formStaffFactory()
-      this.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     async createStaff () {
       this.$refs.item.hide()
