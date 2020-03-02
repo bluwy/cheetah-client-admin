@@ -1,12 +1,11 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :is-dirty="isDirty"
     show-actions
-    dialog-title="Add New Company"
+    item-title="Add New Company"
     v-on="$listeners"
-    @close="resetForm()"
     @ok="createCompany()"
   >
     <company-input-name
@@ -22,14 +21,13 @@
       spellcheck="false"
       hint="Used for job code prefix"
     />
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual } from 'lodash-es'
-import { cacheObjKeys } from '@/utils/common'
 import { required, maxStrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import CompanyInputName from '@/components/Company/InputName.vue'
 import CompanyInputAlias from '@/components/Company/InputAlias.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
@@ -42,9 +40,9 @@ const formCompanyFactory = () => ({
 })
 
 export default {
-  name: 'CompanyDialogCreate',
+  name: 'CompanySidebarItemCreate',
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     CompanyInputName,
     CompanyInputAlias
   },
@@ -66,38 +64,33 @@ export default {
       this.$refs.dialog.$refs.form.resetValidation()
     },
     async createCompany () {
-      if (this.$refs.form.validate() && this.isDirty) {
-        const { cache, restore } = cacheObjKeys(this, ['formCompany'])
+      this.$refs.item.hide()
 
-        // This will reset form, as triggered by dialog close event
-        this.$emit('input', false)
+      pushSnack({ color: 'success', message: `Added new company "${this.formCompany.name}"` })
 
-        pushSnack({ color: 'success', message: `Added new company "${cache.name}"` })
+      try {
+        await this.$apollo.mutate({
+          mutation: COMPANY_CREATE,
+          variables: this.formCompany,
+          update: (store, { data: { createCompany } }) => {
+            const data = store.readQuery({ query: COMPANY_GET_ALL })
 
-        try {
-          await this.$apollo.mutate({
-            mutation: COMPANY_CREATE,
-            variables: cache.formCompany,
-            update: (store, { data: { createCompany } }) => {
-              const data = store.readQuery({ query: COMPANY_GET_ALL })
+            store.writeQuery({
+              query: COMPANY_GET_ALL,
+              data: {
+                companies: data.companies.concat([createCompany])
+              }
+            })
+          }
+        })
 
-              store.writeQuery({
-                query: COMPANY_GET_ALL,
-                data: {
-                  companies: data.companies.concat([createCompany])
-                }
-              })
-            }
-          })
-        } catch (e) {
-          console.error(e)
+        this.$refs.item.close()
+      } catch (e) {
+        console.error(e)
 
-          restore()
+        this.$refs.item.unhide()
 
-          this.$emit('input', true)
-
-          pushSnack({ color: 'error', message: 'Unable to add new company' })
-        }
+        pushSnack({ color: 'error', message: 'Unable to add new company' })
       }
     }
   }

@@ -1,8 +1,8 @@
 <template>
-  <base-dialog
+  <base-sidebar-item
     v-bind="$attrs"
     :card-props="{ loading: !!loadingCount }"
-    dialog-title="Company Info"
+    item-title="Company Info"
     v-on="$listeners"
   >
     <v-input prepend-icon="mdi-account">
@@ -17,16 +17,16 @@
     <v-input prepend-icon="mdi-update">
       {{ formatDate(company.updatedAt) }}
     </v-input>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { formatDate } from '@/utils/common'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import COMPANY_GET_ONE from '@/graphql/Company/GetOne.graphql'
 
 export default {
-  name: 'CompanyDialogInfo',
+  name: 'CompanySidebarItemInfo',
   apollo: {
     company: {
       query: COMPANY_GET_ONE,
@@ -37,20 +37,20 @@ export default {
     }
   },
   components: {
-    BaseDialog
+    BaseSidebarItem
+  },
+  props: {
+    companyId: {
+      type: String,
+      required: true
+    }
   },
   data: () => ({
-    valid: false,
     loadingCount: 0,
-    company: {},
-    companyId: ''
+    company: {}
   }),
   methods: {
-    formatDate,
-    open (companyId) {
-      this.companyId = companyId
-      this.$emit('input', true)
-    }
+    formatDate
   }
 }
 </script>
