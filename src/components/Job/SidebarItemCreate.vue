@@ -1,12 +1,11 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :is-dirty="isDirty"
     show-actions
-    dialog-title="Add New Job"
+    item-title="Add New Job"
     v-on="$listeners"
-    @close="resetForm()"
     @ok="createJob()"
   >
     <customer-autocomplete
@@ -68,16 +67,15 @@
       :tasks="formJob.tasks"
       label="Tasks"
     />
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { formatISO } from 'date-fns'
 import { get, isEqual, cloneDeep } from 'lodash-es'
 import { storeDeleteQuery } from '@/utils/apollo'
-import { cacheObjKeys } from '@/utils/common'
 import { required, minArrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/Common/InputDateTime.vue'
@@ -97,7 +95,7 @@ const formJobFactory = () => ({
 })
 
 export default {
-  name: 'JobDialogCreate',
+  name: 'JobSidebarItemCreate',
   apollo: {
     customer: {
       query: CUSTOMER_GET_ONE,
@@ -124,14 +122,19 @@ export default {
     }
   },
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     CustomerAutocomplete,
     StaffAutocomplete,
     InputDateTime,
     InputListTask
   },
+  props: {
+    followUpJobId: {
+      type: String,
+      default: undefined
+    }
+  },
   data: () => ({
-    followUpJobId: '',
     customer: {},
     followUpJob: {},
     formJob: formJobFactory(),
@@ -182,14 +185,11 @@ export default {
     }
   },
   methods: {
-    open (followUpJobId) {
-      this.followUpJobId = followUpJobId
-    },
     resetForm () {
       this.followUpJobId = ''
       this.followUpJob = {}
       this.formJob = formJobFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     parseFormToVars (form) {
       const vars = cloneDeep(form)
@@ -199,17 +199,14 @@ export default {
       return vars
     },
     async createJob () {
-      const { cache, restore } = cacheObjKeys(this, ['followUpJob', 'followUpJobId', 'formJob'])
-
-      // This will reset form, as triggered by dialog close event
-      this.$emit('input', false)
+      this.$refs.item.hide()
 
       pushSnack({ color: 'success', message: 'Added new job' })
 
       try {
         await this.$apollo.mutate({
           mutation: JOB_CREATE,
-          variables: this.parseFormToVars(cache.formJob),
+          variables: this.parseFormToVars(this.formJob),
           update: (store, { data: { createJob } }) => {
             if (createJob != null) {
               storeDeleteQuery(store, /^jobs/)
@@ -217,13 +214,11 @@ export default {
           }
         })
 
-        this.$emit('create-job')
+        this.$refs.item.close()
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        this.$emit('input', true)
+        this.$refs.item.unhide()
 
         pushSnack({ color: 'error', message: 'Unable to add new job' })
       }

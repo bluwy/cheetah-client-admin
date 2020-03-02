@@ -10,7 +10,7 @@
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
-    @click:row="$refs.dialogInfo.open($event.id)"
+    @click:row="openSidebarItemInfo()"
   >
     <template #top>
       <v-toolbar flat>
@@ -32,26 +32,6 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <job-dialog-create
-          ref="dialogCreate"
-          v-model="dialogCreate"
-          @create-job="refetch()"
-        />
-        <job-dialog-delete
-          ref="dialogDelete"
-          v-model="dialogDelete"
-          @delete-job="refetch()"
-        />
-        <job-dialog-info
-          ref="dialogInfo"
-          v-model="dialogInfo"
-          @reassign-job="refetch()"
-        />
-        <job-dialog-reassign
-          ref="dialogReassign"
-          v-model="dialogReassign"
-          @reassign-job="refetch()"
-        />
       </v-toolbar>
     </template>
     <template #item.active="{ item }">
@@ -64,77 +44,15 @@
       />
     </template>
     <template #item.menu="{ item }">
-      <v-menu>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            color="primary"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-dots-horizontal
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            color="primary"
-            @click.stop="$refs.dialogInfo.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-information</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Info</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            v-if="canReassign(item)"
-            color="warning"
-            @click.stop="$refs.dialogReassign.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-clipboard-text</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Reassign</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            v-if="canFollowUp(item)"
-            color="warning"
-            @click.stop="$refs.dialogCreate.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-clipboard-text</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Follow Up</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            color="error"
-            @click.stop="$refs.dialogDelete.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-delete</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Remove</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <table-item-menu :job-id="item.id" />
     </template>
   </v-data-table>
 </template>
 
 <script>
 import { isEmpty, set } from 'lodash-es'
-import JobDialogCreate from '@/components/Job/DialogCreate.vue'
-import JobDialogDelete from '@/components/Job/DialogDelete.vue'
-import JobDialogInfo from '@/components/Job/DialogInfo.vue'
-import JobDialogReassign from '@/components/Job/DialogReassign.vue'
+import TableItemMenu from '@/components/Job/TableItemMenu.vue'
+import JobSidebarItemInfo from '@/components/Job/SidebarItemInfo.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 import JOB_UPDATE from '@/graphql/JobUpdate.graphql'
@@ -166,10 +84,7 @@ export default {
     }
   },
   components: {
-    JobDialogCreate,
-    JobDialogDelete,
-    JobDialogInfo,
-    JobDialogReassign
+    TableItemMenu
   },
   props: {
     tableTitle: {
@@ -199,11 +114,7 @@ export default {
     sortDesc: [true],
     searchQuery: '',
     jobs: [],
-    jobCount: 0,
-    dialogCreate: false,
-    dialogDelete: false,
-    dialogInfo: false,
-    dialogReassign: false
+    jobCount: 0
   }),
   computed: {
     queryOffset () {
@@ -248,12 +159,8 @@ export default {
     refetch () {
       this.$apollo.queries.jobs.refetch()
     },
-    canReassign (job) {
-      // Haven't check out means haven't done
-      return job.checkOut == null
-    },
-    canFollowUp (job) {
-      return job.state === 'FOLLOW_UP'
+    openSidebarItemInfo () {
+      this.addSidebarItem({ component: JobSidebarItemInfo })
     },
     async updateActive (jobId, newActive) {
       try {

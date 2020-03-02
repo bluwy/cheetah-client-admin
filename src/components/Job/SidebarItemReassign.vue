@@ -1,12 +1,11 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :is-dirty="isDirty"
     show-actions
-    dialog-title="Add New Job"
+    item-title="Add New Job"
     v-on="$listeners"
-    @close="resetForm()"
     @ok="createJob()"
   >
     <customer-autocomplete
@@ -69,25 +68,24 @@
       :tasks="newFormJob.tasks"
       label="Tasks"
     />
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { get, isEqual, cloneDeep } from 'lodash-es'
 import { storeDeleteQuery } from '@/utils/apollo'
-import { cacheObjKeys } from '@/utils/common'
 import { required, minArrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/Common/InputDateTime.vue'
 import InputListTask from '@/components/Common/InputListTask.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
-import JOB_REASSIGN from '@/graphql/Job/REASSIGN.graphql'
+import JOB_REASSIGN from '@/graphql/Job/Reassign.graphql'
 import JOB_REASSIGN_GET_ONE from '@/graphql/Job/ReassignGetOne.graphql'
 
 export default {
-  name: 'JobDialogReassign',
+  name: 'JobSidebarItemReassign',
   apollo: {
     prevJob: {
       query: JOB_REASSIGN_GET_ONE,
@@ -103,14 +101,19 @@ export default {
     }
   },
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     CustomerAutocomplete,
     StaffAutocomplete,
     InputDateTime,
     InputListTask
   },
+  props: {
+    prevJobId: {
+      type: String,
+      required: true
+    }
+  },
   data: () => ({
-    prevJobId: '',
     prevJob: {},
     formJobFactory: () => ({}),
     newFormJob: {},
@@ -149,12 +152,9 @@ export default {
     }
   },
   methods: {
-    open (prevJobId) {
-      this.prevJobId = prevJobId
-    },
     resetForm () {
       this.newFormJob = this.formJobFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     parseFormToVars (form) {
       const vars = cloneDeep(form)
@@ -164,10 +164,7 @@ export default {
       return vars
     },
     async createJob () {
-      const { cache, restore } = cacheObjKeys(this, ['prevJobId', 'newFormJob'])
-
-      // This will reset form, as triggered by dialog close event
-      this.$emit('input', false)
+      this.$refs.item.hide()
 
       pushSnack({ color: 'success', message: 'Reassigned job' })
 
@@ -175,8 +172,8 @@ export default {
         await this.$apollo.mutate({
           mutation: JOB_REASSIGN,
           variables: {
-            id: cache.prevJobId,
-            data: this.parseFormToVars(cache.newFormJob)
+            id: this.prevJobId,
+            data: this.parseFormToVars(this.newFormJob)
           },
           update: (store, { data: { reassignJob } }) => {
             if (reassignJob != null) {
@@ -185,13 +182,11 @@ export default {
           }
         })
 
-        this.$emit('reassign-job')
+        this.$refs.item.close()
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        this.$emit('input', true)
+        this.$refs.item.unhide()
 
         pushSnack({ color: 'error', message: 'Unable to reassign job' })
       }

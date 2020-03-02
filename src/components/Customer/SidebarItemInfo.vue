@@ -9,7 +9,6 @@
     is-editable
     item-title="Customer Info"
     v-on="$listeners"
-    @close="resetForm"
   >
     <v-row no-gutters>
       <v-col

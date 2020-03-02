@@ -1,26 +1,20 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :card-props="{ loading: !!loadingCount }"
     :is-editing.sync="isEditing"
     :show-actions="isEditing"
     :is-dirty="isDirty"
     is-editable
-    dialog-title="Job Info"
+    item-title="Job Info"
     v-on="$listeners"
-    @close="resetForm"
   >
     <template #toolbar>
       <template v-if="canReassign">
-        <job-dialog-reassign
-          ref="dialogReassign"
-          v-model="dialogReassign"
-          @reassign-job="$emit('reassign-job')"
-        />
         <v-btn
           color="primary"
-          @click="$refs.dialogReassign.open(item.id)"
+          @click="openSidebarItemReassign()"
         >
           Reassign
         </v-btn>
@@ -91,25 +85,25 @@
     <v-input prepend-icon="mdi-update">
       {{ formatDate(job.updatedAt) }}
     </v-input>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual, cloneDeep } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
-import { cacheObjKeys, formatDate } from '@/utils/common'
+import { formatDate } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
+import JobSidebarItemReassign from '@/components/Job/SidebarItemReassign.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
-import JobDialogReassign from '@/components/Job/DialogReassign.vue'
 import { pushSnack } from './SnackbarGlobal.vue'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
 import JOB_SET_TASKS from '@/graphql/Job/SetTasks.graphql'
 
 export default {
-  name: 'JobDialogInfo',
+  name: 'JobSidebarItemInfo',
   apollo: {
     job: {
       query: JOB_GET_ONE,
@@ -120,16 +114,20 @@ export default {
     }
   },
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     CustomerAutocomplete,
-    StaffAutocomplete,
-    JobDialogReassign
+    StaffAutocomplete
+  },
+  props: {
+    jobId: {
+      type: String,
+      required: true
+    }
   },
   data: () => ({
     isEditing: false,
     loadingCount: 0,
     job: {},
-    jobId: '',
     formJobFactory: () => ({}),
     formTasksFactory: () => [],
     newFormJob: {},
@@ -140,8 +138,7 @@ export default {
       email: [email],
       companyBelongId: [required],
       staffPrimaryId: [required]
-    },
-    dialogReassign: true
+    }
   }),
   computed: {
     isDirty () {
@@ -175,18 +172,19 @@ export default {
   },
   methods: {
     formatDate,
-    open (jobId) {
-      this.jobId = jobId
-      this.$emit('input', true)
-    },
     resetForm () {
       this.newFormJob = this.formJobFactory()
       this.$refs.dialog.$refs.form.resetValidation()
     },
+    openSidebarItemReassign () {
+      this.addSidebarItem({
+        component: JobSidebarItemReassign,
+        props: {
+          prevJobId: this.jobId
+        }
+      })
+    },
     async updateJob () {
-      const { cache, restore } = cacheObjKeys(this, ['jobId', 'formJobFactory', 'formTasksFactory', 'newFormJob', 'newFormTasks'])
-
-      // Switch to view mode
       this.isEditing = false
 
       pushSnack({ color: 'success', messge: 'Updated job' })
@@ -194,12 +192,12 @@ export default {
       try {
         const updateJob = this.isJobDirty && this.$apollo.mutate({
           mutation: JOB_UPDATE,
-          variables: { id: cache.jobId, ...updatedDiff(cache.formJobFactory(), cache.newFormJob) }
+          variables: { id: this.jobId, ...updatedDiff(this.formJobFactory(), this.newFormJob) }
         })
 
         const setTasks = this.isTasksDirty && this.$apollo.mutate({
           mutation: JOB_SET_TASKS,
-          variables: { id: cache.jobId, tasks: this.newFormTasks }
+          variables: { id: this.jobId, tasks: this.newFormTasks }
         })
 
         // The below is not necessary but I only wanted to await the above
@@ -207,10 +205,6 @@ export default {
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        // Re-open since user might close dialog
-        this.open(cache.jobId)
         this.isEditing = true
 
         pushSnack({ color: 'error', message: 'Unable to update job' })
