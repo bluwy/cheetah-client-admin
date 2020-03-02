@@ -7,7 +7,7 @@
     sort-by="username"
     hide-default-footer
     must-sort
-    @click:row="$refs.dialogInfo.open($event.id)"
+    @click:row="openSidebarItemInfo()"
   >
     <template #top>
       <v-toolbar flat>
@@ -29,28 +29,6 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <v-btn
-          color="primary"
-          @click.stop="dialogCreate = true"
-        >
-          <v-icon left>
-            mdi-plus-circle
-          </v-icon>
-          Create
-        </v-btn>
-        <staff-dialog-create v-model="dialogCreate" />
-        <staff-dialog-info
-          ref="dialogInfo"
-          v-model="dialogInfo"
-        />
-        <staff-dialog-reset-pairing
-          ref="dialogResetPairing"
-          v-model="dialogResetPairing"
-        />
-        <staff-dialog-delete
-          ref="dialogDelete"
-          v-model="dialogDelete"
-        />
       </v-toolbar>
     </template>
     <template #item.paired="{ item }">
@@ -79,64 +57,14 @@
       />
     </template>
     <template #item.menu="{ item }">
-      <v-menu>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            color="primary"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-dots-horizontal
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            color="primary"
-            @click.stop="$refs.dialogInfo.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-information</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Info</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            color="warning"
-            @click.stop="$refs.dialogResetPairing.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-lock</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Reset Pairing</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            color="error"
-            @click.stop="$refs.dialogDelete.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-delete</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Remove</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <table-item-menu :staff-id="item.id" />
     </template>
   </v-data-table>
 </template>
 
 <script>
-import { required, maxStrLength } from '@/utils/inputRules'
-import StaffDialogCreate from '@/components/Staff/DialogCreate.vue'
-import StaffDialogDelete from '@/components/Staff/DialogDelete.vue'
-import StaffDialogInfo from '@/components/Staff/DialogInfo.vue'
-import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
+import StaffSidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
+import TableItemMenu from '@/components/Staff/TableItemMenu.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
 import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
@@ -147,19 +75,19 @@ export default {
     staffs: {
       query: STAFF_GET_ALL,
       variables () {
-        return {
-          query: this.searchable ? this.searchQuery : undefined
-        }
+        return this.searchable && this.searchQuery ? {
+          query: this.searchQuery
+        } : undefined
+      },
+      fetchPolicy () {
+        return this.searchable && this.searchQuery ? 'network-only' : 'cache-first'
       },
       debounce: 300,
       loadingKey: 'loadingCount'
     }
   },
   components: {
-    StaffDialogCreate,
-    StaffDialogDelete,
-    StaffDialogInfo,
-    StaffDialogResetPairing
+    TableItemMenu
   },
   props: {
     searchable: {
@@ -177,18 +105,14 @@ export default {
       { text: '', value: 'menu', sortable: false }
     ],
     searchQuery: '',
-    staffs: [],
-    rules: {
-      fullName: [required, maxStrLength(128)]
-    },
-    dialogCreate: false,
-    dialogInfo: false,
-    dialogResetPairing: false,
-    dialogDelete: false
+    staffs: []
   }),
   methods: {
     refetch () {
       this.$apollo.queries.staffs.refetch()
+    },
+    openSidebarItemInfo () {
+      this.addSidebarItem({ component: StaffSidebarItemInfo })
     },
     async updateActive (staffId, newActive) {
       try {

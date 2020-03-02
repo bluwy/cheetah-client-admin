@@ -1,15 +1,14 @@
 <template>
-  <base-dialog
+  <base-sidebar-item
     ref="dialog"
     v-bind="$attrs"
     :card-props="{ loading: !!loadingCount }"
     :is-editing.sync="isEditing"
     :show-actions="isEditing"
     :is-dirty="isDirty"
-    :dialog-title="isEditing ? 'Update Staff' : 'Staff Info'"
+    :item-title="isEditing ? 'Update Staff' : 'Staff Info'"
     is-editable
     v-on="$listeners"
-    @close="resetForm"
   >
     <v-input prepend-icon="mdi-account">
       {{ staff.username }}
@@ -45,21 +44,21 @@
     <v-input prepend-icon="mdi-update">
       {{ formatDate(staff.updatedAt) }}
     </v-input>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
-import { cacheObjKeys, formatDate } from '@/utils/common'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import { formatDate } from '@/utils/common'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
 import { pushSnack } from './SnackbarGlobal.vue'
 import STAFF_GET_ONE from '@/graphql/Staff/GetOne.graphql'
 import STAFF_UPDATE from '@/graphql/Staff/Update.graphql'
 
 export default {
-  name: 'StaffDialogInfo',
+  name: 'StaffSidebarItemInfo',
   apollo: {
     staff: {
       query: STAFF_GET_ONE,
@@ -70,17 +69,21 @@ export default {
     }
   },
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     StaffDialogResetPairing
+  },
+  props: {
+    staffId: {
+      type: String,
+      required: true
+    }
   },
   data: () => ({
     isEditing: false,
     loadingCount: 0,
     staff: {},
-    staffId: '',
     formStaffFactory: () => ({}),
-    newFormStaff: {},
-    dialogResetPairing: false
+    newFormStaff: {}
   }),
   computed: {
     isDirty () {
@@ -99,18 +102,12 @@ export default {
   },
   methods: {
     formatDate,
-    open (staffId) {
-      this.staffId = staffId
-      this.$emit('input', true)
-    },
     resetForm () {
       this.newFormStaff = this.formStaffFactory()
       this.$refs.dialog.$refs.form.resetValidation()
     },
     async updateStaff () {
-      const { cache, restore } = cacheObjKeys(this, ['staffId', 'formStaffFactory', 'newFormStaff'])
-
-      const formDiff = updatedDiff(cache.formStaffFactory(), cache.newFormStaff)
+      const formDiff = updatedDiff(this.formStaffFactory(), this.newFormStaff)
 
       // Switch to view mode
       this.isEditing = false
@@ -120,15 +117,12 @@ export default {
       try {
         await this.$apollo.mutate({
           mutation: STAFF_UPDATE,
-          variables: { id: cache.staffId, ...formDiff }
+          variables: { id: this.staffId, ...formDiff }
         })
       } catch (e) {
         console.error(e)
 
-        restore()
-
         // Re-open since user might close dialog
-        this.open(cache.staffId)
         this.isEditing = true
 
         pushSnack({ color: 'error', message: 'Unable to update staff' })

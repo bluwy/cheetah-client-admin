@@ -1,12 +1,11 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :is-dirty="isDirty"
     show-actions
-    dialog-title="Add New Company"
+    item-title="Add New Staff"
     v-on="$listeners"
-    @close="resetForm()"
     @ok="createStaff()"
   >
     <staff-input-username
@@ -30,14 +29,13 @@
       to the app and <strong>enter the username</strong> above. This will
       pair the staff's device to this account.
     </v-alert>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual } from 'lodash-es'
-import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import StaffInputUsername from '@/components/Staff/InputUsername.vue'
 import StaffInputFullName from '@/components/Staff/InputFullName.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
@@ -51,13 +49,12 @@ const formStaffFactory = () => ({
 })
 
 export default {
-  name: 'StaffDialogCreate',
+  name: 'StaffSidebarItemCreate',
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     StaffInputUsername,
     StaffInputFullName
   },
-  inheritAttrs: false,
   data: () => ({
     formStaff: formStaffFactory(),
     rule: {
@@ -77,16 +74,14 @@ export default {
       this.$refs.form.resetValidation()
     },
     async createStaff () {
-      const { cache, restore } = cacheObjKeys(this, ['formStaff'])
+      this.$refs.item.hide()
 
-      this.close(true)
-
-      pushSnack({ color: 'success', message: `Added new staff "${cache.username}"` })
+      pushSnack({ color: 'success', message: `Added new staff "${this.formStaff.username}"` })
 
       try {
         await this.$apollo.mutate({
           mutation: STAFF_CREATE,
-          variables: cache.formStaff,
+          variables: this.formStaff,
           update: (store, { data: { createStaff } }) => {
             const data = store.readQuery({ query: STAFF_GET_ALL })
 
@@ -98,12 +93,12 @@ export default {
             })
           }
         })
+
+        this.$refs.item.close()
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        this.$emit('input', true)
+        this.$refs.item.unhide()
 
         pushSnack({ color: 'error', message: 'Unable to add new staff' })
       }
