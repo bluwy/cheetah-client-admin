@@ -67,7 +67,12 @@ export default {
   methods: {
     ...mapActions(['addSidebarItem']),
     openSidebarItemInfo () {
-      this.addSidebarItem({ component: AdminSidebarItemInfo })
+      this.addSidebarItem({
+        component: AdminSidebarItemInfo,
+        props: {
+          adminId: this.adminId
+        }
+      })
     },
     async deleteAdmin () {
       pushSnack({ color: 'success', message: 'Removed admin' })

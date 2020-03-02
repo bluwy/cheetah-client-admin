@@ -10,6 +10,7 @@
       v-for="(item, i) in sidebarItems"
       v-show="!item.hidden"
       :key="i"
+      v-bind="item.props"
       @hide="updateSidebarItemHidden({ index: i, hidden: true })"
       @unhide="updateSidebarItemHidden({ index: i, hidden: false })"
       @close="removeSidebarItemIndex({ index: i })"

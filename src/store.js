@@ -9,9 +9,9 @@ export default new Vuex.Store({
     sidebarMaxItems: 20
   },
   mutations: {
-    ADD_SIDEBAR_ITEM (state, { component, hidden }) {
+    ADD_SIDEBAR_ITEM (state, { component, props, hidden }) {
       if (state.sidebarItems.length < state.sidebarMaxItems) {
-        state.sidebarItems.push({ component, hidden })
+        state.sidebarItems.push({ component, props, hidden })
       }
     },
     REMOVE_SIDEBAR_ITEM_INDEX (state, { index }) {
@@ -24,8 +24,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addSidebarItem ({ commit }, { component, hidden = false }) {
-      commit('ADD_SIDEBAR_ITEM', { component, hidden })
+    addSidebarItem ({ commit }, { component, props, hidden = false }) {
+      commit('ADD_SIDEBAR_ITEM', { component, props, hidden })
     },
     removeSidebarItemIndex ({ commit }, { index }) {
       commit('REMOVE_SIDEBAR_ITEM_INDEX', { index })

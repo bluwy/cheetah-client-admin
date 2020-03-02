@@ -67,7 +67,12 @@ export default {
   methods: {
     ...mapActions(['addSidebarItem']),
     openSidebarItemInfo () {
-      this.addSidebarItem({ component: CompanySidebarItemInfo })
+      this.addSidebarItem({
+        component: CompanySidebarItemInfo,
+        props: {
+          companyId: this.companyId
+        }
+      })
     },
     async deleteCompany () {
       pushSnack({ color: 'success', message: 'Removed company' })
