@@ -7,7 +7,7 @@
     sort-by="username"
     hide-default-footer
     must-sort
-    @click:row="$refs.dialogInfo.open($event.id)"
+    @click:row="openSidebarItemInfo()"
   >
     <template #top>
       <v-toolbar flat>
@@ -29,24 +29,6 @@
         >
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
-        <v-btn
-          color="primary"
-          @click.stop="dialogCreate = true"
-        >
-          <v-icon left>
-            mdi-plus-circle
-          </v-icon>
-          Create
-        </v-btn>
-        <admin-dialog-create v-model="dialogCreate" />
-        <admin-dialog-delete
-          ref="dialogDelete"
-          v-model="dialogDelete"
-        />
-        <admin-dialog-info
-          ref="dialogInfo"
-          v-model="dialogInfo"
-        />
       </v-toolbar>
     </template>
     <template #item.privilege="{ item }">
@@ -66,51 +48,14 @@
       </v-icon>
     </template>
     <template #item.menu="{ item }">
-      <v-menu>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            color="primary"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-dots-horizontal
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            color="primary"
-            @click.stop="$refs.dialogInfo.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-information</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Info</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            color="error"
-            @click.stop="$refs.dialogDelete.open(item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-delete</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Remove</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <table-item-menu :admin-id="item.id" />
     </template>
   </v-data-table>
 </template>
 
 <script>
-import AdminDialogCreate from '@/components/Admin/DialogCreate.vue'
-import AdminDialogDelete from '@/components/Admin/DialogDelete.vue'
-import AdminDialogInfo from '@/components/Admin/DialogInfo.vue'
+import AdminSidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
+import TableItemMenu from '@/components/Admin/TableItemMenu.vue'
 import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 
 export default {
@@ -119,18 +64,19 @@ export default {
     admins: {
       query: ADMIN_GET_ALL,
       variables () {
-        return {
-          query: this.searchable ? this.searchQuery : undefined
-        }
+        return this.searchable && this.searchQuery ? {
+          query: this.searchQuery
+        } : undefined
+      },
+      fetchPolicy () {
+        return this.searchable && this.searchQuery ? 'network-only' : 'cache-first'
       },
       debounce: 300,
       loadingKey: 'loadingCount'
     }
   },
   components: {
-    AdminDialogCreate,
-    AdminDialogDelete,
-    AdminDialogInfo
+    TableItemMenu
   },
   props: {
     searchable: {
@@ -146,14 +92,14 @@ export default {
       { text: '', value: 'menu', sortable: false }
     ],
     searchQuery: '',
-    admins: [],
-    dialogCreate: false,
-    dialogDelete: false,
-    dialogInfo: false
+    admins: []
   }),
   methods: {
     refetch () {
       this.$apollo.queries.admins.refetch()
+    },
+    openSidebarItemInfo () {
+      this.addSidebarItem({ component: AdminSidebarItemInfo })
     }
   }
 }

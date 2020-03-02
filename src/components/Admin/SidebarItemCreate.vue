@@ -1,12 +1,11 @@
 <template>
-  <base-dialog
-    ref="dialog"
+  <base-sidebar-item
+    ref="item"
     v-bind="$attrs"
     :is-dirty="isDirty"
     show-actions
-    dialog-title="Add New Admin"
+    item-title="Add New Admin"
     v-on="$listeners"
-    @close="resetForm()"
     @ok="createAdmin()"
   >
     <admin-input-username
@@ -27,14 +26,13 @@
       label="Full Access"
       hint="Providing full access equals to the power you have now"
     />
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { isEqual } from 'lodash-es'
-import { cacheObjKeys } from '@/utils/common'
 import { required, minStrLength, maxStrLength } from '@/utils/inputRules'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import AdminInputUsername from '@/components/Admin/InputUsername.vue'
 import InputPassword from '@/components/Common/InputPassword.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
@@ -48,9 +46,9 @@ const formAdminFactory = () => ({
 })
 
 export default {
-  name: 'AdminDialogCreate',
+  name: 'AdminSidebarItemCreate',
   components: {
-    BaseDialog,
+    BaseSidebarItem,
     InputPassword,
     AdminInputUsername
   },
@@ -69,21 +67,18 @@ export default {
   methods: {
     resetForm () {
       this.formAdmin = formAdminFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     async createAdmin () {
-      const { cache, restore } = cacheObjKeys(this, ['formAdmin'])
-
       const variables = {
-        username: cache.formAdmin.username,
-        password: cache.formAdmin.password,
-        privilege: cache.formAdmin.fullAccess ? 'FULL' : 'BASIC'
+        username: this.formAdmin.username,
+        password: this.formAdmin.password,
+        privilege: this.formAdmin.fullAccess ? 'FULL' : 'BASIC'
       }
 
-      // This will reset form, as triggered by dialog close event
-      this.$emit('input', false)
+      this.$refs.item.hide()
 
-      pushSnack({ color: 'success', message: `Added new admin "${cache.username}"` })
+      pushSnack({ color: 'success', message: `Added new admin "${variables.username}"` })
 
       try {
         await this.$apollo.mutate({
@@ -100,12 +95,12 @@ export default {
             })
           }
         })
+
+        this.$refs.item.close()
       } catch (e) {
         console.error(e)
 
-        restore()
-
-        this.$emit('input', true)
+        this.$refs.item.unhide()
 
         pushSnack({ color: 'error', message: 'Unable to add new admin' })
       }

@@ -1,8 +1,8 @@
 <template>
-  <base-dialog
+  <base-sidebar-item
     v-bind="$attrs"
     :card-props="{ loading: !!loadingCount }"
-    dialog-title="Admin Info"
+    item-title="Admin Info"
     v-on="$listeners"
   >
     <v-input prepend-icon="mdi-account">
@@ -18,16 +18,16 @@
     <v-input prepend-icon="mdi-update">
       {{ formatDate(admin.updatedAt) }}
     </v-input>
-  </base-dialog>
+  </base-sidebar-item>
 </template>
 
 <script>
 import { formatDate } from '@/utils/common'
-import BaseDialog from '@/components/Common/BaseDialog.vue'
+import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 
 export default {
-  name: 'AdminDialogInfo',
+  name: 'AdminSidebarItemInfo',
   apollo: {
     admin: {
       query: ADMIN_GET_ONE,
@@ -38,19 +38,20 @@ export default {
     }
   },
   components: {
-    BaseDialog
+    BaseSidebarItem
+  },
+  props: {
+    adminId: {
+      type: String,
+      required: true
+    }
   },
   data: () => ({
     loadingCount: 0,
-    admin: {},
-    adminId: ''
+    admin: {}
   }),
   methods: {
-    formatDate,
-    open (adminId) {
-      this.adminId = adminId
-      this.$emit('input', true)
-    }
+    formatDate
   }
 }
 </script>
