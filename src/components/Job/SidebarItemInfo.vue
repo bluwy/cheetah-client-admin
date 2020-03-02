@@ -174,7 +174,7 @@ export default {
     formatDate,
     resetForm () {
       this.newFormJob = this.formJobFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     openSidebarItemReassign () {
       this.addSidebarItem({

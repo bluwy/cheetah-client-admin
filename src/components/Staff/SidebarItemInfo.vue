@@ -27,16 +27,11 @@
     />
     <v-input :prepend-icon="staff.paired ? 'mdi-check' : 'mdi-close'">
       {{ staff.paired ? 'Paired' : 'Not paired' }}
-      <staff-dialog-reset-pairing
-        ref="dialogResetPairing"
-        v-model="dialogResetPairing"
+      <button-confirm
+        button-text="Reset Pairing"
+        confirm-text="Confirm?"
+        @confirm="resetStaffPairing()"
       />
-      <v-btn
-        color="primary"
-        @click="$refs.dialogResetPairing.open(staffId)"
-      >
-        Reset Pairing
-      </v-btn>
     </v-input>
     <v-input prepend-icon="mdi-cake-variant">
       {{ formatDate(staff.createdAt) }}
@@ -52,7 +47,7 @@ import { isEqual } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
 import { formatDate } from '@/utils/common'
 import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
-import StaffDialogResetPairing from '@/components/Staff/DialogResetPairing.vue'
+import ButtonConfirm from '@/components/Common/ButtonConfirm.vue'
 import { pushSnack } from './SnackbarGlobal.vue'
 import STAFF_GET_ONE from '@/graphql/Staff/GetOne.graphql'
 import STAFF_UPDATE from '@/graphql/Staff/Update.graphql'
@@ -70,7 +65,7 @@ export default {
   },
   components: {
     BaseSidebarItem,
-    StaffDialogResetPairing
+    ButtonConfirm
   },
   props: {
     staffId: {
@@ -104,7 +99,7 @@ export default {
     formatDate,
     resetForm () {
       this.newFormStaff = this.formStaffFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     async updateStaff () {
       const formDiff = updatedDiff(this.formStaffFactory(), this.newFormStaff)

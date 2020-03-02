@@ -10,7 +10,7 @@
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
-    @click:row="openSidebarItemInfo()"
+    @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -25,7 +25,6 @@
           hide-details
         />
         <v-btn
-          class="mr-3"
           icon
           color="primary"
           @click.stop="refetch()"
@@ -159,8 +158,13 @@ export default {
     refetch () {
       this.$apollo.queries.jobs.refetch()
     },
-    openSidebarItemInfo () {
-      this.addSidebarItem({ component: JobSidebarItemInfo })
+    openSidebarItemInfo (jobId) {
+      this.addSidebarItem({
+        component: JobSidebarItemInfo,
+        props: {
+          jobId
+        }
+      })
     },
     async updateActive (jobId, newActive) {
       try {

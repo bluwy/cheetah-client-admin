@@ -22,7 +22,6 @@
           hide-details
         />
         <v-btn
-          class="mr-3"
           icon
           color="primary"
           @click.stop="refetch()"
@@ -111,8 +110,13 @@ export default {
     refetch () {
       this.$apollo.queries.staffs.refetch()
     },
-    openSidebarItemInfo () {
-      this.addSidebarItem({ component: StaffSidebarItemInfo })
+    openSidebarItemInfo (staffId) {
+      this.addSidebarItem({
+        component: StaffSidebarItemInfo,
+        props: {
+          staffId
+        }
+      })
     },
     async updateActive (staffId, newActive) {
       try {

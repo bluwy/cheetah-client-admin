@@ -61,7 +61,7 @@ export default {
   methods: {
     resetForm () {
       this.formCompany = formCompanyFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     async createCompany () {
       this.$refs.item.hide()

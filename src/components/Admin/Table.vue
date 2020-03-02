@@ -7,7 +7,7 @@
     sort-by="username"
     hide-default-footer
     must-sort
-    @click:row="openSidebarItemInfo()"
+    @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -22,7 +22,6 @@
           hide-details
         />
         <v-btn
-          class="mr-3"
           icon
           color="primary"
           @click.stop="refetch()"
@@ -98,8 +97,13 @@ export default {
     refetch () {
       this.$apollo.queries.admins.refetch()
     },
-    openSidebarItemInfo () {
-      this.addSidebarItem({ component: AdminSidebarItemInfo })
+    openSidebarItemInfo (adminId) {
+      this.addSidebarItem({
+        component: AdminSidebarItemInfo,
+        props: {
+          adminId
+        }
+      })
     }
   }
 }

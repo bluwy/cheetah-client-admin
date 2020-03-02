@@ -10,7 +10,7 @@
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
     must-sort
-    @click:row="openSidebarItemInfo()"
+    @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
       <v-toolbar flat>
@@ -25,7 +25,6 @@
           hide-details
         />
         <v-btn
-          class="mr-3"
           icon
           color="primary"
           @click.stop="refetch()"
@@ -163,8 +162,13 @@ export default {
     refetch () {
       this.$apollo.queries.customers.refetch()
     },
-    openSidebarItemInfo () {
-      this.addSidebarItem({ component: CustomerSidebarItemInfo })
+    openSidebarItemInfo (customerId) {
+      this.addSidebarItem({
+        component: CustomerSidebarItemInfo,
+        props: {
+          customerId
+        }
+      })
     },
     async updateActive (customerId, newActive) {
       try {

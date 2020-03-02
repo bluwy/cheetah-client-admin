@@ -183,7 +183,7 @@ export default {
     formatDate,
     resetForm () {
       this.newFormCustomer = this.formCustomerFactory()
-      this.$refs.dialog.$refs.form.resetValidation()
+      this.$refs.item.$refs.form.resetValidation()
     },
     formDiff (oriForm, newForm) {
       const formDiff = updatedDiff(oriForm, newForm)
