@@ -65,8 +65,8 @@
 import StaffSidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
 import TableItemMenu from '@/components/Staff/TableItemMenu.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
-import STAFF_GET_ALL from '@/graphql/StaffGetAll.graphql'
-import STAFF_UPDATE from '@/graphql/StaffUpdate.graphql'
+import STAFF_GET_ALL from '@/graphql/Staff/GetAll.graphql'
+import STAFF_UPDATE from '@/graphql/Staff/Update.graphql'
 
 export default {
   name: 'StaffTable',

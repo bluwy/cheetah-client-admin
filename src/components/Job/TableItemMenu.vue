@@ -86,8 +86,10 @@ export default {
   apollo: {
     job: {
       query: JOB_GET_ONE,
-      variables: {
-        id: this.jobId
+      variables () {
+        return {
+          id: this.jobId
+        }
       }
     }
   },

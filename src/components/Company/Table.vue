@@ -39,7 +39,7 @@
 <script>
 import CompanySidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
 import TableItemMenu from '@/components/Admin/TableItemMenu.vue'
-import COMPANY_GET_ALL from '@/graphql/CompanyGetAll.graphql'
+import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 
 export default {
   name: 'CompanyTable',

@@ -97,7 +97,7 @@ import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import JobSidebarItemReassign from '@/components/Job/SidebarItemReassign.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
-import { pushSnack } from './SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
 import JOB_SET_TASKS from '@/graphql/Job/SetTasks.graphql'
@@ -107,8 +107,10 @@ export default {
   apollo: {
     job: {
       query: JOB_GET_ONE,
-      variables: {
-        id: this.jobId
+      variables () {
+        return {
+          id: this.jobId
+        }
       },
       loadingKey: 'loadingCount'
     }
@@ -192,12 +194,18 @@ export default {
       try {
         const updateJob = this.isJobDirty && this.$apollo.mutate({
           mutation: JOB_UPDATE,
-          variables: { id: this.jobId, ...updatedDiff(this.formJobFactory(), this.newFormJob) }
+          variables: {
+            id: this.jobId,
+            ...updatedDiff(this.formJobFactory(), this.newFormJob)
+          }
         })
 
         const setTasks = this.isTasksDirty && this.$apollo.mutate({
           mutation: JOB_SET_TASKS,
-          variables: { id: this.jobId, tasks: this.newFormTasks }
+          variables: {
+            id: this.jobId,
+            tasks: this.newFormTasks
+          }
         })
 
         // The below is not necessary but I only wanted to await the above

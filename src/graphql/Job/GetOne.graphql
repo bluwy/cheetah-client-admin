@@ -1,4 +1,4 @@
-query JobGetOne(id: ID!) {
+query JobGetOne($id: ID!) {
   job(id: $id) {
     id
     createdAt

@@ -30,8 +30,10 @@ export default {
   apollo: {
     company: {
       query: COMPANY_GET_ONE,
-      variables: {
-        id: this.companyId
+      variables () {
+        return {
+          id: this.companyId
+        }
       },
       loadingKey: 'loadingCount'
     }

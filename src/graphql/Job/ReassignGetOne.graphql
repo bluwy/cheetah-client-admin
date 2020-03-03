@@ -1,4 +1,4 @@
-query JobReassignGetOne(id: ID!) {
+query JobReassignGetOne($id: ID!) {
   job(id: $id) {
     id
     code

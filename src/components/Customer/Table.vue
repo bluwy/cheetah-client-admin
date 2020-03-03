@@ -54,9 +54,9 @@ import collectInstanceMixin from '@/mixins/collect-instance'
 import TableItemMenu from '@/components/Customer/TableItemMenu.vue'
 import CustomerSidebarItemInfo from '@/components/Customer/SidebarItemInfo.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
-import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
-import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
-import CUSTOMER_COUNT from '@/graphql/CustomerCount.graphql'
+import CUSTOMER_GET_ALL from '@/graphql/Customer/GetAll.graphql'
+import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
+import CUSTOMER_COUNT from '@/graphql/Customer/Count.graphql'
 
 const instances = []
 

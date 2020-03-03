@@ -3,17 +3,17 @@ import Router from 'vue-router'
 import { apolloClient } from './plugins/apollo'
 import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 
-const BoxLayout = import('@/layouts/Box.vue')
-const DashLayout = import('@/layouts/Dash.vue')
+const BoxLayout = () => import('@/layouts/Box.vue')
+const DashLayout = () => import('@/layouts/Dash.vue')
 
-const Login = import('@/views/Login.vue')
-const Reset = import('@/views/Reset.vue')
+const Login = () => import('@/views/Login.vue')
+const Reset = () => import('@/views/Reset.vue')
 
-const Home = import('@/views/Home.vue')
-const Manage = import('@/views/Manage.vue')
-const Sudo = import('@/views/Sudo.vue')
+const Home = () => import('@/views/Home.vue')
+const Manage = () => import('@/views/Manage.vue')
+const Sudo = () => import('@/views/Sudo.vue')
 
-const Null = import('@/views/Null.vue')
+const Null = () => import('@/views/Null.vue')
 
 const AUTH_BYPASS = !!process.env.AUTH_BYPASS
 

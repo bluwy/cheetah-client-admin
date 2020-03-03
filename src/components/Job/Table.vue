@@ -54,9 +54,9 @@ import collectInstanceMixin from '@/mixins/collect-instance'
 import TableItemMenu from '@/components/Job/TableItemMenu.vue'
 import JobSidebarItemInfo from '@/components/Job/SidebarItemInfo.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
-import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
-import JOB_UPDATE from '@/graphql/JobUpdate.graphql'
-import JOB_COUNT from '@/graphql/JobCount.graphql'
+import JOB_GET_ALL from '@/graphql/Job/GetAll.graphql'
+import JOB_UPDATE from '@/graphql/Job/Update.graphql'
+import JOB_COUNT from '@/graphql/Job/Count.graphql'
 
 const instances = []
 

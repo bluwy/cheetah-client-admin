@@ -31,8 +31,10 @@ export default {
   apollo: {
     admin: {
       query: ADMIN_GET_ONE,
-      variables: {
-        id: this.adminId
+      variables () {
+        return {
+          id: this.adminId
+        }
       },
       loadingKey: 'loadingCount'
     }

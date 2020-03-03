@@ -1,4 +1,4 @@
-query JobFollowUpGetOne(id: ID!) {
+query JobFollowUpGetOne($id: ID!) {
   job(id: $id) {
     id
     code

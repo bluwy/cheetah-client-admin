@@ -1,0 +1,3 @@
+query JobCount($where: JobWhereInput) {
+  jobCount(where: $where)
+}

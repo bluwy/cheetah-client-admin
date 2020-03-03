@@ -112,11 +112,11 @@ import { updatedDiff } from 'deep-object-diff'
 import { formatDate } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
 import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
-import CustomerInputCode from '@/components/Company/InputCode.vue'
-import CustomerInputName from '@/components/Company/InputName.vue'
+import CustomerInputCode from '@/components/Customer/InputCode.vue'
+import CustomerInputName from '@/components/Customer/InputName.vue'
 import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
-import { pushSnack } from './SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
 
@@ -125,8 +125,10 @@ export default {
   apollo: {
     customer: {
       query: CUSTOMER_GET_ONE,
-      variables: {
-        id: this.customerId
+      variables () {
+        return {
+          id: this.customerId
+        }
       },
       loadingKey: 'loadingCount'
     }

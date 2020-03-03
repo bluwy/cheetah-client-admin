@@ -48,7 +48,7 @@ import { updatedDiff } from 'deep-object-diff'
 import { formatDate } from '@/utils/common'
 import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import ButtonConfirm from '@/components/Common/ButtonConfirm.vue'
-import { pushSnack } from './SnackbarGlobal.vue'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import STAFF_GET_ONE from '@/graphql/Staff/GetOne.graphql'
 import STAFF_UPDATE from '@/graphql/Staff/Update.graphql'
 
@@ -57,8 +57,10 @@ export default {
   apollo: {
     staff: {
       query: STAFF_GET_ONE,
-      variables: {
-        id: this.staffId
+      variables () {
+        return {
+          id: this.staffId
+        }
       },
       loadingKey: 'loadingCount'
     }
