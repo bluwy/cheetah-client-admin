@@ -1,8 +1,17 @@
 <template>
   <v-container>
-    <admin-table searchable />
-    <staff-table searchable />
-    <company-table searchable />
+    <admin-table
+      :class="tableClass"
+      searchable
+    />
+    <staff-table
+      :class="tableClass"
+      searchable
+    />
+    <company-table
+      :class="tableClass"
+      searchable
+    />
   </v-container>
 </template>
 
@@ -17,6 +26,9 @@ export default {
     AdminTable,
     StaffTable,
     CompanyTable
-  }
+  },
+  data: () => ({
+    tableClass: 'my-3 elevation-3'
+  })
 }
 </script>

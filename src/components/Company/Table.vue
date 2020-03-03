@@ -4,29 +4,39 @@
     :items="companies"
     :loading="!!loadingCount"
     :search="searchQuery"
+    class="overflow-hidden"
     sort-by="name"
     hide-default-footer
     must-sort
     @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
-      <v-toolbar flat>
+      <v-toolbar
+        flat
+        color="primary lighten-5"
+      >
         <v-toolbar-title>Companies</v-toolbar-title>
         <v-spacer />
-        <v-text-field
+        <input-search
           v-if="searchable"
           v-model="searchQuery"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
         />
         <v-btn
+          class="mx-3"
           icon
           color="primary"
           @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+        <v-btn
+          color="primary"
+          @click.stop="openSidebarItemCreate()"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Add Company
         </v-btn>
       </v-toolbar>
     </template>
@@ -37,8 +47,11 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import CompanySidebarItemCreate from '@/components/Admin/SidebarItemCreate.vue'
 import CompanySidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
 import TableItemMenu from '@/components/Admin/TableItemMenu.vue'
+import InputSearch from '@/components/Common/InputSearch.vue'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 
 export default {
@@ -59,7 +72,8 @@ export default {
     }
   },
   components: {
-    TableItemMenu
+    TableItemMenu,
+    InputSearch
   },
   props: {
     searchable: {
@@ -78,8 +92,12 @@ export default {
     companies: []
   }),
   methods: {
+    ...mapActions(['addSidebarItem']),
     refetch () {
       this.$apollo.queries.companies.refetch()
+    },
+    openSidebarItemCreate () {
+      this.addSidebarItem({ component: CompanySidebarItemCreate })
     },
     openSidebarItemInfo (companyId) {
       this.addSidebarItem({

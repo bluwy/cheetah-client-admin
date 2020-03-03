@@ -9,27 +9,37 @@
     :sort-desc.sync="sortDesc"
     :loading="!!loadingCount"
     :footer-props="{ itemsPerPageOptions: [5, 10, 15, 20] }"
+    class="overflow-hidden"
     must-sort
     @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
-      <v-toolbar flat>
+      <v-toolbar
+        flat
+        color="primary lighten-5"
+      >
         <v-toolbar-title>{{ tableTitle }}</v-toolbar-title>
         <v-spacer />
-        <v-text-field
+        <input-search
           v-if="searchable"
           v-model="searchQuery"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
         />
         <v-btn
+          class="mx-3"
           icon
           color="primary"
           @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+        <v-btn
+          color="primary"
+          @click.stop="openSidebarItemCreate()"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Add Job
         </v-btn>
       </v-toolbar>
     </template>
@@ -49,10 +59,13 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { isEmpty, set } from 'lodash-es'
 import collectInstanceMixin from '@/mixins/collect-instance'
 import TableItemMenu from '@/components/Job/TableItemMenu.vue'
+import JobSidebarItemCreate from '@/components/Job/SidebarItemCreate.vue'
 import JobSidebarItemInfo from '@/components/Job/SidebarItemInfo.vue'
+import InputSearch from '@/components/Common/InputSearch.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_GET_ALL from '@/graphql/Job/GetAll.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
@@ -90,7 +103,8 @@ export default {
     }
   },
   components: {
-    TableItemMenu
+    TableItemMenu,
+    InputSearch
   },
   mixins: [collectInstanceMixin(instances)],
   props: {
@@ -163,8 +177,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['addSidebarItem']),
     refetch () {
       this.$apollo.queries.jobs.refetch()
+    },
+    openSidebarItemCreate () {
+      this.addSidebarItem({ component: JobSidebarItemCreate })
     },
     openSidebarItemInfo (jobId) {
       this.addSidebarItem({

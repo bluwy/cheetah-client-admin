@@ -1,7 +1,13 @@
 <template>
   <v-container>
-    <job-table searchable />
-    <customer-table searchable />
+    <job-table
+      :class="tableClass"
+      searchable
+    />
+    <customer-table
+      :class="tableClass"
+      searchable
+    />
   </v-container>
 </template>
 
@@ -14,6 +20,9 @@ export default {
   components: {
     JobTable,
     CustomerTable
-  }
+  },
+  data: () => ({
+    tableClass: 'my-3 elevation-3'
+  })
 }
 </script>

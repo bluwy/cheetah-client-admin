@@ -5,6 +5,7 @@
   >
     <v-toolbar-title>
       <v-btn
+        large
         text
         to="/"
       >

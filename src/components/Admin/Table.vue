@@ -4,29 +4,39 @@
     :items="admins"
     :loading="!!loadingCount"
     :search="searchQuery"
+    class="overflow-hidden"
     sort-by="username"
     hide-default-footer
     must-sort
     @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
-      <v-toolbar flat>
+      <v-toolbar
+        flat
+        color="primary lighten-5"
+      >
         <v-toolbar-title>Admins</v-toolbar-title>
         <v-spacer />
-        <v-text-field
+        <input-search
           v-if="searchable"
           v-model="searchQuery"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
         />
         <v-btn
+          class="mx-3"
           icon
           color="primary"
           @click.stop="refetch()"
         >
           <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+        <v-btn
+          color="primary"
+          @click.stop="openSidebarItemCreate()"
+        >
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
+          Add Admin
         </v-btn>
       </v-toolbar>
     </template>
@@ -53,7 +63,10 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import AdminSidebarItemCreate from '@/components/Admin/SidebarItemCreate.vue'
 import AdminSidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
+import InputSearch from '@/components/Common/InputSearch.vue'
 import TableItemMenu from '@/components/Admin/TableItemMenu.vue'
 import ADMIN_GET_ALL from '@/graphql/Admin/GetAll.graphql'
 
@@ -75,7 +88,8 @@ export default {
     }
   },
   components: {
-    TableItemMenu
+    TableItemMenu,
+    InputSearch
   },
   props: {
     searchable: {
@@ -94,8 +108,12 @@ export default {
     admins: []
   }),
   methods: {
+    ...mapActions(['addSidebarItem']),
     refetch () {
       this.$apollo.queries.admins.refetch()
+    },
+    openSidebarItemCreate () {
+      this.addSidebarItem({ component: AdminSidebarItemCreate })
     },
     openSidebarItemInfo (adminId) {
       this.addSidebarItem({
