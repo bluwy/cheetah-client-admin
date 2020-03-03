@@ -100,6 +100,7 @@ import CustomerInputName from '@/components/Company/InputName.vue'
 import InputAddresses from '@/components/Common/InputAddresses.vue'
 import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
+import { refetch } from '@/components/Customer/Table.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_CREATE from '@/graphql/Customer/Create.graphql'
 
@@ -161,6 +162,8 @@ export default {
         })
 
         this.$refs.item.close()
+
+        refetch()
       } catch (e) {
         console.error(e)
 

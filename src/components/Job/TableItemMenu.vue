@@ -71,14 +71,15 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { storeDeleteQuery } from '@/utils/apollo'
 import JobSidebarItemInfo from '@/components/Job/SidebarItemInfo.vue'
 import JobSidebarItemReassign from '@/components/Job/SidebarItemReassign.vue'
 import JobSidebarItemCreate from '@/components/Job/SidebarItemCreate.vue'
 import ButtonConfirm from '@/components/Common/ButtonConfirm.vue'
+import { refetch } from '@/components/Job/Table.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_DELETE from '@/graphql/Job/Delete.graphql'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
-import JOB_GET_ALL from '@/graphql/Job/GetAll.graphql'
 
 export default {
   name: 'JobTableItemMenu',
@@ -148,17 +149,12 @@ export default {
           },
           update: (store, { data: { deleteJob } }) => {
             if (deleteJob) {
-              const data = store.readQuery({ query: JOB_GET_ALL })
-
-              store.writeQuery({
-                query: JOB_GET_ALL,
-                data: {
-                  jobs: data.jobs.filter(v => v.id !== this.jobId)
-                }
-              })
+              storeDeleteQuery(store, /^jobs/)
             }
           }
         })
+
+        refetch()
       } catch (e) {
         console.error(e)
 

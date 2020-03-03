@@ -1,6 +1,6 @@
 <template>
   <base-sidebar-item
-    ref="dialog"
+    ref="item"
     v-bind="$attrs"
     :card-props="{ loading: !!loadingCount }"
     :is-editing.sync="isEditing"
@@ -104,7 +104,6 @@ export default {
     async updateStaff () {
       const formDiff = updatedDiff(this.formStaffFactory(), this.newFormStaff)
 
-      // Switch to view mode
       this.isEditing = false
 
       pushSnack({ color: 'success', messge: 'Updated staff' })
@@ -117,7 +116,6 @@ export default {
       } catch (e) {
         console.error(e)
 
-        // Re-open since user might close dialog
         this.isEditing = true
 
         pushSnack({ color: 'error', message: 'Unable to update staff' })

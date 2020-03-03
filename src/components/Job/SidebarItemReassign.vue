@@ -80,6 +80,7 @@ import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/Common/InputDateTime.vue'
 import InputListTask from '@/components/Common/InputListTask.vue'
+import { refetch } from '@/components/Job/Table.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_REASSIGN from '@/graphql/Job/Reassign.graphql'
 import JOB_REASSIGN_GET_ONE from '@/graphql/Job/ReassignGetOne.graphql'
@@ -183,6 +184,8 @@ export default {
         })
 
         this.$refs.item.close()
+
+        refetch()
       } catch (e) {
         console.error(e)
 

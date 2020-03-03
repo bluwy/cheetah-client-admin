@@ -50,12 +50,19 @@
 
 <script>
 import { isEmpty, set } from 'lodash-es'
+import collectInstanceMixin from '@/mixins/collect-instance'
 import TableItemMenu from '@/components/Customer/TableItemMenu.vue'
 import CustomerSidebarItemInfo from '@/components/Customer/SidebarItemInfo.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_GET_ALL from '@/graphql/CustomerGetAll.graphql'
 import CUSTOMER_UPDATE from '@/graphql/CustomerUpdate.graphql'
 import CUSTOMER_COUNT from '@/graphql/CustomerCount.graphql'
+
+const instances = []
+
+export const refetch = () => {
+  instances.forEach(v => v.refetch())
+}
 
 export default {
   name: 'CustomerTable',
@@ -85,6 +92,7 @@ export default {
   components: {
     TableItemMenu
   },
+  mixins: [collectInstanceMixin(instances)],
   props: {
     tableTitle: {
       type: String,

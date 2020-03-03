@@ -50,12 +50,19 @@
 
 <script>
 import { isEmpty, set } from 'lodash-es'
+import collectInstanceMixin from '@/mixins/collect-instance'
 import TableItemMenu from '@/components/Job/TableItemMenu.vue'
 import JobSidebarItemInfo from '@/components/Job/SidebarItemInfo.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_GET_ALL from '@/graphql/JobGetAll.graphql'
 import JOB_UPDATE from '@/graphql/JobUpdate.graphql'
 import JOB_COUNT from '@/graphql/JobCount.graphql'
+
+const instances = []
+
+export const refetch = () => {
+  instances.forEach(v => v.refetch())
+}
 
 export default {
   name: 'JobTable',
@@ -85,6 +92,7 @@ export default {
   components: {
     TableItemMenu
   },
+  mixins: [collectInstanceMixin(instances)],
   props: {
     tableTitle: {
       type: String,

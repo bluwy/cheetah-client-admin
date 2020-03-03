@@ -47,11 +47,12 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { storeDeleteQuery } from '@/utils/apollo'
 import CustomerSidebarItemInfo from '@/components/Customer/SidebarItemInfo.vue'
 import ButtonConfirm from '@/components/Common/ButtonConfirm.vue'
+import { refetch } from '@/components/Customer/Table.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_DELETE from '@/graphql/Customer/Delete.graphql'
-import CUSTOMER_GET_ALL from '@/graphql/Customer/GetAll.graphql'
 
 export default {
   name: 'CustomerTableItemMenu',
@@ -85,17 +86,12 @@ export default {
           },
           update: (store, { data: { deleteCustomer } }) => {
             if (deleteCustomer) {
-              const data = store.readQuery({ query: CUSTOMER_GET_ALL })
-
-              store.writeQuery({
-                query: CUSTOMER_GET_ALL,
-                data: {
-                  customers: data.customers.filter(v => v.id !== this.customerId)
-                }
-              })
+              storeDeleteQuery(store, /^customers/)
             }
           }
         })
+
+        refetch()
       } catch (e) {
         console.error(e)
 
