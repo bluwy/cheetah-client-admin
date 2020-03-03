@@ -11,11 +11,11 @@ export default new Vuex.Store({
   mutations: {
     ADD_SIDEBAR_ITEM (state, { component, props, hidden }) {
       if (state.sidebarItems.length < state.sidebarMaxItems) {
-        state.sidebarItems.push({ component, props, hidden })
+        state.sidebarItems.unshift({ component, props, hidden })
       }
     },
     REMOVE_SIDEBAR_ITEM_INDEX (state, { index }) {
-      state.sidebarItems.splice(index)
+      state.sidebarItems.splice(index, 1)
     },
     UPDATE_SIDEBAR_ITEM_HIDDEN (state, { index, hidden }) {
       if (index < state.sidebarItems.length) {

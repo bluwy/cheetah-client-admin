@@ -73,7 +73,8 @@
 
 <script>
 import { mapActions } from 'vuex'
-import StaffSidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
+import StaffSidebarItemCreate from '@/components/Staff/SidebarItemCreate.vue'
+import StaffSidebarItemInfo from '@/components/Staff/SidebarItemInfo.vue'
 import TableItemMenu from '@/components/Staff/TableItemMenu.vue'
 import InputSearch from '@/components/Common/InputSearch.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
@@ -125,7 +126,7 @@ export default {
       this.$apollo.queries.staffs.refetch()
     },
     openSidebarItemCreate () {
-      this.addSidebarItem({ component: StaffSidebarItemInfo })
+      this.addSidebarItem({ component: StaffSidebarItemCreate })
     },
     openSidebarItemInfo (staffId) {
       this.addSidebarItem({

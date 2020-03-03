@@ -2,7 +2,7 @@
   <v-text-field
     v-bind="$attrs"
     :value="value"
-    :error="error"
+    :error-messages="errorMessages"
     v-on="$listeners"
   >
     <template #appendIcon>
@@ -44,6 +44,9 @@ export default {
       update () {
         return this.apolloUpdate
       },
+      skip () {
+        return !!this.value
+      },
       debounce: 300,
       loadingKey: 'loadingCount'
     }
@@ -77,8 +80,8 @@ export default {
     isUnique () {
       return this.queryCount <= 0
     },
-    error () {
-      return this.isUnique ? false : `"${this.value}" is already taken`
+    errorMessages () {
+      return (this.value && this.isUnique) ? [] : [`"${this.value}" is already taken`]
     }
   }
 }

@@ -1,7 +1,6 @@
 <template>
   <v-app-bar
     app
-    elevate-on-scroll
   >
     <v-toolbar-title>
       <v-btn

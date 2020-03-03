@@ -1,9 +1,9 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-header hide-actions>
-      <v-btn icon>
-        <v-icon>$expand</v-icon>
-      </v-btn>
+    <v-expansion-panel-header
+      color="primary lighten-5"
+      hide-actions
+    >
       <span>{{ itemTitle }}</span>
       <v-spacer />
       <slot name="header" />
@@ -20,7 +20,7 @@
       </v-btn>
       <button-confirm
         :skip-confirm="!isDirty"
-        :button-props="{ icon: true }"
+        :button-props="{ class: 'flex-grow-0', icon: true }"
         button-text="Cancel"
         confirm-text="Confirm?"
         @confirm="close()"
@@ -53,6 +53,7 @@
             @confirm="close()"
           />
           <v-btn
+            class="ml-3"
             type="submit"
             color="primary"
           >

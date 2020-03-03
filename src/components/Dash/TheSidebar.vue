@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
+    width="400"
     app
-    clipped
     hide-overlay
     right
   >
