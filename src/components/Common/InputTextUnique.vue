@@ -81,7 +81,7 @@ export default {
       return this.queryCount <= 0
     },
     errorMessages () {
-      return (this.value && this.isUnique) ? [] : [`"${this.value}" is already taken`]
+      return (this.value && !this.isUnique) ? [`"${this.value}" is already taken`] : []
     }
   }
 }

@@ -48,9 +48,9 @@
 
 <script>
 import { mapActions } from 'vuex'
-import CompanySidebarItemCreate from '@/components/Admin/SidebarItemCreate.vue'
-import CompanySidebarItemInfo from '@/components/Admin/SidebarItemInfo.vue'
-import TableItemMenu from '@/components/Admin/TableItemMenu.vue'
+import CompanySidebarItemCreate from '@/components/Company/SidebarItemCreate.vue'
+import CompanySidebarItemInfo from '@/components/Company/SidebarItemInfo.vue'
+import TableItemMenu from '@/components/Company/TableItemMenu.vue'
 import InputSearch from '@/components/Common/InputSearch.vue'
 import COMPANY_GET_ALL from '@/graphql/Company/GetAll.graphql'
 

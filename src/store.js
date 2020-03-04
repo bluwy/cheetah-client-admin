@@ -6,19 +6,23 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     sidebarItems: [],
+    sidebarItemsCounter: 0,
     sidebarMaxItems: 20
   },
   mutations: {
     ADD_SIDEBAR_ITEM (state, { component, props, hidden }) {
       if (state.sidebarItems.length < state.sidebarMaxItems) {
-        state.sidebarItems.unshift({ component, props, hidden })
+        const key = state.sidebarItemsCounter++
+        state.sidebarItems.push({ key, component, props, hidden })
       }
     },
-    REMOVE_SIDEBAR_ITEM_INDEX (state, { index }) {
-      state.sidebarItems.splice(index, 1)
+    REMOVE_SIDEBAR_ITEM (state, { key }) {
+      state.sidebarItems = state.sidebarItems.filter(v => v.key !== key)
     },
-    UPDATE_SIDEBAR_ITEM_HIDDEN (state, { index, hidden }) {
-      if (index < state.sidebarItems.length) {
+    UPDATE_SIDEBAR_ITEM_HIDDEN (state, { key, hidden }) {
+      const index = state.sidebarItems.findIndex(v => v.key === key)
+
+      if (~index) {
         state.sidebarItems[index].hidden = hidden
       }
     }
@@ -27,11 +31,11 @@ export default new Vuex.Store({
     addSidebarItem ({ commit }, { component, props, hidden = false }) {
       commit('ADD_SIDEBAR_ITEM', { component, props, hidden })
     },
-    removeSidebarItemIndex ({ commit }, { index }) {
-      commit('REMOVE_SIDEBAR_ITEM_INDEX', { index })
+    removeSidebarItem ({ commit }, { key }) {
+      commit('REMOVE_SIDEBAR_ITEM', { key })
     },
-    updateSidebarItemHidden ({ commit }, { index, hidden }) {
-      commit('UPDATE_SIDEBAR_ITEM_HIDDEN', { index, hidden })
+    updateSidebarItemHidden ({ commit }, { key, hidden }) {
+      commit('UPDATE_SIDEBAR_ITEM_HIDDEN', { key, hidden })
     }
   }
 })

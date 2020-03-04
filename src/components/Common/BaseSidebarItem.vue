@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panel>
     <v-expansion-panel-header
-      color="primary lighten-5"
+      color="py-1 primary lighten-5"
       hide-actions
     >
       <span>{{ itemTitle }}</span>
@@ -48,6 +48,7 @@
           <slot name="actions" />
           <button-confirm
             :skip-confirm="!isDirty"
+            :button-props="{ color: 'error', outlined: true }"
             button-text="Cancel"
             confirm-text="Confirm?"
             @confirm="close()"
