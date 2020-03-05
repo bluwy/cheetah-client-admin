@@ -5,11 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    sidebarOpen: false,
     sidebarItems: [],
     sidebarItemsCounter: 0,
     sidebarMaxItems: 20
   },
   mutations: {
+    SET_SIDEBAR_OPEN (state, { value }) {
+      state.sidebarOpen = !!value
+    },
     ADD_SIDEBAR_ITEM (state, { component, props, hidden }) {
       if (state.sidebarItems.length < state.sidebarMaxItems) {
         const key = state.sidebarItemsCounter++
@@ -28,6 +32,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setSidebarOpen ({ commit }, { value }) {
+      commit('SET_SIDEBAR_OPEN', { value })
+    },
     addSidebarItem ({ commit }, { component, props, hidden = false }) {
       commit('ADD_SIDEBAR_ITEM', { component, props, hidden })
     },

@@ -1,10 +1,24 @@
 <template>
   <v-navigation-drawer
-    width="400"
+    v-bind="$attrs"
+    :width="$vuetify.breakpoint.smAndDown ? '100%' : '30%'"
+    :mobile-break-point="$vuetify.breakpoint.thresholds.sm"
+    :temporary="$vuetify.breakpoint.smAndDown"
     app
+    stateless
     hide-overlay
     right
+    disable-route-watcher
+    v-on="$listeners"
   >
+    <v-container v-if="$vuetify.breakpoint.smAndDown">
+      <v-btn
+        icon
+        @click="$emit('input', false)"
+      >
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+    </v-container>
     <v-expansion-panels
       :value="activePanel"
       flat
@@ -49,11 +63,16 @@ export default {
       if (val > oldVal) {
         // When add, open last
         this.activePanel = val - 1
+
+        if (this.$vuetify.breakpoint.smAndDown) {
+          this.setSidebarOpen({ value: true })
+        }
       }
     }
   },
   methods: {
     ...mapActions([
+      'setSidebarOpen',
       'removeSidebarItem',
       'updateSidebarItemHidden'
     ])
