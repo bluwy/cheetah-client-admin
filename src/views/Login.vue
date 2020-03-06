@@ -44,7 +44,7 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <div class="text-center mt-3">
+    <div class="text-center white--text mt-3">
       Forgot password? Contact developer
     </div>
   </v-form>

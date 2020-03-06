@@ -15,8 +15,6 @@ const Sudo = () => import('@/views/Sudo.vue')
 
 const Null = () => import('@/views/Null.vue')
 
-const AUTH_BYPASS = !!process.env.AUTH_BYPASS
-
 Vue.use(Router)
 
 const router = new Router({
@@ -60,22 +58,18 @@ const router = new Router({
           path: 'sudo',
           name: 'sudo',
           component: Sudo
+        },
+        {
+          path: '*',
+          name: '404',
+          component: Null
         }
       ]
-    },
-    {
-      path: '*',
-      name: '404',
-      component: Null
     }
   ]
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (AUTH_BYPASS) {
-    return next()
-  }
-
   if (to.matched.some(v => v.meta.requiresAuth)) {
     const userData = await getUserData()
 

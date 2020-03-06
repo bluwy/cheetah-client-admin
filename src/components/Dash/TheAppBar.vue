@@ -99,6 +99,8 @@ export default {
         console.error(e)
       }
 
+      this.$apollo.getClient().resetStore()
+
       this.$router.push({ path: '/login' })
     }
   }

@@ -1,0 +1,9 @@
+mutation SudoCreateAdmin($sudoPassword: String!, $data: AdminCreateInput!) {
+  sudoCreateAdmin(sudoPassword: $sudoPassword, data: $data) {
+    id
+    createdAt
+    updatedAt
+    username
+    privilege
+  }
+}
