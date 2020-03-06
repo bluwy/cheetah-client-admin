@@ -19,7 +19,7 @@
       spellcheck="false"
     />
     <v-switch
-      v-model="formAdmin.privilege"
+      v-model="formAdmin.fullAccess"
       label="Full Access"
       hint="Providing full access equals to the power you have now"
     />
