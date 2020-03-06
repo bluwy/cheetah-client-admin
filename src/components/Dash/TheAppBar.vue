@@ -64,6 +64,7 @@
 
 <script>
 import { get } from 'lodash-es'
+import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import ADMIN_GET_ONE from '@/graphql/Admin/GetOne.graphql'
 import AUTH_LOGOUT from '@/graphql/Auth/Logout.graphql'
 
@@ -93,15 +94,15 @@ export default {
         if (!logoutAdmin) {
           throw new Error('Unable to logout')
         }
+
+        await this.$router.push({ path: '/login' })
+
+        await this.$apollo.getClient().resetStore()
       } catch (e) {
-        // If logout failed, just log to console, no need to prevent client.
-        // This is because the session if not logout will also expire anyway.
         console.error(e)
+
+        pushSnack({ color: 'error', message: 'Unable to logout' })
       }
-
-      this.$apollo.getClient().resetStore()
-
-      this.$router.push({ path: '/login' })
     }
   }
 }

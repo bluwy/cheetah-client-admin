@@ -131,7 +131,7 @@ export default {
     ],
     page: 1,
     queryLimit: 20,
-    sortBy: ['dateIssued'],
+    sortBy: ['createdAt'],
     sortDesc: [true],
     searchQuery: '',
     jobs: [],
