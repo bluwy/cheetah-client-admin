@@ -6,7 +6,9 @@ import { isArray, isPlainObject } from 'lodash-es'
  * @returns {string[]}
  */
 export function getErrorMessages (error) {
-  if (error.graphQLErrors && error.graphQLErrors.length) {
+  if (!error) {
+    return ['']
+  } else if (error.graphQLErrors && error.graphQLErrors.length) {
     return error.graphQLErrors.map(v => v.message)
   } else {
     return [error.message]
