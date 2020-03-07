@@ -81,6 +81,7 @@ import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
 import InputDateTime from '@/components/Common/InputDateTime.vue'
 import InputListTask from '@/components/Common/InputListTask.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
+import { refetch } from '@/components/Job/Table.vue'
 import JOB_CREATE from '@/graphql/Job/Create.graphql'
 import JOB_FOLLOW_UP_GET_ONE from '@/graphql/Job/FollowUpGetOne.graphql'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
@@ -196,6 +197,10 @@ export default {
 
       vars.startDate = new Date(vars.startDate)
 
+      if (!vars.staffSecondaryId) {
+        vars.staffSecondaryId = undefined
+      }
+
       return vars
     },
     async createJob () {
@@ -215,6 +220,8 @@ export default {
         })
 
         this.$refs.item.close()
+
+        refetch()
       } catch (e) {
         console.error(e)
 

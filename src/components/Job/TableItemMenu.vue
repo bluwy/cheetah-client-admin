@@ -11,37 +11,43 @@
         </v-icon>
       </v-btn>
     </template>
-    <v-list>
+    <v-list dense>
       <v-list-item
         color="primary"
         @click.stop="openSidebarItemInfo()"
       >
         <v-list-item-icon>
-          <v-icon>mdi-information</v-icon>
+          <v-icon color="primary">
+            mdi-information
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Info</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-list-item
-        v-if="canReassign(item)"
+        v-if="canReassign"
         color="warning"
         @click.stop="openSidebarItemReassign()"
       >
         <v-list-item-icon>
-          <v-icon>mdi-clipboard-text</v-icon>
+          <v-icon color="warning">
+            mdi-clipboard-text
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Reassign</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-list-item
-        v-if="canFollowUp(item)"
+        v-if="canFollowUp"
         color="warning"
         @click.stop="openSidebarItemFollowUp()"
       >
         <v-list-item-icon>
-          <v-icon>mdi-clipboard-text</v-icon>
+          <v-icon color="warning">
+            mdi-clipboard-text
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Follow Up</v-list-item-title>
@@ -57,7 +63,9 @@
             v-on="on"
           >
             <v-list-item-icon>
-              <v-icon>mdi-delete</v-icon>
+              <v-icon color="error">
+                mdi-delete
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Remove</v-list-item-title>

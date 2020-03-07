@@ -41,11 +41,11 @@ export default {
       variables () {
         return this.apolloVariables(this.value)
       },
-      update () {
-        return this.apolloUpdate
+      update (data) {
+        return this.apolloUpdate(data)
       },
       skip () {
-        return !!this.value
+        return !this.value || this.value === this.oriValue
       },
       debounce: 300,
       loadingKey: 'loadingCount'
@@ -54,10 +54,14 @@ export default {
   props: {
     value: {
       type: String,
-      required: true
+      default: ''
+    },
+    oriValue: {
+      type: String,
+      default: ''
     },
     apolloQuery: {
-      type: Function,
+      type: Object,
       required: true
     },
     apolloVariables: {
@@ -78,10 +82,10 @@ export default {
       return !!this.loadingCount
     },
     isUnique () {
-      return this.queryCount <= 0
+      return this.value === this.oriValue || this.queryCount <= 0
     },
     errorMessages () {
-      return (this.value && !this.isUnique) ? [`"${this.value}" is already taken`] : []
+      return (this.value && !this.isUnique && !this.isLoading) ? [`"${this.value}" is already taken`] : []
     }
   }
 }

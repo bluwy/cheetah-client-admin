@@ -7,17 +7,22 @@
       <span>{{ itemTitle }}</span>
       <v-spacer />
       <slot name="header" />
-      <v-btn
-        v-if="isEditable"
-        :input-value="isEditing"
-        icon
-        color="warning"
-        @click="$emit('update:isEditing', !isEditing)"
+      <v-col
+        class="flex-grow-0"
+        cols="auto"
       >
-        <v-icon>
-          mdi-pencil
-        </v-icon>
-      </v-btn>
+        <v-btn
+          v-if="isEditable"
+          :input-value="isEditing"
+          icon
+          color="warning"
+          @click.stop="$emit('update:isEditing', !isEditing)"
+        >
+          <v-icon>
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </v-col>
       <button-confirm
         :skip-confirm="!isDirty"
         :button-props="{ class: 'flex-grow-0', icon: true }"
@@ -36,6 +41,7 @@
       <v-form
         ref="form"
         v-model="valid"
+        class="pt-3"
         lazy-validation
         @submit.prevent="ok()"
       >

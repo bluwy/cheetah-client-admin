@@ -45,7 +45,6 @@
     <input-addresses
       :addresses="formCustomer.addresses"
       prepend-icon="mdi-map-marker"
-      label="Address"
       spellcheck="false"
     />
     <v-row>
@@ -147,6 +146,11 @@ export default {
     },
     async createCustomer () {
       this.$refs.item.hide()
+
+      // If falsy then set undefined, else hit by uuid error
+      if (!this.formCustomer.staffSecondaryId) {
+        this.formCustomer.staffSecondaryId = undefined
+      }
 
       pushSnack({ color: 'success', message: 'Added new customer' })
 

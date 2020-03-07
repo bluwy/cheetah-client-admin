@@ -8,7 +8,7 @@
     class="overflow-hidden"
     hide-default-footer
     must-sort
-    @click:row="openSidebarItemInfo()"
+    @click:row="openSidebarItemInfo($event.id)"
   >
     <template #top>
       <v-toolbar
@@ -114,8 +114,8 @@ export default {
       { text: 'Username', value: 'username' },
       { text: 'Full Name', value: 'fullName' },
       { text: 'Device Paired', value: 'paired' },
-      { text: 'Active', value: 'active' },
-      { text: '', value: 'menu', sortable: false }
+      { text: 'Active', value: 'active', width: 100 },
+      { text: '', value: 'menu', width: 0, sortable: false }
     ],
     searchQuery: '',
     staffs: []

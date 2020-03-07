@@ -20,7 +20,7 @@
       >
         <v-text-field
           :value="address"
-          append-outer-icon="mdi-close"
+          :append-outer-icon="readonly ? '' : 'mdi-close'"
           color="primary"
           placeholder="Address"
           hide-details
@@ -32,6 +32,7 @@
         />
       </v-col>
       <v-col
+        v-show="!readonly"
         key="footer"
         cols="12"
       >
@@ -60,9 +61,13 @@ export default {
   props: {
     addresses: {
       type: Array,
-      required: true
+      default: () => []
     },
     minOneAddress: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     }

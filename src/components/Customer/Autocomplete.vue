@@ -1,7 +1,7 @@
 <template>
   <v-autocomplete
     v-bind="$attrs"
-    :search-input.sync="query"
+    :search-input.sync="searchQuery"
     :items="mapCustomers"
     v-on="$listeners"
   >

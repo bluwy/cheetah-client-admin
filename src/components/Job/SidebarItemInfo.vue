@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { isEqual, cloneDeep } from 'lodash-es'
+import { get, has, isEqual, cloneDeep } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
 import { formatDate } from '@/utils/common'
 import { required, email } from '@/utils/inputRules'
@@ -97,7 +97,10 @@ import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import JobSidebarItemReassign from '@/components/Job/SidebarItemReassign.vue'
 import CustomerAutocomplete from '@/components/Customer/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
+import InputDateTime from '@/components/Common/InputDateTime.vue'
+import InputListTask from '@/components/Common/InputListTask.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
+import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import JOB_GET_ONE from '@/graphql/Job/GetOne.graphql'
 import JOB_UPDATE from '@/graphql/Job/Update.graphql'
 import JOB_SET_TASKS from '@/graphql/Job/SetTasks.graphql'
@@ -113,12 +116,25 @@ export default {
         }
       },
       loadingKey: 'loadingCount'
+    },
+    customer: {
+      query: CUSTOMER_GET_ONE,
+      variables () {
+        return {
+          id: this.job.customer.id
+        }
+      },
+      skip () {
+        return !has(this.job, ['customer.id'])
+      }
     }
   },
   components: {
     BaseSidebarItem,
     CustomerAutocomplete,
-    StaffAutocomplete
+    StaffAutocomplete,
+    InputListTask,
+    InputDateTime
   },
   props: {
     jobId: {
@@ -130,6 +146,8 @@ export default {
     isEditing: false,
     loadingCount: 0,
     job: {},
+    // Job's customer
+    customer: {},
     formJobFactory: () => ({}),
     formTasksFactory: () => [],
     newFormJob: {},
@@ -155,21 +173,26 @@ export default {
     canReassign () {
       // Haven't check out means haven't done
       return this.job.checkOut == null
+    },
+    customerAddresses () {
+      return get(this.customer, 'addresses', [])
     }
   },
   watch: {
     job (val) {
-      this.formJobFactory = () => ({
-        customerId: val.customer.id,
-        address: val.address,
-        startDate: val.startDate,
-        staffPrimaryId: val.staffPrimary.id,
-        staffSecondaryId: val.staffSecondary ? val.staffSecondary.id : ''
-      })
+      if (val) {
+        this.formJobFactory = () => ({
+          customerId: val.customer.id,
+          address: val.address,
+          startDate: val.startDate,
+          staffPrimaryId: val.staffPrimary.id,
+          staffSecondaryId: val.staffSecondary ? val.staffSecondary.id : ''
+        })
 
-      this.formTasksFactory = () => cloneDeep(val.tasks)
+        this.formTasksFactory = () => cloneDeep(val.tasks)
 
-      this.resetForm()
+        this.$nextTick(() => this.resetForm())
+      }
     }
   },
   methods: {

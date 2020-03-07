@@ -102,7 +102,7 @@ export default {
     headers: [
       { text: 'Username', value: 'username' },
       { text: 'Full Access', value: 'privilege' },
-      { text: '', value: 'menu', sortable: false }
+      { text: '', value: 'menu', width: 0, sortable: false }
     ],
     searchQuery: '',
     admins: []

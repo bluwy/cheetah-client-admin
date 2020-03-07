@@ -43,14 +43,8 @@
         </v-btn>
       </v-toolbar>
     </template>
-    <template #item.active="{ item }">
-      <v-checkbox
-        class="my-0 py-0"
-        :input-value="item.active"
-        hide-details
-        dense
-        @change="updateActive(item.id, $event.target.checked)"
-      />
+    <template #item.createdAt="{ item }">
+      {{ formatDate(item.createdAt) }}
     </template>
     <template #item.menu="{ item }">
       <table-item-menu :job-id="item.id" />
@@ -61,14 +55,13 @@
 <script>
 import { mapActions } from 'vuex'
 import { isEmpty, set } from 'lodash-es'
+import { formatDate } from '@/utils/common'
 import collectInstanceMixin from '@/mixins/collect-instance'
 import TableItemMenu from '@/components/Job/TableItemMenu.vue'
 import JobSidebarItemCreate from '@/components/Job/SidebarItemCreate.vue'
 import JobSidebarItemInfo from '@/components/Job/SidebarItemInfo.vue'
 import InputSearch from '@/components/Common/InputSearch.vue'
-import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import JOB_GET_ALL from '@/graphql/Job/GetAll.graphql'
-import JOB_UPDATE from '@/graphql/Job/Update.graphql'
 import JOB_COUNT from '@/graphql/Job/Count.graphql'
 
 const instances = []
@@ -127,7 +120,7 @@ export default {
       { text: 'Code', value: 'code' },
       { text: 'Customer', value: 'customer.name' },
       { text: 'Issue Date', value: 'createdAt' },
-      { text: '', value: 'menu', sortable: false }
+      { text: '', value: 'menu', width: 0, sortable: false }
     ],
     page: 1,
     queryLimit: 20,
@@ -177,6 +170,7 @@ export default {
     }
   },
   methods: {
+    formatDate,
     ...mapActions(['addSidebarItem']),
     refetch () {
       this.$apollo.queries.jobs.refetch()
@@ -191,18 +185,6 @@ export default {
           jobId
         }
       })
-    },
-    async updateActive (jobId, newActive) {
-      try {
-        await this.$apollo.mutate({
-          mutation: JOB_UPDATE,
-          variables: { id: jobId, active: newActive }
-        })
-      } catch (e) {
-        console.error(e)
-
-        pushSnack({ color: 'error', message: 'Unable to toggle active' })
-      }
     }
   }
 }

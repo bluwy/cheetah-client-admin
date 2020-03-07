@@ -13,25 +13,33 @@
     <v-input prepend-icon="mdi-account">
       {{ staff.username }}
     </v-input>
-    <v-text-field
+    <staff-input-full-name
       v-model="newFormStaff.fullName"
-      prepend-icon="mdi-shield"
       :readonly="!isEditing"
+      :solo="!isEditing"
+      :flat="!isEditing"
+      :ori-value="staff.fullName"
+      prepend-icon="mdi-shield"
       single-line
       dense
     />
     <v-switch
       v-model="newFormStaff.active"
       :readonly="!isEditing"
+      :disabled="!isEditing"
+      label="Active"
       dense
     />
     <v-input :prepend-icon="staff.paired ? 'mdi-check' : 'mdi-close'">
+      <template #append>
+        <button-confirm
+          :button-props="{ color: 'error', outlined: true, small: true }"
+          button-text="Reset Pairing"
+          confirm-text="Confirm?"
+          @confirm="resetStaffPairing()"
+        />
+      </template>
       {{ staff.paired ? 'Paired' : 'Not paired' }}
-      <button-confirm
-        button-text="Reset Pairing"
-        confirm-text="Confirm?"
-        @confirm="resetStaffPairing()"
-      />
     </v-input>
     <v-input prepend-icon="mdi-cake-variant">
       {{ formatDate(staff.createdAt) }}
@@ -46,6 +54,7 @@
 import { isEqual } from 'lodash-es'
 import { updatedDiff } from 'deep-object-diff'
 import { formatDate } from '@/utils/common'
+import StaffInputFullName from '@/components/Staff/InputFullName.vue'
 import BaseSidebarItem from '@/components/Common/BaseSidebarItem.vue'
 import ButtonConfirm from '@/components/Common/ButtonConfirm.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
@@ -66,6 +75,7 @@ export default {
     }
   },
   components: {
+    StaffInputFullName,
     BaseSidebarItem,
     ButtonConfirm
   },
@@ -89,12 +99,14 @@ export default {
   },
   watch: {
     staff (val) {
-      this.formStaffFactory = () => ({
-        fullName: val.fullName,
-        active: val.active
-      })
+      if (val) {
+        this.formStaffFactory = () => ({
+          fullName: val.fullName,
+          active: val.active
+        })
 
-      this.resetForm()
+        this.resetForm()
+      }
     }
   },
   methods: {

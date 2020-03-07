@@ -49,7 +49,7 @@ export default {
   data: () => ({
     formCompany: formCompanyFactory(),
     rule: {
-      name: [required, maxStrLength(16)],
+      name: [required],
       alias: [required, maxStrLength(1)]
     }
   }),

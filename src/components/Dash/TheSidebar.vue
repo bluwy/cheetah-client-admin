@@ -20,7 +20,7 @@
       </v-btn>
     </v-container>
     <v-expansion-panels
-      :value="activePanel"
+      v-model="activePanel"
       flat
     >
       <v-fade-transition
@@ -30,14 +30,14 @@
       >
         <component
           :is="item.component"
-          v-for="item in sidebarItems"
+          v-for="(item, i) in sidebarItems"
           v-show="!item.hidden"
           :key="item.key"
           v-bind="item.props"
           class="panel ma-3 mb-0"
-          @hide="updateSidebarItemHidden({ key: item.key, hidden: true })"
-          @unhide="updateSidebarItemHidden({ key: item.key, hidden: false })"
-          @close="removeSidebarItem({ key: item.key })"
+          @hide="handleUpdateSidebarItemHidden(i, { key: item.key, hidden: true })"
+          @unhide="handleUpdateSidebarItemHidden(i, { key: item.key, hidden: false })"
+          @close="handleRemoveSidebarItem(i, { key: item.key })"
         />
       </v-fade-transition>
     </v-expansion-panels>
@@ -75,7 +75,24 @@ export default {
       'setSidebarOpen',
       'removeSidebarItem',
       'updateSidebarItemHidden'
-    ])
+    ]),
+    validateActiveIndex (index) {
+      if (this.activePanel === index) {
+        this.activePanel = undefined
+      }
+    },
+    handleSetSidebarOpen (index, arg) {
+      this.validateActiveIndex(index)
+      this.setSidebarOpen(arg)
+    },
+    handleRemoveSidebarItem (index, arg) {
+      this.validateActiveIndex(index)
+      this.removeSidebarItem(arg)
+    },
+    handleUpdateSidebarItemHidden (index, arg) {
+      this.validateActiveIndex(index)
+      this.updateSidebarItemHidden(arg)
+    }
   }
 }
 </script>

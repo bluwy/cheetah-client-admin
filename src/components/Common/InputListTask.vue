@@ -65,7 +65,7 @@ export default {
     },
     tasks: {
       type: Array,
-      required: true
+      default: () => []
     },
     minOneTask: {
       type: Boolean,

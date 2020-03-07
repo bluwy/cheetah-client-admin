@@ -86,7 +86,7 @@ export default {
     headers: [
       { text: 'Name', value: 'name' },
       { text: 'Alias', value: 'alias' },
-      { text: '', value: 'menu', sortable: false }
+      { text: '', value: 'menu', width: 0, sortable: false }
     ],
     searchQuery: '',
     companies: []

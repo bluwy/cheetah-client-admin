@@ -19,6 +19,9 @@
           v-model="newFormCustomer.code"
           :rules="rule.code"
           :readonly="!isEditing"
+          :solo="!isEditing"
+          :flat="!isEditing"
+          :ori-value="customer.code"
           label="Code"
           spellcheck="false"
         />
@@ -28,6 +31,9 @@
           v-model="newFormCustomer.name"
           :rules="rule.name"
           :readonly="!isEditing"
+          :solo="!isEditing"
+          :flat="!isEditing"
+          :ori-value="customer.name"
           label="Name"
           spellcheck="false"
         />
@@ -36,6 +42,8 @@
     <v-text-field
       v-model="newFormCustomer.phoneNumber"
       :readonly="!isEditing"
+      :solo="!isEditing"
+      :flat="!isEditing"
       label="Phone Number (optional)"
       prepend-icon="mdi-phone"
       spellcheck="false"
@@ -44,6 +52,8 @@
       v-model="newFormCustomer.email"
       :rules="rule.email"
       :readonly="!isEditing"
+      :solo="!isEditing"
+      :flat="!isEditing"
       label="Email (optional)"
       prepend-icon="mdi-email"
       spellcheck="false"
@@ -52,7 +62,6 @@
       :addresses="newFormCustomer.addresses"
       :readonly="!isEditing"
       prepend-icon="mdi-map-marker"
-      label="Address"
       spellcheck="false"
     />
     <v-row>
@@ -61,10 +70,12 @@
           v-model="newFormCustomer.companyBelongId"
           :rules="rule.companyBelongId"
           :readonly="!isEditing"
+          :solo="!isEditing"
+          :flat="!isEditing"
+          :clearable="isEditing"
           label="Managed by"
           hide-details
           dense
-          clearable
         />
       </v-col>
       <v-col
@@ -75,11 +86,13 @@
           v-model="newFormCustomer.staffPrimaryId"
           :rules="rule.staffPrimaryId"
           :readonly="!isEditing"
+          :solo="!isEditing"
+          :flat="!isEditing"
           :filter="v => v.id !== newFormCustomer.staffSecondaryId"
+          :clearable="isEditing"
           label="Technician 1"
           hide-details
           dense
-          clearable
         />
       </v-col>
       <v-col
@@ -89,11 +102,13 @@
         <staff-autocomplete
           v-model="newFormCustomer.staffSecondaryId"
           :readonly="!isEditing"
+          :solo="!isEditing"
+          :flat="!isEditing"
           :filter="v => v.id !== newFormCustomer.staffPrimaryId"
+          :clearable="isEditing"
           label="Technician 2 (optional)"
           hide-details
           dense
-          clearable
         />
       </v-col>
     </v-row>
@@ -116,6 +131,7 @@ import CustomerInputCode from '@/components/Customer/InputCode.vue'
 import CustomerInputName from '@/components/Customer/InputName.vue'
 import CompanyAutocomplete from '@/components/Company/Autocomplete.vue'
 import StaffAutocomplete from '@/components/Staff/Autocomplete.vue'
+import InputAddresses from '@/components/Common/InputAddresses.vue'
 import { pushSnack } from '@/components/Common/SnackbarGlobal.vue'
 import CUSTOMER_GET_ONE from '@/graphql/Customer/GetOne.graphql'
 import CUSTOMER_UPDATE from '@/graphql/Customer/Update.graphql'
@@ -138,7 +154,8 @@ export default {
     CustomerInputCode,
     CustomerInputName,
     CompanyAutocomplete,
-    StaffAutocomplete
+    StaffAutocomplete,
+    InputAddresses
   },
   props: {
     customerId: {
@@ -167,18 +184,20 @@ export default {
   },
   watch: {
     customer (val) {
-      this.formCustomerFactory = () => ({
-        code: val.code,
-        name: val.name,
-        addresses: cloneDeep(val.addresses),
-        email: val.email,
-        phoneNumber: val.phoneNumber,
-        companyBelongId: val.companyBelong.id,
-        staffPrimaryId: val.staffPrimary.id,
-        staffSecondaryId: (val.staffSecondary && val.staffSecondary.id) || ''
-      })
+      if (val) {
+        this.formCustomerFactory = () => ({
+          code: val.code,
+          name: val.name,
+          addresses: cloneDeep(val.addresses),
+          email: val.email,
+          phoneNumber: val.phoneNumber,
+          companyBelongId: val.companyBelong.id,
+          staffPrimaryId: val.staffPrimary.id,
+          staffSecondaryId: (val.staffSecondary && val.staffSecondary.id) || ''
+        })
 
-      this.resetForm()
+        this.$nextTick(() => this.resetForm())
+      }
     }
   },
   methods: {

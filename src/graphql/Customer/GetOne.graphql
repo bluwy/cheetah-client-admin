@@ -1,4 +1,4 @@
-query CustomerGetOne($id: id!) {
+query CustomerGetOne($id: ID!) {
   customer(id: $id) {
     id
     createdAt

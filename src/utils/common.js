@@ -29,5 +29,5 @@ export const transformObj = (obj, transforms) => {
 }
 
 export const formatDate = (isoDate) => {
-  return format(new Date(isoDate), 'd MMM yyyy')
+  return isoDate ? format(new Date(isoDate), 'd MMM yyyy') : ''
 }

@@ -1,5 +1,5 @@
 mutation CompanyCreate($name: String!, $alias: String!) {
-  createCompany(data: { name: $name, alias: $aliasz }) {
+  createCompany(data: { name: $name, alias: $alias }) {
     id
     createdAt
     updatedAt

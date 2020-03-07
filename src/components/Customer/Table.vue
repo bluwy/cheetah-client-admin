@@ -129,8 +129,8 @@ export default {
       { text: 'Technician 1', value: 'staffPrimary.username' },
       { text: 'Technician 2', value: 'staffSecondary.username' },
       { text: 'Company', value: 'companyBelong.name' },
-      { text: 'Active', value: 'active' },
-      { text: '', value: 'menu', sortable: false }
+      { text: 'Active', value: 'active', width: 100 },
+      { text: '', value: 'menu', width: 0, sortable: false }
     ],
     page: 1,
     queryLimit: 20,

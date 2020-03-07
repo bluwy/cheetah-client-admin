@@ -9,8 +9,10 @@
       {{ admin.username }}
     </v-input>
     <v-input prepend-icon="mdi-shield">
-      <strong>{{ admin.privilege === 'FULL' ? 'Has' : 'No' }}</strong>
-      full access
+      <span>
+        <strong>{{ admin.privilege === 'FULL' ? 'Has' : 'No' }}</strong>
+        full access
+      </span>
     </v-input>
     <v-input prepend-icon="mdi-cake-variant">
       {{ formatDate(admin.createdAt) }}

@@ -11,13 +11,15 @@
         </v-icon>
       </v-btn>
     </template>
-    <v-list>
+    <v-list dense>
       <v-list-item
         color="primary"
         @click.stop="openSidebarItemInfo()"
       >
         <v-list-item-icon>
-          <v-icon>mdi-information</v-icon>
+          <v-icon color="primary">
+            mdi-information
+          </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>Info</v-list-item-title>
@@ -29,11 +31,13 @@
       >
         <template #activator="{ on }">
           <v-list-item
-            color="error"
+            color="warning"
             v-on="on"
           >
             <v-list-item-icon>
-              <v-icon>mdi-lock</v-icon>
+              <v-icon color="warning">
+                mdi-lock
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Reset Pairing</v-list-item-title>
@@ -51,7 +55,9 @@
             v-on="on"
           >
             <v-list-item-icon>
-              <v-icon>mdi-delete</v-icon>
+              <v-icon color="error">
+                mdi-delete
+              </v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Remove</v-list-item-title>
