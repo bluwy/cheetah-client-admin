@@ -1,9 +1,9 @@
-import type { UserConfig } from 'vite'
-import reactPlugin from 'vite-plugin-react'
+import type { UserConfig } from 'vite';
+import reactPlugin from 'vite-plugin-react';
 
 const config: UserConfig = {
   jsx: 'react',
-  plugins: [reactPlugin]
-}
+  plugins: [reactPlugin],
+};
 
-export default config
+export default config;

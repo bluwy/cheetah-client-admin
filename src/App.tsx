@@ -1,5 +1,5 @@
-import React from 'react'
-import { Button } from '@material-ui/core'
+import React from 'react';
+import { Button } from '@material-ui/core';
 
 function App() {
   return (
@@ -7,7 +7,7 @@ function App() {
       <div>Hello World</div>
       <Button variant="contained" color="primary">Oh hi</Button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
