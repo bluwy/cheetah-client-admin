@@ -1,0 +1,26 @@
+{
+  "name": "cheetah",
+  "version": "1.0.0",
+  "author": "Bjorn Lu",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@pika/react": "^16.13.1",
+    "@pika/react-dom": "^16.13.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.43",
+    "@types/react-dom": "^16.9.8",
+    "typescript": "^3.9.7",
+    "vite": "^1.0.0-rc.4",
+    "vite-plugin-react": "^3.0.2"
+  }
+}
