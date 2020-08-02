@@ -1,2 +1,4 @@
 node_modules
 vite.config.ts
+apollo.config.js
+src/schema.ts
