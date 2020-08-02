@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
+import Null from './pages/Null';
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
         <Route path="/dashboard">
           Dashboard
         </Route>
-        <Route>404</Route>
+        <Route>
+          <Null />
+        </Route>
       </Switch>
     </main>
   );
