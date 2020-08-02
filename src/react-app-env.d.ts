@@ -19,6 +19,10 @@ declare namespace NodeJS {
   }
 }
 
+interface ImportMeta {
+  env: Record<string, string>
+}
+
 declare module '*.gif' {
   const src: string;
   export default src;
