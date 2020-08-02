@@ -709,3 +709,14 @@ export type AuthLoginMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'adminLogin'>
 );
+
+export type AuthResetPasswordMutationVariables = Exact<{
+  resetToken: Scalars['String'];
+  newPassword: Scalars['String'];
+}>;
+
+
+export type AuthResetPasswordMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'adminResetPassword'>
+);

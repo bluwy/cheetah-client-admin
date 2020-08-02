@@ -3,9 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
 import {
-  AuthLoginMutation as LoginM,
-  AuthLoginMutationVariables as LoginV,
+  AuthResetPasswordMutation as ResetM,
+  AuthResetPasswordMutationVariables as ResetV,
 } from '/@/schema';
+import { useLocationQuery } from '/@/utils';
 import {
   makeStyles,
   Box,
@@ -19,13 +20,14 @@ import {
 import { Alert } from '@material-ui/lab';
 
 interface FormInput {
-  username: string
-  password: string
+  newPassword: string
 }
 
-const LOGIN = gql`
-  mutation AuthLogin($username: String!, $password: String!) {
-    adminLogin(username: $username, password: $password)
+const RESET_TOKEN_KEY = 'token';
+
+const RESET_PASSWORD = gql`
+  mutation AuthResetPassword($resetToken: String!, $newPassword: String!) {
+    adminResetPassword(resetToken: $resetToken, newPassword: $newPassword)
   }
 `;
 
@@ -35,54 +37,62 @@ const useStyles = makeStyles({
   },
 });
 
-function Login() {
+function useResetToken() {
+  const history = useHistory();
+  const query = useLocationQuery();
+  const resetToken = query.get(RESET_TOKEN_KEY);
+
+  if (!resetToken) {
+    history.push('/login');
+  }
+
+  return resetToken;
+}
+
+function ResetPassword() {
   const history = useHistory();
   const { register, handleSubmit } = useForm<FormInput>();
-  const [login, { loading, error }] = useMutation<LoginM, LoginV>(LOGIN);
+  const [resetPassword, { loading, error }] = useMutation<ResetM, ResetV>(RESET_PASSWORD);
 
   const classes = useStyles();
+  const resetToken = useResetToken();
 
   const onSubmit = async (data: FormInput) => {
-    const result = await login({ variables: data });
+    if (!resetToken) {
+      return;
+    }
 
-    if (result.data?.adminLogin) {
-      history.push('/dashboard');
+    const result = await resetPassword({
+      variables: {
+        resetToken,
+        newPassword: data.newPassword,
+      },
+    });
+
+    if (result.data?.adminResetPassword) {
+      history.push('/login');
     }
   };
 
   return (
-    <Grid
-      className={classes.grid}
-      container
-      direction="column"
-      justify="center"
-      alignItems="center"
-    >
+    <Grid className={classes.grid} container justify="center" alignItems="center">
       <Card>
         <CardContent>
           <Box marginBottom={2}>
-            <Typography align="center">Login to dashboard</Typography>
+            <Typography align="center">Enter your new password</Typography>
           </Box>
           {error && (
             <Alert severity="error">
-              Invalid username or password
+              Unable to reset. The token may be expired.
             </Alert>
           )}
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
             <Box marginY={2}>
               <TextField
-                name="username"
-                label="Username"
-                variant="outlined"
-                fullWidth
-                inputRef={register({ required: true })}
-              />
-            </Box>
-            <Box marginY={2}>
-              <TextField
                 type="password"
-                name="password"
-                label="Password"
+                name="newPassword"
+                autoComplete="new-password"
+                label="New password"
                 variant="outlined"
                 fullWidth
                 inputRef={register({ required: true })}
@@ -95,20 +105,13 @@ function Login() {
               fullWidth
               disabled={loading}
             >
-              Login
+              Confirm
             </Button>
           </form>
         </CardContent>
       </Card>
-      <Box clone marginTop={1}>
-        <Typography color="textSecondary" align="center">
-          Forgot password?
-          <br />
-          Please contact the developer.
-        </Typography>
-      </Box>
     </Grid>
   );
 }
 
-export default Login;
+export default ResetPassword;

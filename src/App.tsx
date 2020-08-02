@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
           <Login />
         </Route>
         <Route path="/reset-password">
-          Reset Password
+          <ResetPassword />
         </Route>
         <Route path="/sudo">
           Sudo
