@@ -78,7 +78,7 @@ function ResetPassword() {
     <Grid className={classes.grid} container justify="center" alignItems="center">
       <Card>
         <CardContent>
-          <Box marginBottom={2}>
+          <Box mb={2}>
             <Typography align="center">Enter your new password</Typography>
           </Box>
           {error && (
@@ -87,7 +87,7 @@ function ResetPassword() {
             </Alert>
           )}
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
-            <Box marginY={2}>
+            <Box my={2}>
               <TextField
                 type="password"
                 name="newPassword"

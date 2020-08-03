@@ -60,7 +60,7 @@ function Login() {
     >
       <Card>
         <CardContent>
-          <Box marginBottom={2}>
+          <Box mb={2}>
             <Typography align="center">Login to dashboard</Typography>
           </Box>
           {error && (
@@ -69,7 +69,7 @@ function Login() {
             </Alert>
           )}
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
-            <Box marginY={2}>
+            <Box my={2}>
               <TextField
                 name="username"
                 label="Username"
@@ -78,7 +78,7 @@ function Login() {
                 inputRef={register({ required: true })}
               />
             </Box>
-            <Box marginY={2}>
+            <Box my={2}>
               <TextField
                 type="password"
                 name="password"
@@ -100,7 +100,7 @@ function Login() {
           </form>
         </CardContent>
       </Card>
-      <Box clone marginTop={1}>
+      <Box clone mt={1}>
         <Typography color="textSecondary" align="center">
           Forgot password?
           <br />

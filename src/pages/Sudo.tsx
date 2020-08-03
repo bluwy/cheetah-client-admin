@@ -88,7 +88,7 @@ function useCreateAdminForm(sudoPassword: string) {
         </Alert>
       )}
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <Box marginY={3}>
+        <Box my={3}>
           <TextField
             name="username"
             autoComplete="username"
@@ -98,7 +98,7 @@ function useCreateAdminForm(sudoPassword: string) {
             inputRef={register({ required: true })}
           />
         </Box>
-        <Box marginY={3}>
+        <Box my={3}>
           <TextField
             type="password"
             name="password"
@@ -159,7 +159,7 @@ function useGetResetTokenForm(sudoPassword: string) {
         </Alert>
       )}
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <Box marginY={3}>
+        <Box my={3}>
 
           <TextField
             name="username"
@@ -195,10 +195,10 @@ function Sudo() {
     <Grid className={classes.grid} container justify="center" alignItems="center">
       <Card>
         <CardContent>
-          <Box marginBottom={2}>
+          <Box mb={2}>
             <Typography align="center">Hola sudo mode</Typography>
           </Box>
-          <Box marginY={3}>
+          <Box my={3}>
             <TextField
               name="sudoPassword"
               autoComplete="password"

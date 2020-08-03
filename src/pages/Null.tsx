@@ -22,7 +22,7 @@ function Null() {
       <Box textAlign="center">
         <Typography variant="h1">404</Typography>
         <Typography variant="body1">Page not found.</Typography>
-        <Box marginTop={1}>
+        <Box mt={1}>
           <Typography variant="body2">
             Take me to
             {' '}
