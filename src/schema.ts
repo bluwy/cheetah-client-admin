@@ -720,3 +720,28 @@ export type AuthResetPasswordMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'adminResetPassword'>
 );
+
+export type AuthCreateAdminMutationVariables = Exact<{
+  sudoPassword: Scalars['String'];
+  data: AdminCreateInput;
+}>;
+
+
+export type AuthCreateAdminMutation = (
+  { __typename?: 'Mutation' }
+  & { adminCreate: (
+    { __typename?: 'Admin' }
+    & Pick<Admin, 'id' | 'username'>
+  ) }
+);
+
+export type AuthGetResetPasswordTokenMutationVariables = Exact<{
+  sudoPassword: Scalars['String'];
+  username: Scalars['String'];
+}>;
+
+
+export type AuthGetResetPasswordTokenMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'adminGetResetPasswordToken'>
+);
