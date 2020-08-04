@@ -738,6 +738,14 @@ export type SettingsStaffFindStaffsQuery = (
   )> }
 );
 
+export type AuthLogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AuthLogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'adminLogout'>
+);
+
 export type AuthLoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
