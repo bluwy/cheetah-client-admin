@@ -716,6 +716,30 @@ export type ThemeSwitchGetAppThemeQuery = (
   & Pick<Query, 'appTheme'>
 );
 
+export type CompanyAutocompleteFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CompanyAutocompleteFindCompaniesQuery = (
+  { __typename?: 'Query' }
+  & { companies: Array<(
+    { __typename?: 'Company' }
+    & Pick<Company, 'id' | 'name'>
+  )> }
+);
+
+export type CustomerAutocompleteFindCustomersQueryVariables = Exact<{
+  query?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CustomerAutocompleteFindCustomersQuery = (
+  { __typename?: 'Query' }
+  & { customers: Array<(
+    { __typename?: 'Customer' }
+    & Pick<Customer, 'id' | 'name'>
+  )> }
+);
+
 export type SettingsCompanyFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -735,6 +759,17 @@ export type SettingsStaffFindStaffsQuery = (
   & { staffs: Array<(
     { __typename?: 'Staff' }
     & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
+  )> }
+);
+
+export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StaffAutocompleteFindStaffsQuery = (
+  { __typename?: 'Query' }
+  & { staffs: Array<(
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'fullName'>
   )> }
 );
 
