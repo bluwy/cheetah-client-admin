@@ -716,14 +716,14 @@ export type ThemeSwitchGetAppThemeQuery = (
   & Pick<Query, 'appTheme'>
 );
 
-export type CompanyAutocompleteFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
+export type SettingsStaffFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CompanyAutocompleteFindCompaniesQuery = (
+export type SettingsStaffFindStaffsQuery = (
   { __typename?: 'Query' }
-  & { companies: Array<(
-    { __typename?: 'Company' }
-    & Pick<Company, 'id' | 'name'>
+  & { staffs: Array<(
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
   )> }
 );
 
