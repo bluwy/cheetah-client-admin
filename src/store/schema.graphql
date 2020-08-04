@@ -1,0 +1,5 @@
+# This file is only used for GraphQL intellisense and code gen
+
+extend type Query {
+  appTheme: String
+}

@@ -500,6 +500,7 @@ export type Query = {
   admin: Admin;
   adminCount: Scalars['Int'];
   admins: Array<Admin>;
+  appTheme?: Maybe<Scalars['String']>;
   companies: Array<Company>;
   company: Company;
   companyCount: Scalars['Int'];
@@ -698,6 +699,33 @@ export type TaskTypeFilter = {
   not?: Maybe<TaskType>;
   notIn?: Maybe<Array<TaskType>>;
 };
+
+export type GetAppThemeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAppThemeQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'appTheme'>
+);
+
+export type ThemeSwitchGetAppThemeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ThemeSwitchGetAppThemeQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'appTheme'>
+);
+
+export type CompanyAutocompleteFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CompanyAutocompleteFindCompaniesQuery = (
+  { __typename?: 'Query' }
+  & { companies: Array<(
+    { __typename?: 'Company' }
+    & Pick<Company, 'id' | 'name'>
+  )> }
+);
 
 export type AuthLoginMutationVariables = Exact<{
   username: Scalars['String'];
