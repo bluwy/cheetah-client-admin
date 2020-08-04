@@ -716,6 +716,17 @@ export type ThemeSwitchGetAppThemeQuery = (
   & Pick<Query, 'appTheme'>
 );
 
+export type SettingsCompanyFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SettingsCompanyFindCompaniesQuery = (
+  { __typename?: 'Query' }
+  & { companies: Array<(
+    { __typename?: 'Company' }
+    & Pick<Company, 'id' | 'name'>
+  )> }
+);
+
 export type SettingsStaffFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
 
 

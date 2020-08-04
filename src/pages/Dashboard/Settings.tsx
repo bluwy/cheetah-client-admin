@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography, Box } from '@material-ui/core';
+import SettingsCompany from '/@/components/settings/Company';
 import SettingsStaff from '/@/components/settings/Staff';
 import ThemeSwitch from '/@/components/ThemeSwitch';
 
@@ -12,6 +13,7 @@ function DashboardSettings() {
         <ThemeSwitch />
       </Box>
       <SettingsStaff />
+      <SettingsCompany />
     </div>
   );
 }
