@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { createMuiTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 import {
   GetAppThemeQuery as AppThemeQ,
   GetAppThemeQueryVariables as AppThemeV,
@@ -30,14 +32,16 @@ function App() {
   return (
     <main>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/sudo" component={Sudo} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route component={Null} />
-        </Switch>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <CssBaseline />
+          <Switch>
+            <Route path="/login" component={Login} />
+            <Route path="/reset-password" component={ResetPassword} />
+            <Route path="/sudo" component={Sudo} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route component={Null} />
+          </Switch>
+        </MuiPickersUtilsProvider>
       </ThemeProvider>
     </main>
   );

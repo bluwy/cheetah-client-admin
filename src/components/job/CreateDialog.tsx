@@ -23,6 +23,7 @@ import {
 import CustomerAutocomplete from '/@/components/customer/Autocomplete';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
 import DialogTitleClosable from '/@/components/DialogTitleClosable';
+import { KeyboardDateTimePicker } from '@material-ui/pickers';
 import TaskInputList from './TaskInputList';
 
 interface FormInput {
@@ -30,7 +31,7 @@ interface FormInput {
   customerId: string
   staffPrimaryId: string
   staffSecondaryId: string | undefined
-  // startDate: Date
+  startDate: Date
   tasks: NestedValue<TaskCreateInput[]>
 }
 
@@ -53,6 +54,7 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
       customerId: undefined,
       staffPrimaryId: undefined,
       staffSecondaryId: undefined,
+      startDate: new Date(),
       tasks: [],
     },
   });
@@ -67,13 +69,7 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     try {
       await createJob({
-        variables: {
-          data: {
-            ...data,
-            // TODO: Add inputs
-            startDate: new Date(),
-          },
-        },
+        variables: { data },
       });
 
       handleClose();
@@ -149,6 +145,20 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
                     fullWidth
                   />
                 )}
+              />
+            )}
+          />
+          <Controller
+            name="startDate"
+            control={control}
+            render={(params) => (
+              <KeyboardDateTimePicker
+                {...params}
+                label="Preferred start time"
+                variant="inline"
+                inputVariant="outlined"
+                ampm={false}
+                format="yyyy/MM/dd HH:mm"
               />
             )}
           />
