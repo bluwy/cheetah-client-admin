@@ -740,6 +740,19 @@ export type CustomerAutocompleteFindCustomersQuery = (
   )> }
 );
 
+export type CreateDialogJobCreateMutationVariables = Exact<{
+  data: JobCreateInput;
+}>;
+
+
+export type CreateDialogJobCreateMutation = (
+  { __typename?: 'Mutation' }
+  & { jobCreate: (
+    { __typename?: 'Job' }
+    & Pick<Job, 'id'>
+  ) }
+);
+
 export type SettingsCompanyFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
 
 

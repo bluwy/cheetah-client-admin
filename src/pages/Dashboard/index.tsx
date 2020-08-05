@@ -26,6 +26,7 @@ import {
   Settings as SettingsIcon,
   ExitToApp as ExitToAppIcon,
 } from '@material-ui/icons';
+import DashboardHome from './Home';
 import DashboardSettings from './Settings';
 
 const LOGOUT = gql`
@@ -57,7 +58,7 @@ function Dashboard() {
 
   const handleLogout = () => {
     if (!loading) {
-      // No need to await, just assume that it'll work and got to login page
+      // No need to await, just assume that it'll work and go to login page
       logout();
       history.push('/login');
     }
@@ -90,10 +91,10 @@ function Dashboard() {
           </List>
         </Grid>
       </Drawer>
-      <Box p={2}>
+      <Box flexGrow={1} p={2}>
         <Switch>
           <Route path={`${routeMatch.url}/settings`} component={DashboardSettings} />
-          <Route>Home</Route>
+          <Route component={DashboardHome} />
         </Switch>
       </Box>
     </Grid>
