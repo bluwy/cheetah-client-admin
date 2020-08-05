@@ -1,10 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { gql, useMutation } from '@apollo/client';
-import { useForm, Controller } from 'react-hook-form';
+import {
+  useForm,
+  Controller,
+  NestedValue,
+  SubmitHandler,
+} from 'react-hook-form';
 import {
   CreateDialogJobCreateMutation as CreateM,
   CreateDialogJobCreateMutationVariables as CreateV,
+  TaskCreateInput,
 } from '/@/schema';
 import {
   Button,
@@ -12,10 +18,12 @@ import {
   DialogActions,
   DialogContent,
   TextField,
+  Typography,
 } from '@material-ui/core';
 import CustomerAutocomplete from '/@/components/customer/Autocomplete';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
 import DialogTitleClosable from '/@/components/DialogTitleClosable';
+import TaskInputList from './TaskInputList';
 
 interface FormInput {
   address: string
@@ -23,7 +31,7 @@ interface FormInput {
   staffPrimaryId: string
   staffSecondaryId: string | undefined
   // startDate: Date
-  // tasks: TaskCreateInput[]
+  tasks: NestedValue<TaskCreateInput[]>
 }
 
 const CREATE_JOB = gql`
@@ -45,6 +53,7 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
       customerId: undefined,
       staffPrimaryId: undefined,
       staffSecondaryId: undefined,
+      tasks: [],
     },
   });
 
@@ -55,7 +64,7 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
     onClose();
   };
 
-  const onSubmit = async (data: FormInput) => {
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
     try {
       await createJob({
         variables: {
@@ -63,7 +72,6 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
             ...data,
             // TODO: Add inputs
             startDate: new Date(),
-            tasks: [],
           },
         },
       });
@@ -144,7 +152,14 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
               />
             )}
           />
-
+          <Typography variant="subtitle1">Job tasks</Typography>
+          <Controller
+            name="tasks"
+            control={control}
+            render={({ onChange, value }) => (
+              <TaskInputList value={value} onChange={onChange} />
+            )}
+          />
         </DialogContent>
         <DialogActions>
           <Button type="submit" color="primary">
