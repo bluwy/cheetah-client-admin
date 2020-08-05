@@ -9,7 +9,7 @@ export function debounce<T extends Function>(fn: T, wait: number): T {
   // @ts-ignore
   return function debounced(this: ThisType<T>, ...args) {
     clearTimeout(t);
-    t = window.setTimeout(() => fn.apply(this, ...args), wait);
+    t = window.setTimeout(() => fn.apply(this, args), wait);
   };
 }
 
@@ -18,7 +18,7 @@ export function throttle<T extends Function>(fn: T, wait: number): T {
   // @ts-ignore
   return function throttled(this: ThisType<T>, ...args) {
     if (t == null) {
-      fn.apply(this, ...args);
+      fn.apply(this, args);
       t = window.setTimeout(() => { t = undefined; }, wait);
     }
   };
