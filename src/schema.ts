@@ -753,12 +753,12 @@ export type CustomerAutocompleteFindCustomersQuery = (
   )> }
 );
 
-export type CreateDialogJobCreateMutationVariables = Exact<{
+export type JobCreateDialogJobCreateMutationVariables = Exact<{
   data: JobCreateInput;
 }>;
 
 
-export type CreateDialogJobCreateMutation = (
+export type JobCreateDialogJobCreateMutation = (
   { __typename?: 'Mutation' }
   & { jobCreate: (
     { __typename?: 'Job' }

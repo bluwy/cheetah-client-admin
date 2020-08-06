@@ -7,8 +7,8 @@ import {
   SubmitHandler,
 } from 'react-hook-form';
 import {
-  CreateDialogJobCreateMutation as CreateM,
-  CreateDialogJobCreateMutationVariables as CreateV,
+  JobCreateDialogJobCreateMutation as CreateM,
+  JobCreateDialogJobCreateMutationVariables as CreateV,
   TaskCreateInput,
 } from '/@/schema';
 import { TextField, Typography } from '@material-ui/core';
@@ -30,7 +30,7 @@ interface FormInput {
 }
 
 const CREATE_JOB = gql`
-  mutation CreateDialogJobCreate($data: JobCreateInput!) {
+  mutation JobCreateDialogJobCreate($data: JobCreateInput!) {
     jobCreate(data: $data) {
       id
     }
