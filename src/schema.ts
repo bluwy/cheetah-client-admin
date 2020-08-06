@@ -740,6 +740,16 @@ export type CompanyCreateDialogCompanyCreateMutation = (
   ) }
 );
 
+export type CompanyDeleteDialogCompanyDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CompanyDeleteDialogCompanyDeleteMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'companyDelete'>
+);
+
 export type CustomerAutocompleteFindCustomersQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
 }>;
@@ -775,6 +785,19 @@ export type SettingsCompanyFindCompaniesQuery = (
     { __typename?: 'Company' }
     & Pick<Company, 'id' | 'name'>
   )> }
+);
+
+export type CompanyListItemCompanyFindOneQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CompanyListItemCompanyFindOneQuery = (
+  { __typename?: 'Query' }
+  & { company: (
+    { __typename?: 'Company' }
+    & Pick<Company, 'id' | 'name'>
+  ) }
 );
 
 export type SettingsStaffFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;

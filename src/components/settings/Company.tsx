@@ -8,11 +8,10 @@ import {
   Box,
   Button,
   List,
-  ListItem,
-  ListItemText,
   Typography,
 } from '@material-ui/core';
 import CompanyCreateDialog from '/@/components/company/CreateDialog';
+import CompanyListItem from './CompanyListItem';
 
 const FIND_COMPANIES = gql`
   query SettingsCompanyFindCompanies {
@@ -35,9 +34,7 @@ function SettingsCompany() {
       <Typography variant="subtitle1">Companies</Typography>
       <List dense>
         {companies.map((company) => (
-          <ListItem key={company.id}>
-            <ListItemText>{company.name}</ListItemText>
-          </ListItem>
+          <CompanyListItem key={company.id} companyId={company.id} />
         ))}
       </List>
       <Button
