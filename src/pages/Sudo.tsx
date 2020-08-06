@@ -58,19 +58,31 @@ const useStyles = makeStyles({
 });
 
 function useCreateAdminForm(sudoPassword: string) {
-  const { register, handleSubmit } = useForm<CreateAdminFormInput>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    errors,
+  } = useForm<CreateAdminFormInput>();
+
   const [
     createAdmin,
     { loading, error, data },
   ] = useMutation<CreateAdminM, CreateAdminV>(CREATE_ADMIN);
 
   const onSubmit = async (formData: CreateAdminFormInput) => {
-    await createAdmin({
-      variables: {
-        sudoPassword,
-        data: formData,
-      },
-    });
+    try {
+      await createAdmin({
+        variables: {
+          sudoPassword,
+          data: formData,
+        },
+      });
+
+      reset();
+    } catch {
+      // TODO: Show error
+    }
   };
 
   return (
@@ -95,7 +107,11 @@ function useCreateAdminForm(sudoPassword: string) {
             label="Username"
             variant="outlined"
             fullWidth
-            inputRef={register({ required: true })}
+            inputRef={register({
+              required: { value: true, message: 'Username is required' },
+            })}
+            error={!!errors.username}
+            helperText={errors.username?.message}
           />
         </Box>
         <Box my={3}>
@@ -106,7 +122,11 @@ function useCreateAdminForm(sudoPassword: string) {
             label="Password"
             variant="outlined"
             fullWidth
-            inputRef={register({ required: true })}
+            inputRef={register({
+              required: { value: true, message: 'Password is required' },
+            })}
+            error={!!errors.password}
+            helperText={errors.password?.message}
           />
 
         </Box>
@@ -125,7 +145,13 @@ function useCreateAdminForm(sudoPassword: string) {
 }
 
 function useGetResetTokenForm(sudoPassword: string) {
-  const { register, handleSubmit } = useForm<ResetTokenFormInput>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    errors,
+  } = useForm<ResetTokenFormInput>();
+
   const [
     getResetToken,
     { loading, error, data },
@@ -136,12 +162,18 @@ function useGetResetTokenForm(sudoPassword: string) {
     : undefined;
 
   const onSubmit = async (formData: ResetTokenFormInput) => {
-    await getResetToken({
-      variables: {
-        sudoPassword,
-        username: formData.username,
-      },
-    });
+    try {
+      await getResetToken({
+        variables: {
+          sudoPassword,
+          username: formData.username,
+        },
+      });
+
+      reset();
+    } catch {
+      // TODO: Show error
+    }
   };
 
   return (
@@ -160,14 +192,17 @@ function useGetResetTokenForm(sudoPassword: string) {
       )}
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <Box my={3}>
-
           <TextField
             name="username"
             autoComplete="username"
             label="Username"
             variant="outlined"
             fullWidth
-            inputRef={register({ required: true })}
+            inputRef={register({
+              required: { value: true, message: 'Username is required' },
+            })}
+            error={!!errors.username}
+            helperText={errors.username?.message}
           />
         </Box>
         <Button
@@ -205,6 +240,7 @@ function Sudo() {
               label="Password"
               variant="outlined"
               fullWidth
+              autoFocus
               value={sudoPassword}
               onChange={(e) => setSudoPassword(e.target.value)}
             />

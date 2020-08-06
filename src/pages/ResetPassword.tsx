@@ -51,7 +51,7 @@ function useResetToken() {
 
 function ResetPassword() {
   const history = useHistory();
-  const { register, handleSubmit } = useForm<FormInput>();
+  const { register, handleSubmit, errors } = useForm<FormInput>();
   const [resetPassword, { loading, error }] = useMutation<ResetM, ResetV>(RESET_PASSWORD);
 
   const classes = useStyles();
@@ -95,7 +95,12 @@ function ResetPassword() {
                 label="New password"
                 variant="outlined"
                 fullWidth
-                inputRef={register({ required: true })}
+                autoFocus
+                inputRef={register({
+                  required: { value: true, message: 'New password is required' },
+                })}
+                error={!!errors.newPassword}
+                helperText={errors.newPassword?.message}
               />
             </Box>
             <Button

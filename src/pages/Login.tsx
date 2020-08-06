@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 
 function Login() {
   const history = useHistory();
-  const { register, handleSubmit } = useForm<FormInput>();
+  const { register, handleSubmit, errors } = useForm<FormInput>();
   const [login, { loading, error }] = useMutation<LoginM, LoginV>(LOGIN);
 
   const classes = useStyles();
@@ -75,7 +75,12 @@ function Login() {
                 label="Username"
                 variant="outlined"
                 fullWidth
-                inputRef={register({ required: true })}
+                autoFocus
+                inputRef={register({
+                  required: { value: true, message: 'Username is required' },
+                })}
+                error={!!errors.username}
+                helperText={errors.username?.message}
               />
             </Box>
             <Box my={2}>
@@ -85,7 +90,11 @@ function Login() {
                 label="Password"
                 variant="outlined"
                 fullWidth
-                inputRef={register({ required: true })}
+                inputRef={register({
+                  required: { value: true, message: 'Password is required' },
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
               />
             </Box>
             <Button
