@@ -25,8 +25,8 @@ function FormDialog(props: FormDialogProps) {
   } = props;
 
   return (
-    <form noValidate onSubmit={onSubmit}>
-      <Dialog {...restProps} onClose={onClose}>
+    <Dialog {...restProps} onClose={onClose}>
+      <form noValidate onSubmit={onSubmit}>
         <DialogTitleClosable onClose={onClose}>
           {dialogTitle}
         </DialogTitleClosable>
@@ -38,8 +38,8 @@ function FormDialog(props: FormDialogProps) {
             Confirm
           </Button>
         </DialogActions>
-      </Dialog>
-    </form>
+      </form>
+    </Dialog>
   );
 }
 
