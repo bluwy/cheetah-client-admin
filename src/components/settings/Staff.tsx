@@ -16,6 +16,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
+import StaffCreateDialog from '/@/components/staff/CreateDialog';
 
 const FIND_STAFFS = gql`
   query SettingsStaffFindStaffs {
@@ -46,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SettingsStaff() {
   const { data } = useQuery<FindStaffsQ, FindStaffsV>(FIND_STAFFS);
+  const [showStaffCreateDialog, setShowStaffCreateDialog] = useState(false);
   const activeStaffs = data?.staffs.filter((v) => v.active) ?? [];
   const inactiveStaffs = data?.staffs.filter((v) => !v.active) ?? [];
 
@@ -91,6 +93,18 @@ function SettingsStaff() {
           </Collapse>
         </>
       )}
+      <Button
+        size="small"
+        variant="contained"
+        color="primary"
+        onClick={() => setShowStaffCreateDialog(true)}
+      >
+        Create new staff
+      </Button>
+      <StaffCreateDialog
+        open={showStaffCreateDialog}
+        onClose={() => setShowStaffCreateDialog(false)}
+      />
     </Box>
   );
 }

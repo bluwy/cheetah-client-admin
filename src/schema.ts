@@ -799,6 +799,19 @@ export type StaffAutocompleteFindStaffsQuery = (
   )> }
 );
 
+export type StaffCreateDialogStaffCreateMutationVariables = Exact<{
+  data: StaffCreateInput;
+}>;
+
+
+export type StaffCreateDialogStaffCreateMutation = (
+  { __typename?: 'Mutation' }
+  & { staffCreate: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id'>
+  ) }
+);
+
 export type AuthLogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
