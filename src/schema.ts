@@ -727,6 +727,19 @@ export type CompanyAutocompleteFindCompaniesQuery = (
   )> }
 );
 
+export type CompanyCreateDialogCompanyCreateMutationVariables = Exact<{
+  data: CompanyCreateInput;
+}>;
+
+
+export type CompanyCreateDialogCompanyCreateMutation = (
+  { __typename?: 'Mutation' }
+  & { companyCreate: (
+    { __typename?: 'Company' }
+    & Pick<Company, 'id'>
+  ) }
+);
+
 export type CustomerAutocompleteFindCustomersQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
 }>;
