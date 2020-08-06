@@ -12,3 +12,6 @@ generates:
             - ""
       - typescript
       - typescript-operations
+    config:
+      scalars:
+        DateTime: Date

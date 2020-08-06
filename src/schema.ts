@@ -16,7 +16,7 @@ export type Scalars = {
    * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
    * 8601 standard for representation of dates and times using the Gregorian calendar.
    */
-  DateTime: any;
+  DateTime: Date;
 };
 
 export type Action = {
