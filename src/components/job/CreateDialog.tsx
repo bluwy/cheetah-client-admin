@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { gql, useMutation } from '@apollo/client';
 import {
   useForm,
@@ -12,19 +11,14 @@ import {
   CreateDialogJobCreateMutationVariables as CreateV,
   TaskCreateInput,
 } from '/@/schema';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  TextField,
-  Typography,
-} from '@material-ui/core';
+import { TextField, Typography } from '@material-ui/core';
+import { KeyboardDateTimePicker } from '@material-ui/pickers';
 import CustomerAutocomplete from '/@/components/customer/Autocomplete';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
-import DialogTitleClosable from '/@/components/DialogTitleClosable';
-import { KeyboardDateTimePicker } from '@material-ui/pickers';
+import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
 import TaskInputList from './TaskInputList';
+
+type JobCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
 
 interface FormInput {
   address: string
@@ -43,21 +37,15 @@ const CREATE_JOB = gql`
   }
 `;
 
-function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
+function JobCreateDialog(props: JobCreateDialogProps) {
+  const { onClose, ...restProps } = props;
+
   const {
     register,
     handleSubmit,
     control,
     reset,
-  } = useForm<FormInput>({
-    defaultValues: {
-      customerId: undefined,
-      staffPrimaryId: undefined,
-      staffSecondaryId: undefined,
-      startDate: new Date(),
-      tasks: [],
-    },
-  });
+  } = useForm<FormInput>();
 
   const [createJob] = useMutation<CreateM, CreateV>(CREATE_JOB);
 
@@ -79,113 +67,104 @@ function JobCreateDialog({ open, onClose }: JobCreateDialogProps) {
   };
 
   return (
-    <form noValidate onSubmit={handleSubmit(onSubmit)}>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitleClosable onClose={handleClose}>
-          Create new job
-        </DialogTitleClosable>
-        <DialogContent>
-          <Controller
-            name="customerId"
-            control={control}
-            rules={{ required: true }}
-            render={({ onBlur, onChange }) => (
-              <CustomerAutocomplete
-                onBlur={onBlur}
-                onChange={(e, option) => onChange(option?.id)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Customer"
-                    variant="outlined"
-                    fullWidth
-                  />
-                )}
-              />
-            )}
-          />
-          <TextField
-            name="address"
-            label="Customer address"
-            variant="outlined"
-            fullWidth
-            inputRef={register({ required: true })}
-          />
-          <Controller
-            name="staffPrimaryId"
-            control={control}
-            rules={{ required: true }}
-            render={({ onBlur, onChange }) => (
-              <StaffAutocomplete
-                onBlur={onBlur}
-                onChange={(e, option) => onChange(option?.id)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Technician 1"
-                    variant="outlined"
-                    fullWidth
-                  />
-                )}
-              />
-            )}
-          />
-          <Controller
-            name="staffSecondaryId"
-            control={control}
-            render={({ onBlur, onChange }) => (
-              <StaffAutocomplete
-                onBlur={onBlur}
-                onChange={(e, option) => onChange(option?.id)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Technician 2 (optional)"
-                    variant="outlined"
-                    fullWidth
-                  />
-                )}
-              />
-            )}
-          />
-          <Controller
-            name="startDate"
-            control={control}
-            render={(params) => (
-              <KeyboardDateTimePicker
+    <FormDialog
+      {...restProps}
+      dialogTitle="Create new job"
+      onSubmit={handleSubmit(onSubmit)}
+      onClose={handleClose}
+    >
+      <Controller
+        name="customerId"
+        control={control}
+        rules={{ required: true }}
+        defaultValue={undefined}
+        render={({ onBlur, onChange }) => (
+          <CustomerAutocomplete
+            onBlur={onBlur}
+            onChange={(e, option) => onChange(option?.id)}
+            renderInput={(params) => (
+              <TextField
                 {...params}
-                label="Preferred start time"
-                variant="inline"
-                inputVariant="outlined"
-                ampm={false}
-                format="yyyy/MM/dd HH:mm"
+                label="Customer"
+                variant="outlined"
+                fullWidth
               />
             )}
           />
-          <Typography variant="subtitle1">Job tasks</Typography>
-          <Controller
-            name="tasks"
-            control={control}
-            render={({ onChange, value }) => (
-              <TaskInputList value={value} onChange={onChange} />
+        )}
+      />
+      <TextField
+        name="address"
+        label="Customer address"
+        variant="outlined"
+        fullWidth
+        inputRef={register({ required: true })}
+      />
+      <Controller
+        name="staffPrimaryId"
+        control={control}
+        rules={{ required: true }}
+        defaultValue={undefined}
+        render={({ onBlur, onChange }) => (
+          <StaffAutocomplete
+            onBlur={onBlur}
+            onChange={(e, option) => onChange(option?.id)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Technician 1"
+                variant="outlined"
+                fullWidth
+              />
             )}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button type="submit" color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </form>
+        )}
+      />
+      <Controller
+        name="staffSecondaryId"
+        control={control}
+        defaultValue={undefined}
+        render={({ onBlur, onChange }) => (
+          <StaffAutocomplete
+            onBlur={onBlur}
+            onChange={(e, option) => onChange(option?.id)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Technician 2 (optional)"
+                variant="outlined"
+                fullWidth
+              />
+            )}
+          />
+        )}
+      />
+      <Controller
+        name="startDate"
+        control={control}
+        defaultValue={new Date()}
+        render={(params) => (
+          <KeyboardDateTimePicker
+            {...params}
+            label="Preferred start time"
+            variant="inline"
+            inputVariant="outlined"
+            ampm={false}
+            format="yyyy/MM/dd HH:mm"
+          />
+        )}
+      />
+      <Typography variant="subtitle1">Job tasks</Typography>
+      <Controller
+        name="tasks"
+        control={control}
+        defaultValue={[]}
+        render={({ onChange, value }) => (
+          <TaskInputList value={value} onChange={onChange} />
+        )}
+      />
+    </FormDialog>
   );
 }
-
-type JobCreateDialogProps = PropTypes.InferProps<typeof JobCreateDialog.propTypes>;
-
-JobCreateDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
 
 export default JobCreateDialog;
