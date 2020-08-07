@@ -750,6 +750,30 @@ export type CompanyDeleteDialogCompanyDeleteMutation = (
   & Pick<Mutation, 'companyDelete'>
 );
 
+export type CompanyListFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CompanyListFindCompaniesQuery = (
+  { __typename?: 'Query' }
+  & { companies: Array<(
+    { __typename?: 'Company' }
+    & Pick<Company, 'id'>
+  )> }
+);
+
+export type CompanyListItemCompanyFindOneQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CompanyListItemCompanyFindOneQuery = (
+  { __typename?: 'Query' }
+  & { company: (
+    { __typename?: 'Company' }
+    & Pick<Company, 'id' | 'name'>
+  ) }
+);
+
 export type CustomerAutocompleteFindCustomersQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
 }>;
@@ -773,30 +797,6 @@ export type JobCreateDialogJobCreateMutation = (
   & { jobCreate: (
     { __typename?: 'Job' }
     & Pick<Job, 'id'>
-  ) }
-);
-
-export type SettingsCompanyFindCompaniesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SettingsCompanyFindCompaniesQuery = (
-  { __typename?: 'Query' }
-  & { companies: Array<(
-    { __typename?: 'Company' }
-    & Pick<Company, 'id' | 'name'>
-  )> }
-);
-
-export type CompanyListItemCompanyFindOneQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type CompanyListItemCompanyFindOneQuery = (
-  { __typename?: 'Query' }
-  & { company: (
-    { __typename?: 'Company' }
-    & Pick<Company, 'id' | 'name'>
   ) }
 );
 
