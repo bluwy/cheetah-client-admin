@@ -858,6 +858,33 @@ export type StaffListItemStaffFindOneQuery = (
   ) }
 );
 
+export type StaffToggleActiveDialogFindOneQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type StaffToggleActiveDialogFindOneQuery = (
+  { __typename?: 'Query' }
+  & { staff: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'active'>
+  ) }
+);
+
+export type StaffToggleActiveDialogStaffSetActiveMutationVariables = Exact<{
+  id: Scalars['ID'];
+  active: Scalars['Boolean'];
+}>;
+
+
+export type StaffToggleActiveDialogStaffSetActiveMutation = (
+  { __typename?: 'Mutation' }
+  & { staffUpdate: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'active'>
+  ) }
+);
+
 export type AuthLogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 

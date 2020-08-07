@@ -16,7 +16,10 @@ import {
 import {
   Delete as DeleteIcon,
   PermDeviceInformation as PairingIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
 } from '@material-ui/icons';
+import StaffToggleActiveDialog from './ToggleActiveDialog';
 import StaffDeleteDialog from '/@/components/staff/DeleteDialog';
 
 const FIND_STAFF = gql`
@@ -37,6 +40,7 @@ const useStyles = makeStyles({
 });
 
 function StaffListItem({ staffId }: StaffListItemProps) {
+  const [showToggleActiveDialog, setShowToggleActiveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { data } = useQuery<FindOneQ, FindOneV>(FIND_STAFF, {
     variables: {
@@ -67,6 +71,14 @@ function StaffListItem({ staffId }: StaffListItemProps) {
         )}
       </ListItemText>
       <ListItemSecondaryAction>
+        <IconButton onClick={() => setShowToggleActiveDialog(true)}>
+          {data.staff.active ? <VisibilityIcon /> : <VisibilityOffIcon />}
+        </IconButton>
+        <StaffToggleActiveDialog
+          staffId={data.staff.id}
+          open={showToggleActiveDialog}
+          onClose={() => setShowToggleActiveDialog(false)}
+        />
         <IconButton edge="end" onClick={() => setShowDeleteDialog(true)}>
           <DeleteIcon />
         </IconButton>
