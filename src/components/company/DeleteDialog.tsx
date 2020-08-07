@@ -7,7 +7,7 @@ import {
 } from '/@/schema';
 import YesNoDialog, { YesNoDialogProps } from '/@/components/YesNoDialog';
 
-interface CompanyDeleteDialog extends Omit<YesNoDialogProps, 'dialogTitle' | 'yesText' | 'noText'> {
+interface CompanyDeleteDialogProps extends Omit<YesNoDialogProps, 'dialogTitle' | 'yesText' | 'noText'> {
   companyId: string
 }
 
@@ -17,7 +17,7 @@ const DELETE_COMPANY = gql`
   }
 `;
 
-function CompanyDeleteDialog(props: CompanyDeleteDialog) {
+function CompanyDeleteDialog(props: CompanyDeleteDialogProps) {
   const { companyId, onYes, ...restProps } = props;
   const [deleteCompany] = useMutation<DeleteM, DeleteV>(DELETE_COMPANY);
 

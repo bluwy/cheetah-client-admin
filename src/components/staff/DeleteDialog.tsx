@@ -7,7 +7,7 @@ import {
 } from '/@/schema';
 import YesNoDialog, { YesNoDialogProps } from '/@/components/YesNoDialog';
 
-interface StaffDeleteDialog extends Omit<YesNoDialogProps, 'dialogTitle' | 'yesText' | 'noText'> {
+interface StaffDeleteDialogProps extends Omit<YesNoDialogProps, 'dialogTitle' | 'yesText' | 'noText'> {
   staffId: string
 }
 
@@ -17,7 +17,7 @@ const DELETE_STAFF = gql`
   }
 `;
 
-function StaffDeleteDialog(props: StaffDeleteDialog) {
+function StaffDeleteDialog(props: StaffDeleteDialogProps) {
   const { staffId, onYes, ...restProps } = props;
   const [deleteStaff] = useMutation<DeleteM, DeleteV>(DELETE_STAFF);
 
