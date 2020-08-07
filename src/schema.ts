@@ -800,17 +800,6 @@ export type JobCreateDialogJobCreateMutation = (
   ) }
 );
 
-export type SettingsStaffFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SettingsStaffFindStaffsQuery = (
-  { __typename?: 'Query' }
-  & { staffs: Array<(
-    { __typename?: 'Staff' }
-    & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
-  )> }
-);
-
 export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -832,6 +821,40 @@ export type StaffCreateDialogStaffCreateMutation = (
   & { staffCreate: (
     { __typename?: 'Staff' }
     & Pick<Staff, 'id'>
+  ) }
+);
+
+export type StaffDeleteDialogStaffDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type StaffDeleteDialogStaffDeleteMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'staffDelete'>
+);
+
+export type StaffListFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StaffListFindStaffsQuery = (
+  { __typename?: 'Query' }
+  & { staffs: Array<(
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id'>
+  )> }
+);
+
+export type StaffListItemStaffFindOneQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type StaffListItemStaffFindOneQuery = (
+  { __typename?: 'Query' }
+  & { staff: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
   ) }
 );
 
