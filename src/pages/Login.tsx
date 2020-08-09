@@ -38,7 +38,9 @@ const useStyles = makeStyles({
 function Login() {
   const history = useHistory();
   const { register, handleSubmit, errors } = useForm<FormInput>();
-  const [login, { loading, error }] = useMutation<LoginM, LoginV>(LOGIN);
+  const [login, { loading, error }] = useMutation<LoginM, LoginV>(LOGIN, {
+    fetchPolicy: 'no-cache',
+  });
 
   const classes = useStyles();
 

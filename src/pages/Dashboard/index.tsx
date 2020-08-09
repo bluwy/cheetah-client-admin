@@ -52,14 +52,16 @@ const useStyles = makeStyles({
 function Dashboard() {
   const history = useHistory();
   const routeMatch = useRouteMatch();
-  const [logout, { loading }] = useMutation<LogoutM, LogoutV>(LOGOUT);
+  const [logout, { loading, client }] = useMutation<LogoutM, LogoutV>(LOGOUT, {
+    fetchPolicy: 'no-cache',
+  });
 
   const classes = useStyles();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (!loading) {
-      // No need to await, just assume that it'll work and go to login page
-      logout();
+      await logout();
+      await client.clearStore();
       history.push('/login');
     }
   };
