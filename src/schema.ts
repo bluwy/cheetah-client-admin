@@ -319,7 +319,6 @@ export type JobWhereInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  adminCheckSession: Scalars['Boolean'];
   adminCreate: Admin;
   adminDelete: Scalars['Boolean'];
   adminGetResetPasswordToken: Scalars['String'];
@@ -340,7 +339,6 @@ export type Mutation = {
   jobSetTasksDone: Scalars['Boolean'];
   jobUpdateByAdmin: Job;
   jobUpdateByStaff: Job;
-  staffCheckSession: Scalars['Boolean'];
   staffCreate: Staff;
   staffDelete: Scalars['Boolean'];
   staffLogin: Scalars['Boolean'];
@@ -499,6 +497,7 @@ export type Query = {
   __typename?: 'Query';
   admin: Admin;
   adminCount: Scalars['Int'];
+  adminIsInSession: Scalars['Boolean'];
   admins: Array<Admin>;
   appTheme?: Maybe<Scalars['String']>;
   companies: Array<Company>;
@@ -512,6 +511,7 @@ export type Query = {
   jobs: Array<Job>;
   staff: Staff;
   staffCount: Scalars['Int'];
+  staffIsInSession: Scalars['Boolean'];
   staffs: Array<Staff>;
 };
 
@@ -706,6 +706,14 @@ export type GetAppThemeQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetAppThemeQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'appTheme'>
+);
+
+export type AuthGuardAdminIsInSessionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AuthGuardAdminIsInSessionQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'adminIsInSession'>
 );
 
 export type ThemeSwitchGetAppThemeQueryVariables = Exact<{ [key: string]: never; }>;

@@ -8,6 +8,7 @@ import {
   GetAppThemeQuery as AppThemeQ,
   GetAppThemeQueryVariables as AppThemeV,
 } from './schema';
+import AuthGuard from './components/AuthGuard';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
 import Sudo from './pages/Sudo';
@@ -38,7 +39,11 @@ function App() {
             <Route path="/login" component={Login} />
             <Route path="/reset-password" component={ResetPassword} />
             <Route path="/sudo" component={Sudo} />
-            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/dashboard">
+              <AuthGuard>
+                <Dashboard />
+              </AuthGuard>
+            </Route>
             <Route component={Null} />
           </Switch>
         </MuiPickersUtilsProvider>
