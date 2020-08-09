@@ -885,6 +885,17 @@ export type StaffToggleActiveDialogStaffSetActiveMutation = (
   ) }
 );
 
+export type PrivilegeHookGetPrivilegeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PrivilegeHookGetPrivilegeQuery = (
+  { __typename?: 'Query' }
+  & { admin: (
+    { __typename?: 'Admin' }
+    & Pick<Admin, 'id' | 'privilege'>
+  ) }
+);
+
 export type AuthLogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
