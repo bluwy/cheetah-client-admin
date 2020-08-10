@@ -795,6 +795,31 @@ export type CustomerAutocompleteFindCustomersQuery = (
   )> }
 );
 
+export type CustomerDatatableFindCustomersQueryVariables = Exact<{
+  query?: Maybe<Scalars['String']>;
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<CustomerWhereInput>;
+  orderBy?: Maybe<CustomerOrderByInput>;
+}>;
+
+
+export type CustomerDatatableFindCustomersQuery = (
+  { __typename?: 'Query' }
+  & { customers: Array<(
+    { __typename?: 'Customer' }
+    & Pick<Customer, 'id' | 'code' | 'name' | 'active'>
+  )> }
+);
+
+export type CustomerDatatableCustomerCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CustomerDatatableCustomerCountQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'customerCount'>
+);
+
 export type JobCreateDialogJobCreateMutationVariables = Exact<{
   data: JobCreateInput;
 }>;

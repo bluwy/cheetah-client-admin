@@ -1172,6 +1172,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
+"@types/react-table@^7.0.22":
+  version "7.0.22"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.0.22.tgz#5dd97d7c2b1978338ed3f3f634da0d5b0362998d"
+  integrity sha512-RAzjB7Udv23QPuIuNNRn8VBldmcFobqpNqLWXh0FXVVyIye76muzfn01WZdcTIEfmQjHts7bjJSQQVabLQgTcA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.2.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.0.tgz#882839db465df1320e4753e6e9f70ca7e9b4d46d"
@@ -4905,6 +4912,11 @@ react-router@5.2.0:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-table@^7.5.0:
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.5.0.tgz#87326d92cdffbbf970f49b395bcafc3f84989ddf"
+  integrity sha512-hLsbNqLJkkYiATVteM8mthP8y5vnLPB2qdi9FeGZjsvb2m5vxj6cavIgk35oulvBmYD6Kox0HFfI332HPZpC7w==
 
 react-transition-group@^4.0.0, react-transition-group@^4.4.0:
   version "4.4.1"
