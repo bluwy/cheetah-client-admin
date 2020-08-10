@@ -47,7 +47,7 @@ function CustomerDatatable() {
   const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
   const [orderDesc, setOrderDesc] = useState(false);
 
-  const { data: findData } = useQuery<FindQ, FindV>(FIND_CUSTOMERS, {
+  const { data: findData, loading: findLoading } = useQuery<FindQ, FindV>(FIND_CUSTOMERS, {
     variables: {
       skip,
       first,
@@ -57,7 +57,7 @@ function CustomerDatatable() {
     },
   });
 
-  const { data: countData } = useQuery<CountQ, CountV>(CUSTOMER_COUNT);
+  const { data: countData, loading: countLoading } = useQuery<CountQ, CountV>(CUSTOMER_COUNT);
 
   if (findData != null) {
     dataRef.current = findData.customers;
@@ -82,6 +82,7 @@ function CustomerDatatable() {
     <Datatable
       columns={columns}
       data={dataRef.current}
+      loading={findLoading || countLoading}
       totalCount={totalCount}
       pageIndex={skip}
       pageSize={first}

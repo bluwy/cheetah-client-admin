@@ -2,14 +2,15 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactTable, { Column, SortingRule, TableState } from 'react-table';
 import {
-  TableContainer,
+  LinearProgress,
   Table,
-  TableHead,
-  TableCell,
-  TableRow,
   TableBody,
+  TableCell,
+  TableContainer,
   TableFooter,
+  TableHead,
   TablePagination,
+  TableRow,
   TableSortLabel,
 } from '@material-ui/core';
 
@@ -19,6 +20,7 @@ const { useTable, usePagination, useSortBy } = ReactTable;
 export interface DatatableProps<T extends object> {
   columns: Column<T>[],
   data: T[],
+  loading?: boolean,
   totalCount: number
   pageIndex: number,
   pageSize: number,
@@ -30,6 +32,7 @@ function Datatable<T extends object>(props: DatatableProps<T>) {
   const {
     columns,
     data,
+    loading,
     totalCount,
     pageIndex,
     pageSize,
@@ -70,6 +73,7 @@ function Datatable<T extends object>(props: DatatableProps<T>) {
 
   return (
     <TableContainer>
+      {loading && <LinearProgress />}
       <Table {...getTableProps()}>
         <TableHead>
           {headerGroups.map((headerGroup) => (
@@ -121,11 +125,16 @@ function Datatable<T extends object>(props: DatatableProps<T>) {
 Datatable.propTypes = {
   columns: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
+  loading: PropTypes.bool,
   totalCount: PropTypes.number.isRequired,
   pageIndex: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   sortBy: PropTypes.array.isRequired,
   onStateChange: PropTypes.func.isRequired,
+};
+
+Datatable.defaultProps = {
+  loading: false,
 };
 
 export default Datatable;
