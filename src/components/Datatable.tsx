@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import ReactTable, { Column } from 'react-table';
+import ReactTable, { Column, SortingRule, TableState } from 'react-table';
 import {
   TableContainer,
   Table,
@@ -10,41 +10,63 @@ import {
   TableBody,
   TableFooter,
   TablePagination,
+  TableSortLabel,
 } from '@material-ui/core';
 
 // Fuck packages that don't export ESM
-const { useTable, usePagination } = ReactTable;
+const { useTable, usePagination, useSortBy } = ReactTable;
 
-interface DatatableProps<T extends object> {
+export interface DatatableProps<T extends object> {
   columns: Column<T>[],
   data: T[],
   totalCount: number
+  pageIndex: number,
+  pageSize: number,
+  sortBy: SortingRule<T>[],
+  onStateChange: (state: TableState<T>) => void
 }
 
 function Datatable<T extends object>(props: DatatableProps<T>) {
-  const { columns, data, totalCount } = props;
-  const [pageSize, setPageSize] = useState(10);
+  const {
+    columns,
+    data,
+    totalCount,
+    pageIndex,
+    pageSize,
+    sortBy,
+    onStateChange,
+  } = props;
+
   const {
     getTableProps,
+    getTableBodyProps,
     headerGroups,
     page,
     prepareRow,
-    state: {
-      pageIndex,
-    },
+    gotoPage,
+    setPageSize,
+    state,
   } = useTable(
     {
       columns,
       data,
+      manualSortBy: true,
+      disableMultiSort: true,
       manualPagination: true,
       pageCount: Math.ceil(totalCount / pageSize),
       initialState: {
+        pageIndex,
         pageSize,
-        pageIndex: 0,
+        sortBy,
       },
     },
+    useSortBy,
     usePagination,
   );
+
+  useEffect(() => {
+    onStateChange(state);
+  }, [onStateChange, state]);
 
   return (
     <TableContainer>
@@ -53,14 +75,20 @@ function Datatable<T extends object>(props: DatatableProps<T>) {
           {headerGroups.map((headerGroup) => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <TableCell {...column.getHeaderProps()}>
+                <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
+                  {column.canSort && (
+                    <TableSortLabel
+                      active={column.isSorted}
+                      direction={column.isSortedDesc ? 'desc' : 'asc'}
+                    />
+                  )}
                 </TableCell>
               ))}
             </TableRow>
           ))}
         </TableHead>
-        <TableBody>
+        <TableBody {...getTableBodyProps()}>
           {page.map((row) => {
             prepareRow(row);
             return (
@@ -80,7 +108,8 @@ function Datatable<T extends object>(props: DatatableProps<T>) {
               page={pageIndex}
               count={totalCount}
               rowsPerPage={pageSize}
-              onChangePage={(e, value) => setPageSize(value)}
+              onChangePage={(e, value) => gotoPage(value)}
+              onChangeRowsPerPage={(e) => setPageSize(+e.target.value)}
             />
           </TableRow>
         </TableFooter>
@@ -93,6 +122,10 @@ Datatable.propTypes = {
   columns: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   totalCount: PropTypes.number.isRequired,
+  pageIndex: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  sortBy: PropTypes.array.isRequired,
+  onStateChange: PropTypes.func.isRequired,
 };
 
 export default Datatable;

@@ -1,12 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import {
   CustomerDatatableFindCustomersQuery as FindQ,
   CustomerDatatableFindCustomersQueryVariables as FindV,
   CustomerDatatableCustomerCountQuery as CountQ,
   CustomerDatatableCustomerCountQueryVariables as CountV,
+  OrderByArg,
 } from '/@/schema';
-import Datatable from '/@/components/Datatable';
+import Datatable, { DatatableProps } from '/@/components/Datatable';
+
+type Customer = FindQ['customers'][number];
 
 const FIND_CUSTOMERS = gql`
   query CustomerDatatableFindCustomers(
@@ -38,23 +41,52 @@ const CUSTOMER_COUNT = gql`
 `;
 
 function CustomerDatatable() {
-  const { data: findData } = useQuery<FindQ, FindV>(FIND_CUSTOMERS);
+  const dataRef = useRef<Customer[]>([]);
+  const [skip, setSkip] = useState(0);
+  const [first, setFirst] = useState(10);
+  const [orderBy, setOrderBy] = useState<string | undefined>(undefined);
+  const [orderDesc, setOrderDesc] = useState(false);
+
+  const { data: findData } = useQuery<FindQ, FindV>(FIND_CUSTOMERS, {
+    variables: {
+      skip,
+      first,
+      orderBy: orderBy != null ? {
+        [orderBy]: orderDesc ? OrderByArg.Desc : OrderByArg.Asc,
+      } : undefined,
+    },
+  });
+
   const { data: countData } = useQuery<CountQ, CountV>(CUSTOMER_COUNT);
 
-  const customers = findData?.customers ?? [];
-  const totalCount = countData?.customerCount ?? -1;
+  if (findData != null) {
+    dataRef.current = findData.customers;
+  }
 
   const columns = useMemo(() => [
     { Header: 'Code', accessor: 'code' as const },
     { Header: 'Name', accessor: 'name' as const },
     { Header: 'Active', accessor: 'active' as const },
   ], []);
+  const totalCount = countData?.customerCount ?? -1;
+  const sortBy = orderBy != null ? [{ id: orderBy, desc: orderDesc }] : [];
+
+  const handleStateChange: DatatableProps<Customer>['onStateChange'] = (state) => {
+    setSkip(state.pageIndex);
+    setFirst(state.pageSize);
+    setOrderBy(state.sortBy?.[0]?.id ?? undefined);
+    setOrderDesc(state.sortBy?.[0]?.desc ?? false);
+  };
 
   return (
     <Datatable
       columns={columns}
-      data={customers}
+      data={dataRef.current}
       totalCount={totalCount}
+      pageIndex={skip}
+      pageSize={first}
+      sortBy={sortBy}
+      onStateChange={handleStateChange}
     />
   );
 }
