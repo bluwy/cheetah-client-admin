@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Button } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+} from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import JobCreateDialog from '/@/components/job/CreateDialog';
 
@@ -8,18 +13,20 @@ function DashboardHome() {
 
   return (
     <div>
-      <Grid container justify="space-between">
-        <Typography variant="h6">Welcome, User</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          startIcon={<AddIcon />}
-          onClick={() => setJobCreateDialogOpen(true)}
-        >
-          Create new job
-        </Button>
-      </Grid>
+      <Box mb={2}>
+        <Grid container justify="space-between">
+          <Typography variant="h6">Welcome, User</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<AddIcon />}
+            onClick={() => setJobCreateDialogOpen(true)}
+          >
+            Create new job
+          </Button>
+        </Grid>
+      </Box>
       <JobCreateDialog
         open={jobCreateDialogOpen}
         onClose={() => setJobCreateDialogOpen(false)}

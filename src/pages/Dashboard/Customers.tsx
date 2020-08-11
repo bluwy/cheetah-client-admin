@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Grid, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+} from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import CustomerDatatable from '/@/components/customer/Datatable';
 import CustomerCreateDialog from '/@/components/customer/CreateDialog';
@@ -9,18 +14,20 @@ function DashboardCustomers() {
 
   return (
     <div>
-      <Grid container justify="space-between">
-        <Typography variant="h6">Customers</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          startIcon={<AddIcon />}
-          onClick={() => setCreateDialogOpen(true)}
-        >
-          Create new customer
-        </Button>
-      </Grid>
+      <Box mb={2}>
+        <Grid container justify="space-between">
+          <Typography variant="h6">Customers</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<AddIcon />}
+            onClick={() => setCreateDialogOpen(true)}
+          >
+            Create new customer
+          </Button>
+        </Grid>
+      </Box>
       <CustomerCreateDialog
         open={createDialogOpen}
         onClose={() => setCreateDialogOpen(false)}
