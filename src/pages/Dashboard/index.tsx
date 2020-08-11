@@ -26,10 +26,12 @@ import {
   Settings as SettingsIcon,
   ExitToApp as ExitToAppIcon,
   People as PeopleIcon,
+  Work as WorkIcon,
 } from '@material-ui/icons';
 import DashboardHome from './Home';
-import DashboardSettings from './Settings';
+import DashboardJobs from './Jobs';
 import DashboardCustomers from './Customers';
+import DashboardSettings from './Settings';
 
 const LOGOUT = gql`
   mutation AuthLogout {
@@ -82,6 +84,10 @@ function Dashboard() {
               <ListItemIcon><HomeIcon /></ListItemIcon>
               <ListItemText>Home</ListItemText>
             </ListItem>
+            <ListItem button component={RouterLink} to={`${routeMatch.url}/jobs`}>
+              <ListItemIcon><WorkIcon /></ListItemIcon>
+              <ListItemText>Jobs</ListItemText>
+            </ListItem>
             <ListItem button component={RouterLink} to={`${routeMatch.url}/customers`}>
               <ListItemIcon><PeopleIcon /></ListItemIcon>
               <ListItemText>Customers</ListItemText>
@@ -101,6 +107,7 @@ function Dashboard() {
       </Drawer>
       <Box flexGrow={1} p={2}>
         <Switch>
+          <Route path={`${routeMatch.url}/jobs`} component={DashboardJobs} />
           <Route path={`${routeMatch.url}/customers`} component={DashboardCustomers} />
           <Route path={`${routeMatch.url}/settings`} component={DashboardSettings} />
           <Route component={DashboardHome} />

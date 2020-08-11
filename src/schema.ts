@@ -846,6 +846,31 @@ export type JobCreateDialogJobCreateMutation = (
   ) }
 );
 
+export type JobDatatableFindJobsQueryVariables = Exact<{
+  query?: Maybe<Scalars['String']>;
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<JobWhereInput>;
+  orderBy?: Maybe<JobOrderByInput>;
+}>;
+
+
+export type JobDatatableFindJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & Pick<Job, 'id' | 'code' | 'address' | 'state'>
+  )> }
+);
+
+export type JobDatatableJobCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobDatatableJobCountQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'jobCount'>
+);
+
 export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
