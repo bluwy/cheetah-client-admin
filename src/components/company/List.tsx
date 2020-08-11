@@ -4,7 +4,7 @@ import {
   CompanyListFindCompaniesQuery as FindCompaniesQ,
   CompanyListFindCompaniesQueryVariables as FindCompaniesV,
 } from '/@/schema';
-import { List } from '@material-ui/core';
+import { Box, List } from '@material-ui/core';
 import CompanyListItem from './ListItem';
 
 const FIND_COMPANIES = gql`
@@ -21,11 +21,13 @@ function CompanyList() {
   const companies = data?.companies ?? [];
 
   return (
-    <List dense>
-      {companies.map((company) => (
-        <CompanyListItem key={company.id} companyId={company.id} />
-      ))}
-    </List>
+    <Box maxWidth="400px">
+      <List dense>
+        {companies.map((company) => (
+          <CompanyListItem key={company.id} companyId={company.id} />
+        ))}
+      </List>
+    </Box>
   );
 }
 
