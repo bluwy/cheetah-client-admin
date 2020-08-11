@@ -765,7 +765,7 @@ export type CompanyListFindCompaniesQuery = (
   { __typename?: 'Query' }
   & { companies: Array<(
     { __typename?: 'Company' }
-    & Pick<Company, 'id'>
+    & Pick<Company, 'id' | 'name'>
   )> }
 );
 
@@ -887,7 +887,7 @@ export type StaffListFindStaffsQuery = (
   { __typename?: 'Query' }
   & { staffs: Array<(
     { __typename?: 'Staff' }
-    & Pick<Staff, 'id'>
+    & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
   )> }
 );
 

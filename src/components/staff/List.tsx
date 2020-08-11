@@ -11,6 +11,9 @@ const FIND_STAFFS = gql`
   query StaffListFindStaffs {
     staffs {
       id
+      fullName
+      active
+      paired
     }
   }
 `;

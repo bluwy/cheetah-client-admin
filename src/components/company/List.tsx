@@ -11,6 +11,7 @@ const FIND_COMPANIES = gql`
   query CompanyListFindCompanies {
     companies {
       id
+      name
     }
   }
 `;
