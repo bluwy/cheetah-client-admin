@@ -39,8 +39,8 @@ function CompanyListItem({ companyId }: CompanyListItemProps) {
     <ListItem>
       <ListItemText>{data.company.name}</ListItemText>
       <ListItemSecondaryAction>
-        <IconButton edge="end" onClick={() => setShowDeleteDialog(true)}>
-          <DeleteIcon />
+        <IconButton size="small" edge="end" onClick={() => setShowDeleteDialog(true)}>
+          <DeleteIcon fontSize="small" />
         </IconButton>
         <CompanyDeleteDialog
           companyId={data.company.id}

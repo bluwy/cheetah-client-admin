@@ -71,16 +71,18 @@ function StaffListItem({ staffId }: StaffListItemProps) {
         )}
       </ListItemText>
       <ListItemSecondaryAction>
-        <IconButton onClick={() => setShowToggleActiveDialog(true)}>
-          {data.staff.active ? <VisibilityIcon /> : <VisibilityOffIcon />}
+        <IconButton size="small" onClick={() => setShowToggleActiveDialog(true)}>
+          {data.staff.active
+            ? <VisibilityIcon fontSize="small" />
+            : <VisibilityOffIcon fontSize="small" />}
         </IconButton>
         <StaffToggleActiveDialog
           staffId={data.staff.id}
           open={showToggleActiveDialog}
           onClose={() => setShowToggleActiveDialog(false)}
         />
-        <IconButton edge="end" onClick={() => setShowDeleteDialog(true)}>
-          <DeleteIcon />
+        <IconButton size="small" edge="end" onClick={() => setShowDeleteDialog(true)}>
+          <DeleteIcon fontSize="small" />
         </IconButton>
         <StaffDeleteDialog
           staffId={data.staff.id}
