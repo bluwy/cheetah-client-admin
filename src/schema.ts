@@ -795,6 +795,19 @@ export type CustomerAutocompleteFindCustomersQuery = (
   )> }
 );
 
+export type CustomerCreateDialogCustomerCreateMutationVariables = Exact<{
+  data: CustomerCreateInput;
+}>;
+
+
+export type CustomerCreateDialogCustomerCreateMutation = (
+  { __typename?: 'Mutation' }
+  & { customerCreate: (
+    { __typename?: 'Customer' }
+    & Pick<Customer, 'id'>
+  ) }
+);
+
 export type CustomerDatatableFindCustomersQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
   skip?: Maybe<Scalars['Int']>;

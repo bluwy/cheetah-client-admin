@@ -14,7 +14,7 @@ import TaskInput, { taskPropTypeShape, TaskInputTask } from './TaskInput';
 
 type TaskInputListProps = {
   value: TaskInputTask[],
-  onChange: ((newValue: TaskInputTask[]) => void) | null | undefined
+  onChange?: (newValue: TaskInputTask[]) => void
 };
 
 const useStyles = makeStyles({

@@ -1,43 +1,38 @@
 import React from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import {
-  useForm,
-  Controller,
-  NestedValue,
-  SubmitHandler,
-} from 'react-hook-form';
-import {
-  JobCreateDialogJobCreateMutation as CreateM,
-  JobCreateDialogJobCreateMutationVariables as CreateV,
-  TaskCreateInput,
+  CustomerCreateDialogCustomerCreateMutation as CreateM,
+  CustomerCreateDialogCustomerCreateMutationVariables as CreateV,
 } from '/@/schema';
-import { TextField, Typography } from '@material-ui/core';
-import { KeyboardDateTimePicker } from '@material-ui/pickers';
-import CustomerAutocomplete from '/@/components/customer/Autocomplete';
+import { TextField } from '@material-ui/core';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
 import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
-import TaskInputList from './TaskInputList';
+import CompanyAutocomplete from '../company/Autocomplete';
 
-type JobCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
+type CustomerCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
 
 interface FormInput {
-  address: string
-  customerId: string
+  code: string
+  name: string
+  // Array separated with "\n"
+  addresses: string
+  email?: string
+  phoneNumber?: string
+  companyBelongId: string
   staffPrimaryId: string
   staffSecondaryId?: string
-  startDate: Date
-  tasks: NestedValue<TaskCreateInput[]>
 }
 
-const CREATE_JOB = gql`
-  mutation JobCreateDialogJobCreate($data: JobCreateInput!) {
-    jobCreate(data: $data) {
+const CREATE_CUSTOMER = gql`
+  mutation CustomerCreateDialogCustomerCreate($data: CustomerCreateInput!) {
+    customerCreate(data: $data) {
       id
     }
   }
 `;
 
-function JobCreateDialog(props: JobCreateDialogProps) {
+function CustomerCreateDialog(props: CustomerCreateDialogProps) {
   const { onClose, ...restProps } = props;
 
   const {
@@ -47,7 +42,7 @@ function JobCreateDialog(props: JobCreateDialogProps) {
     reset,
   } = useForm<FormInput>();
 
-  const [createJob] = useMutation<CreateM, CreateV>(CREATE_JOB);
+  const [createCustomer] = useMutation<CreateM, CreateV>(CREATE_CUSTOMER);
 
   const handleClose = () => {
     reset();
@@ -56,8 +51,13 @@ function JobCreateDialog(props: JobCreateDialogProps) {
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     try {
-      await createJob({
-        variables: { data },
+      await createCustomer({
+        variables: {
+          data: {
+            ...data,
+            addresses: data.addresses.split('\n').filter(Boolean),
+          },
+        },
       });
 
       handleClose();
@@ -69,36 +69,66 @@ function JobCreateDialog(props: JobCreateDialogProps) {
   return (
     <FormDialog
       {...restProps}
-      dialogTitle="Create new job"
+      dialogTitle="Create new customer"
       onSubmit={handleSubmit(onSubmit)}
       onClose={handleClose}
     >
+      <TextField
+        name="code"
+        label="Code"
+        variant="outlined"
+        fullWidth
+        inputRef={register({ required: true })}
+      />
+      <TextField
+        name="name"
+        label="Name"
+        variant="outlined"
+        fullWidth
+        inputRef={register({ required: true })}
+      />
+      <TextField
+        name="email"
+        type="email"
+        label="Email"
+        variant="outlined"
+        fullWidth
+        inputRef={register()}
+      />
+      <TextField
+        name="phoneNumber"
+        type="tel"
+        label="Phone number"
+        variant="outlined"
+        fullWidth
+        inputRef={register()}
+      />
+      <TextField
+        name="addresses"
+        label="Addresses (Separate multiple addresses in new line)"
+        variant="outlined"
+        multiline
+        fullWidth
+        inputRef={register()}
+      />
       <Controller
-        name="customerId"
+        name="companyBelongId"
         control={control}
-        rules={{ required: true }}
         defaultValue={undefined}
         render={({ onBlur, onChange }) => (
-          <CustomerAutocomplete
+          <CompanyAutocomplete
             onBlur={onBlur}
             onChange={(e, option) => onChange(option?.id)}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Customer"
+                label="Company in charge"
                 variant="outlined"
                 fullWidth
               />
             )}
           />
         )}
-      />
-      <TextField
-        name="address"
-        label="Customer address"
-        variant="outlined"
-        fullWidth
-        inputRef={register({ required: true })}
       />
       <Controller
         name="staffPrimaryId"
@@ -139,32 +169,8 @@ function JobCreateDialog(props: JobCreateDialogProps) {
           />
         )}
       />
-      <Controller
-        name="startDate"
-        control={control}
-        defaultValue={new Date()}
-        render={(params) => (
-          <KeyboardDateTimePicker
-            {...params}
-            label="Preferred start time"
-            variant="inline"
-            inputVariant="outlined"
-            ampm={false}
-            format="yyyy/MM/dd HH:mm"
-          />
-        )}
-      />
-      <Typography variant="subtitle1">Job tasks</Typography>
-      <Controller
-        name="tasks"
-        control={control}
-        defaultValue={[]}
-        render={({ onChange, value }) => (
-          <TaskInputList value={value} onChange={onChange} />
-        )}
-      />
     </FormDialog>
   );
 }
 
-export default JobCreateDialog;
+export default CustomerCreateDialog;
