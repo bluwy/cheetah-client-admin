@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useLazyQuery } from '@apollo/client';
 import {
   StaffToggleActiveDialogFindOneQuery as FindOneQ,
   StaffToggleActiveDialogFindOneQueryVariables as FindOneV,
@@ -32,13 +32,24 @@ const SET_ACTIVE = gql`
 `;
 
 function StaffToggleActiveDialog(props: StaffToggleActiveDialogProps) {
-  const { staffId, onYes, ...restProps } = props;
-  const { data } = useQuery<FindOneQ, FindOneV>(FIND_STAFF, {
+  const {
+    staffId,
+    open,
+    onYes,
+    ...restProps
+  } = props;
+  const [findStaff, { data }] = useLazyQuery<FindOneQ, FindOneV>(FIND_STAFF, {
     variables: {
       id: staffId,
     },
   });
   const [setActive] = useMutation<SetActiveM, SetActiveV>(SET_ACTIVE);
+
+  useEffect(() => {
+    if (open) {
+      findStaff();
+    }
+  }, [open]);
 
   const handleYes = () => {
     setActive({
@@ -53,6 +64,7 @@ function StaffToggleActiveDialog(props: StaffToggleActiveDialogProps) {
   return (
     <YesNoDialog
       {...restProps}
+      open={open}
       dialogTitle={data?.staff.active ? 'Make staff inactive?' : 'Make staff active?'}
       onYes={handleYes}
     />
@@ -61,6 +73,7 @@ function StaffToggleActiveDialog(props: StaffToggleActiveDialogProps) {
 
 StaffToggleActiveDialog.propTypes = {
   staffId: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
   onYes: PropTypes.func,
 };
 

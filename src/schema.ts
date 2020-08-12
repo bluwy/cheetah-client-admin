@@ -770,19 +770,6 @@ export type CompanyListFindCompaniesQuery = (
   )> }
 );
 
-export type CompanyListItemCompanyFindOneQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type CompanyListItemCompanyFindOneQuery = (
-  { __typename?: 'Query' }
-  & { company: (
-    { __typename?: 'Company' }
-    & Pick<Company, 'id' | 'name'>
-  ) }
-);
-
 export type CustomerAddressAutocompleteFindCustomerQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -989,19 +976,6 @@ export type StaffListFindStaffsQuery = (
     { __typename?: 'Staff' }
     & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
   )> }
-);
-
-export type StaffListItemStaffFindOneQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type StaffListItemStaffFindOneQuery = (
-  { __typename?: 'Query' }
-  & { staff: (
-    { __typename?: 'Staff' }
-    & Pick<Staff, 'id' | 'fullName' | 'active' | 'paired'>
-  ) }
 );
 
 export type StaffToggleActiveDialogFindOneQueryVariables = Exact<{

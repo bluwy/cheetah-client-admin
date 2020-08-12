@@ -24,7 +24,7 @@ function CompanyList() {
     <Box maxWidth="400px">
       <List dense>
         {companies.map((company) => (
-          <CompanyListItem key={company.id} companyId={company.id} />
+          <CompanyListItem key={company.id} data={company} />
         ))}
       </List>
     </Box>

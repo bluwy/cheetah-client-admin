@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { gql, useQuery } from '@apollo/client';
-import {
-  StaffListItemStaffFindOneQuery as FindOneQ,
-  StaffListItemStaffFindOneQueryVariables as FindOneV,
-} from '/@/schema';
 import {
   makeStyles,
   IconButton,
@@ -22,49 +17,28 @@ import {
 import StaffToggleActiveDialog from './ToggleActiveDialog';
 import StaffDeleteDialog from '/@/components/staff/DeleteDialog';
 
-const FIND_STAFF = gql`
-  query StaffListItemStaffFindOne($id: ID!) {
-    staff(id: $id) {
-      id
-      fullName
-      active
-      paired
-    }
-  }
-`;
-
 const useStyles = makeStyles({
   inactiveText: {
     opacity: 0.5,
   },
 });
 
-function StaffListItem({ staffId }: StaffListItemProps) {
+function StaffListItem({ data }: StaffListItemProps) {
   const [showToggleActiveDialog, setShowToggleActiveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { data } = useQuery<FindOneQ, FindOneV>(FIND_STAFF, {
-    variables: {
-      id: staffId,
-    },
-  });
-
   const classes = useStyles();
-
-  if (data == null) {
-    return <ListItem />;
-  }
 
   return (
     <ListItem>
       <ListItemText>
-        {data.staff.active ? data.staff.fullName : (
+        {data.active ? data.fullName : (
           <Tooltip title="Staff is inactive and will not be searchable when creating jobs">
             <span className={classes.inactiveText}>
-              {data.staff.fullName}
+              {data.fullName}
             </span>
           </Tooltip>
         )}
-        {!data.staff.paired && (
+        {!data.paired && (
           <Tooltip title="User is not paired yet">
             <PairingIcon fontSize="small" />
           </Tooltip>
@@ -72,12 +46,12 @@ function StaffListItem({ staffId }: StaffListItemProps) {
       </ListItemText>
       <ListItemSecondaryAction>
         <IconButton size="small" onClick={() => setShowToggleActiveDialog(true)}>
-          {data.staff.active
+          {data.active
             ? <VisibilityIcon fontSize="small" />
             : <VisibilityOffIcon fontSize="small" />}
         </IconButton>
         <StaffToggleActiveDialog
-          staffId={data.staff.id}
+          staffId={data.id}
           open={showToggleActiveDialog}
           onClose={() => setShowToggleActiveDialog(false)}
         />
@@ -85,7 +59,7 @@ function StaffListItem({ staffId }: StaffListItemProps) {
           <DeleteIcon fontSize="small" />
         </IconButton>
         <StaffDeleteDialog
-          staffId={data.staff.id}
+          staffId={data.id}
           open={showDeleteDialog}
           onClose={() => setShowDeleteDialog(false)}
         />
@@ -97,7 +71,12 @@ function StaffListItem({ staffId }: StaffListItemProps) {
 type StaffListItemProps = PropTypes.InferProps<typeof StaffListItem.propTypes>;
 
 StaffListItem.propTypes = {
-  staffId: PropTypes.string.isRequired,
+  data: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    fullName: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
+    paired: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default StaffListItem;

@@ -26,7 +26,7 @@ function StaffList() {
     <Box maxWidth="400px">
       <List dense>
         {staffs.map((staff) => (
-          <StaffListItem key={staff.id} staffId={staff.id} />
+          <StaffListItem key={staff.id} data={staff} />
         ))}
       </List>
     </Box>
