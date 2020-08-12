@@ -6,6 +6,7 @@ import {
   StaffDeleteDialogStaffDeleteMutationVariables as DeleteV,
 } from '/@/schema';
 import YesNoDialog, { YesNoDialogProps } from '/@/components/YesNoDialog';
+import { useSnackbar } from '/@/components/SnackbarProvider';
 
 interface StaffDeleteDialogProps extends Omit<YesNoDialogProps, 'dialogTitle' | 'yesText' | 'noText'> {
   staffId: string
@@ -20,9 +21,20 @@ const DELETE_STAFF = gql`
 function StaffDeleteDialog(props: StaffDeleteDialogProps) {
   const { staffId, onYes, ...restProps } = props;
   const [deleteStaff] = useMutation<DeleteM, DeleteV>(DELETE_STAFF);
+  const pushSnack = useSnackbar();
 
   const handleYes = () => {
-    deleteStaff({ variables: { id: staffId } });
+    deleteStaff({
+      variables: {
+        id: staffId,
+      },
+    }).catch(() => {
+      pushSnack({
+        severity: 'error',
+        message: 'Unable to delete staff',
+      });
+    });
+
     onYes?.();
   };
 

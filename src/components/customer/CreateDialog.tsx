@@ -8,7 +8,8 @@ import {
 import { TextField } from '@material-ui/core';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
 import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
-import CompanyAutocomplete from '../company/Autocomplete';
+import CompanyAutocomplete from '/@/components/company/Autocomplete';
+import { useSnackbar } from '/@/components/SnackbarProvider';
 
 type CustomerCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
 
@@ -44,26 +45,29 @@ function CustomerCreateDialog(props: CustomerCreateDialogProps) {
 
   const [createCustomer] = useMutation<CreateM, CreateV>(CREATE_CUSTOMER);
 
+  const pushSnack = useSnackbar();
+
   const handleClose = () => {
     reset();
     onClose();
   };
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    try {
-      await createCustomer({
-        variables: {
-          data: {
-            ...data,
-            addresses: data.addresses.split('\n').filter(Boolean),
-          },
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    createCustomer({
+      variables: {
+        data: {
+          ...data,
+          addresses: data.addresses.split('\n').filter(Boolean),
         },
+      },
+    }).catch(() => {
+      pushSnack({
+        severity: 'error',
+        message: 'Unable to create customer',
       });
+    });
 
-      handleClose();
-    } catch {
-      // TODO: Show error
-    }
+    handleClose();
   };
 
   return (

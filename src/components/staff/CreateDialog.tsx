@@ -7,6 +7,7 @@ import {
 } from '/@/schema';
 import { makeStyles, Box, TextField } from '@material-ui/core';
 import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
+import { useSnackbar } from '/@/components/SnackbarProvider';
 
 type StaffCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
 
@@ -42,6 +43,7 @@ function StaffCreateDialog(props: StaffCreateDialogProps) {
 
   const [createStaff] = useMutation<CreateM, CreateV>(CREATE_STAFF);
 
+  const pushSnack = useSnackbar();
   const classes = useStyles();
 
   const handleClose = () => {
@@ -49,16 +51,21 @@ function StaffCreateDialog(props: StaffCreateDialogProps) {
     onClose();
   };
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    try {
-      await createStaff({
-        variables: { data },
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    createStaff({
+      variables: { data },
+      update(cache) {
+        cache.evict({ fieldName: 'staffs' });
+        cache.gc();
+      },
+    }).catch(() => {
+      pushSnack({
+        severity: 'error',
+        message: 'Unable to create staff',
       });
+    });
 
-      handleClose();
-    } catch {
-      // TODO: Show error
-    }
+    handleClose();
   };
 
   return (

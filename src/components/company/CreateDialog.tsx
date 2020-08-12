@@ -7,6 +7,7 @@ import {
 } from '/@/schema';
 import { makeStyles, Box, TextField } from '@material-ui/core';
 import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
+import { useSnackbar } from '/@/components/SnackbarProvider';
 
 type CompanyCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
 
@@ -42,6 +43,7 @@ function CompanyCreateDialog(props: CompanyCreateDialogProps) {
 
   const [createCompany] = useMutation<CreateM, CreateV>(CREATE_COMPANY);
 
+  const pushSnack = useSnackbar();
   const classes = useStyles();
 
   const handleClose = () => {
@@ -49,16 +51,17 @@ function CompanyCreateDialog(props: CompanyCreateDialogProps) {
     onClose();
   };
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    try {
-      await createCompany({
-        variables: { data },
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    createCompany({
+      variables: { data },
+    }).catch(() => {
+      pushSnack({
+        severity: 'error',
+        message: 'Unable to create company',
       });
+    });
 
-      handleClose();
-    } catch {
-      // TODO: Show error
-    }
+    handleClose();
   };
 
   return (

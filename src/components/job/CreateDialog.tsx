@@ -22,6 +22,7 @@ import CustomerAutocomplete from '/@/components/customer/Autocomplete';
 import CustomerAddressAutocomplete from '/@/components/customer/AddressAutocomplete';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
 import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
+import { useSnackbar } from '/@/components/SnackbarProvider';
 import TaskInputList, { TaskInputListTask } from './TaskInputList';
 
 type JobCreateDialogProps = Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'>;
@@ -62,6 +63,7 @@ function JobCreateDialog(props: JobCreateDialogProps) {
 
   const [createJob] = useMutation<CreateM, CreateV>(CREATE_JOB);
 
+  const pushSnack = useSnackbar();
   const classes = useStyles();
 
   const handleClose = () => {
@@ -69,24 +71,25 @@ function JobCreateDialog(props: JobCreateDialogProps) {
     onClose();
   };
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    try {
-      await createJob({
-        variables: {
-          data: {
-            ...data,
-            tasks: data.tasks.map((v) => ({
-              type: v.type,
-              remarks: v.remarks,
-            })),
-          },
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
+    createJob({
+      variables: {
+        data: {
+          ...data,
+          tasks: data.tasks.map((v) => ({
+            type: v.type,
+            remarks: v.remarks,
+          })),
         },
+      },
+    }).catch(() => {
+      pushSnack({
+        severity: 'error',
+        message: 'Unable to create job',
       });
+    });
 
-      handleClose();
-    } catch {
-      // TODO: Show error
-    }
+    handleClose();
   };
 
   return (
