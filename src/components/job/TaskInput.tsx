@@ -59,6 +59,7 @@ function TaskInput({ value, onChange }: TaskInputProps) {
         className={classes.typeText}
         label="Type"
         select
+        variant="outlined"
         size="small"
         value={value.type}
         onChange={(e) => handleChange({ type: e.target.value as TaskType })}
@@ -73,6 +74,7 @@ function TaskInput({ value, onChange }: TaskInputProps) {
         className={classes.remarksText}
         label="Remarks"
         size="small"
+        variant="outlined"
         fullWidth
         value={value.remarks}
         onChange={(e) => handleChange({ remarks: e.target.value })}
