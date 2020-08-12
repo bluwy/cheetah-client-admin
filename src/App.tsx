@@ -9,6 +9,7 @@ import {
   GetAppThemeQueryVariables as AppThemeV,
 } from './schema';
 import AuthGuard from './components/AuthGuard';
+import SnackbarProvider from './components/SnackbarProvider';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
 import Sudo from './pages/Sudo';
@@ -33,19 +34,21 @@ function App() {
   return (
     <main>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <CssBaseline />
-          <Switch>
-            <Route path="/login" component={Login} />
-            <Route path="/reset-password" component={ResetPassword} />
-            <Route path="/sudo" component={Sudo} />
-            <Route path="/dashboard">
-              <AuthGuard>
-                <Dashboard />
-              </AuthGuard>
-            </Route>
-            <Route component={Null} />
-          </Switch>
+          <SnackbarProvider>
+            <Switch>
+              <Route path="/login" component={Login} />
+              <Route path="/reset-password" component={ResetPassword} />
+              <Route path="/sudo" component={Sudo} />
+              <Route path="/dashboard">
+                <AuthGuard>
+                  <Dashboard />
+                </AuthGuard>
+              </Route>
+              <Route component={Null} />
+            </Switch>
+          </SnackbarProvider>
         </MuiPickersUtilsProvider>
       </ThemeProvider>
     </main>
