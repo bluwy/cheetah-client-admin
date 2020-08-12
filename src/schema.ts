@@ -783,6 +783,19 @@ export type CompanyListItemCompanyFindOneQuery = (
   ) }
 );
 
+export type CustomerAddressAutocompleteFindCustomerQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CustomerAddressAutocompleteFindCustomerQuery = (
+  { __typename?: 'Query' }
+  & { customer: (
+    { __typename?: 'Customer' }
+    & Pick<Customer, 'id' | 'addresses'>
+  ) }
+);
+
 export type CustomerAutocompleteFindCustomersQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>;
 }>;

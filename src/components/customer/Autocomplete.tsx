@@ -15,7 +15,7 @@ export type CustomerAutocompleteProps<
   FreeSolo extends boolean | undefined = undefined
 > = Omit<
 AutocompleteProps<CustomerAutocompleteCustomer, Multiple, DisableClearable, FreeSolo>,
-'loading' | 'getOptionLabel' | 'options'
+'loading' | 'getOptionSelected' | 'getOptionLabel' | 'options'
 >;
 
 const FIND_CUSTOMERS = gql`
@@ -56,6 +56,7 @@ function CustomerAutocomplete<
     <Autocomplete
       {...restProps}
       loading={loading}
+      getOptionSelected={(option, value) => option.id === value.id}
       getOptionLabel={(v) => v.name}
       options={data?.customers ?? []}
       onInputChange={handleInputChange}

@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 import { KeyboardDateTimePicker } from '@material-ui/pickers';
 import CustomerAutocomplete from '/@/components/customer/Autocomplete';
+import CustomerAddressAutocomplete from '/@/components/customer/AddressAutocomplete';
 import StaffAutocomplete from '/@/components/staff/Autocomplete';
 import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
 import TaskInputList, { TaskInputListTask } from './TaskInputList';
@@ -52,7 +53,6 @@ function JobCreateDialog(props: JobCreateDialogProps) {
   const { onClose, classes: propClasses, ...restProps } = props;
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -128,16 +128,30 @@ function JobCreateDialog(props: JobCreateDialogProps) {
       <Box mb={2}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <TextField
+            <Controller
               name="address"
-              label="Address"
-              variant="outlined"
-              fullWidth
-              inputRef={register({
+              control={control}
+              rules={{
                 required: { value: true, message: 'Address is required' },
-              })}
-              error={!!errors.address}
-              helperText={errors.address?.message}
+              }}
+              defaultValue={undefined}
+              render={({ onBlur, onChange }) => (
+                <CustomerAddressAutocomplete
+                  freeSolo
+                  onBlur={onBlur}
+                  onChange={(e, option) => onChange(option)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Address"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.address}
+                      helperText={errors.address?.message}
+                    />
+                  )}
+                />
+              )}
             />
           </Grid>
           <Grid item xs={6}>
