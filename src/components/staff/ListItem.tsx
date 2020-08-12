@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   makeStyles,
+  Box,
   IconButton,
   ListItem,
   ListItemSecondaryAction,
@@ -10,7 +11,7 @@ import {
 } from '@material-ui/core';
 import {
   Delete as DeleteIcon,
-  PermDeviceInformation as PairingIcon,
+  PhoneAndroid as PairingIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from '@material-ui/icons';
@@ -40,7 +41,9 @@ function StaffListItem({ data }: StaffListItemProps) {
         )}
         {!data.paired && (
           <Tooltip title="User is not paired yet">
-            <PairingIcon fontSize="small" />
+            <Box display="inline" mx={1}>
+              <PairingIcon fontSize="inherit" />
+            </Box>
           </Tooltip>
         )}
       </ListItemText>
