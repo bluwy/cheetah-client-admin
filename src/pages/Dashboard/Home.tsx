@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import JobCreateDialog from '/@/components/job/CreateDialog';
+import JobKanban from '/@/components/job/Kanban';
 
 function DashboardHome() {
   const [jobCreateDialogOpen, setJobCreateDialogOpen] = useState(false);
@@ -27,11 +28,11 @@ function DashboardHome() {
           </Button>
         </Grid>
       </Box>
+      <JobKanban />
       <JobCreateDialog
         open={jobCreateDialogOpen}
         onClose={() => setJobCreateDialogOpen(false)}
       />
-      Home
     </div>
   );
 }

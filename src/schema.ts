@@ -227,7 +227,7 @@ export type Job = {
   staffPrimary: Staff;
   staffSecondary?: Maybe<Staff>;
   startDate: Scalars['DateTime'];
-  state?: Maybe<JobState>;
+  state: JobState;
   tasks: Array<Task>;
   updatedAt: Scalars['DateTime'];
 };
@@ -273,7 +273,8 @@ export enum JobState {
   Done = 'DONE',
   Expired = 'EXPIRED',
   FollowUp = 'FOLLOW_UP',
-  Reviewed = 'REVIEWED'
+  Reviewed = 'REVIEWED',
+  Todo = 'TODO'
 }
 
 export type JobStateFilter = {
@@ -869,6 +870,67 @@ export type JobDatatableJobCountQueryVariables = Exact<{ [key: string]: never; }
 export type JobDatatableJobCountQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'jobCount'>
+);
+
+export type KanbanCardJobFragment = (
+  { __typename?: 'Job' }
+  & Pick<Job, 'id'>
+  & { customer: (
+    { __typename?: 'Customer' }
+    & Pick<Customer, 'id' | 'name'>
+  ), staffPrimary: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'username'>
+  ), staffSecondary?: Maybe<(
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'username'>
+  )> }
+);
+
+export type JobKanbanCardFindJobQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type JobKanbanCardFindJobQuery = (
+  { __typename?: 'Query' }
+  & { job: (
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  ) }
+);
+
+export type JobKanbanDoneFindJobsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobKanbanDoneFindJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  )> }
+);
+
+export type JobKanbanProgressFindJobsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobKanbanProgressFindJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  )> }
+);
+
+export type JobKanbanTodoFindJobsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobKanbanTodoFindJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  )> }
 );
 
 export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
