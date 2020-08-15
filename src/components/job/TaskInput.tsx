@@ -20,11 +20,6 @@ interface TaskInputTaskType {
   value: TaskType
 }
 
-export const taskPropTypeShape = {
-  type: PropTypes.string,
-  remarks: PropTypes.string,
-};
-
 const TASK_TYPES: TaskInputTaskType[] = [
   { label: 'Follow-up service', value: TaskType.Service },
   { label: 'Complaint', value: TaskType.Complaint },
@@ -84,7 +79,10 @@ function TaskInput({ value, onChange }: TaskInputProps) {
 }
 
 TaskInput.propTypes = {
-  value: PropTypes.shape(taskPropTypeShape).isRequired,
+  value: PropTypes.shape({
+    type: PropTypes.string.isRequired,
+    remarks: PropTypes.string.isRequired,
+  }).isRequired,
   onChange: PropTypes.func,
 };
 

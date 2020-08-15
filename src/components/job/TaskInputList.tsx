@@ -10,7 +10,7 @@ import {
   ListItemSecondaryAction,
 } from '@material-ui/core';
 import { Delete as DeleteIcon } from '@material-ui/icons';
-import TaskInput, { taskPropTypeShape, TaskInputTask } from './TaskInput';
+import TaskInput, { TaskInputTask } from './TaskInput';
 
 export interface TaskInputListTask extends TaskInputTask {
   id: string
@@ -92,7 +92,11 @@ function TaskInputList({ value, onChange }: TaskInputListProps) {
 }
 
 TaskInputList.propTypes = {
-  value: PropTypes.arrayOf(PropTypes.shape(taskPropTypeShape).isRequired).isRequired,
+  value: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    remarks: PropTypes.string.isRequired,
+  }).isRequired).isRequired,
   onChange: PropTypes.func,
 };
 

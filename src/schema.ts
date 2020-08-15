@@ -334,6 +334,7 @@ export type Mutation = {
   customerUpdate: Customer;
   jobCreate: Job;
   jobDelete: Scalars['Boolean'];
+  jobFinish: Job;
   jobReassign: JobReassignResponse;
   jobSetActions: Scalars['Boolean'];
   jobSetTasks: Scalars['Boolean'];
@@ -418,6 +419,11 @@ export type MutationJobCreateArgs = {
 
 
 export type MutationJobDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationJobFinishArgs = {
   id: Scalars['ID'];
 };
 
@@ -872,6 +878,45 @@ export type JobDatatableJobCountQuery = (
   & Pick<Query, 'jobCount'>
 );
 
+export type JobDoneDialogJobFindOneQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type JobDoneDialogJobFindOneQuery = (
+  { __typename?: 'Query' }
+  & { job: (
+    { __typename?: 'Job' }
+    & Pick<Job, 'id' | 'code' | 'address' | 'startDate' | 'checkIn' | 'checkOut' | 'state'>
+    & { customer: (
+      { __typename?: 'Customer' }
+      & Pick<Customer, 'id' | 'name'>
+    ), staffPrimary: (
+      { __typename?: 'Staff' }
+      & Pick<Staff, 'id'>
+    ), staffSecondary?: Maybe<(
+      { __typename?: 'Staff' }
+      & Pick<Staff, 'id'>
+    )>, tasks: Array<(
+      { __typename?: 'Task' }
+      & Pick<Task, 'id' | 'type' | 'remarks'>
+    )> }
+  ) }
+);
+
+export type JobDoneDialogJobFinishMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type JobDoneDialogJobFinishMutation = (
+  { __typename?: 'Mutation' }
+  & { jobFinish: (
+    { __typename?: 'Job' }
+    & Pick<Job, 'id'>
+  ) }
+);
+
 export type KanbanCardJobFragment = (
   { __typename?: 'Job' }
   & Pick<Job, 'id'>
@@ -931,6 +976,52 @@ export type JobKanbanTodoFindJobsQuery = (
     { __typename?: 'Job' }
     & KanbanCardJobFragment
   )> }
+);
+
+export type JobReassignDialogJobFindOneQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type JobReassignDialogJobFindOneQuery = (
+  { __typename?: 'Query' }
+  & { job: (
+    { __typename?: 'Job' }
+    & Pick<Job, 'id' | 'code' | 'address' | 'startDate' | 'checkIn' | 'checkOut' | 'state'>
+    & { customer: (
+      { __typename?: 'Customer' }
+      & Pick<Customer, 'id' | 'name'>
+    ), staffPrimary: (
+      { __typename?: 'Staff' }
+      & Pick<Staff, 'id'>
+    ), staffSecondary?: Maybe<(
+      { __typename?: 'Staff' }
+      & Pick<Staff, 'id'>
+    )>, tasks: Array<(
+      { __typename?: 'Task' }
+      & Pick<Task, 'id' | 'type' | 'remarks'>
+    )> }
+  ) }
+);
+
+export type JobReassignDialogJobReassignMutationVariables = Exact<{
+  id: Scalars['ID'];
+  data: JobReassignInput;
+}>;
+
+
+export type JobReassignDialogJobReassignMutation = (
+  { __typename?: 'Mutation' }
+  & { jobReassign: (
+    { __typename?: 'JobReassignResponse' }
+    & { oriJob: (
+      { __typename?: 'Job' }
+      & Pick<Job, 'id' | 'state'>
+    ), newJob: (
+      { __typename?: 'Job' }
+      & Pick<Job, 'id'>
+    ) }
+  ) }
 );
 
 export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;

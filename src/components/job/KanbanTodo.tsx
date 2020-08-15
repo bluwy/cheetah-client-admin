@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import {
   JobKanbanTodoFindJobsQuery as FindQ,
@@ -6,6 +6,11 @@ import {
 } from '/@/schema';
 import { List, ListItem, Typography } from '@material-ui/core';
 import JobKanbanCard, { JOB_FRAGMENT } from './KanbanCard';
+import JobReassignDialog from './ReassignDialog';
+
+interface KanbanaTodoListItemProps {
+  jobId: string
+}
 
 const FIND_TODO_JOBS = gql`
   query JobKanbanTodoFindJobs {
@@ -29,6 +34,21 @@ const FIND_TODO_JOBS = gql`
   ${JOB_FRAGMENT}
 `;
 
+function KanbanTodoListItem({ jobId }: KanbanaTodoListItemProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <ListItem disableGutters>
+      <JobKanbanCard jobId={jobId} onClick={() => setOpen(true)} />
+      <JobReassignDialog
+        jobId={jobId}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
+    </ListItem>
+  );
+}
+
 function KanbanTodo() {
   const { data } = useQuery<FindQ, FindV>(FIND_TODO_JOBS);
 
@@ -39,9 +59,7 @@ function KanbanTodo() {
       </Typography>
       <List>
         {data?.jobs.map((job) => (
-          <ListItem key={job.id} disableGutters>
-            <JobKanbanCard jobId={job.id} />
-          </ListItem>
+          <KanbanTodoListItem key={job.id} jobId={job.id} />
         ))}
       </List>
     </>

@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import {
   useForm,
   Controller,
   NestedValue,
   SubmitHandler,
-  UseFormOptions,
 } from 'react-hook-form';
 import {
-  JobCreateDialogJobCreateMutation as CreateM,
-  JobCreateDialogJobCreateMutationVariables as CreateV,
+  JobReassignDialogJobFindOneQuery as FindQ,
+  JobReassignDialogJobFindOneQueryVariables as FindV,
+  JobReassignDialogJobReassignMutation as ReassignM,
+  JobReassignDialogJobReassignMutationVariables as ReassignV,
 } from '/@/schema';
 import {
   makeStyles,
@@ -20,30 +21,63 @@ import {
   Typography,
 } from '@material-ui/core';
 import { KeyboardDateTimePicker } from '@material-ui/pickers';
-import CustomerAutocomplete from '/@/components/customer/Autocomplete';
-import CustomerAddressAutocomplete from '/@/components/customer/AddressAutocomplete';
-import StaffAutocomplete from '/@/components/staff/Autocomplete';
-import FormDialog, { FormDialogProps } from '/@/components/FormDialog';
-import { useSnackbar } from '/@/components/SnackbarProvider';
 import TaskInputList, { TaskInputListTask } from './TaskInputList';
+import FormDialog, { FormDialogProps } from '../FormDialog';
+import { useSnackbar } from '../SnackbarProvider';
+import CustomerAddressAutocomplete from '../customer/AddressAutocomplete';
+import StaffAutocomplete from '../staff/Autocomplete';
 
-interface JobCreateDialogProps extends Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'> {
-  defaultFormInput?: UseFormOptions<FormInput>['defaultValues']
+interface JobReassignDialogProps extends Omit<FormDialogProps, 'dialogTitle' | 'onSubmit'> {
+  jobId: string
 }
 
 interface FormInput {
   address: string
-  customerId: string
   staffPrimaryId: string
   staffSecondaryId?: string
   startDate: Date
   tasks: NestedValue<TaskInputListTask[]>
 }
 
-const CREATE_JOB = gql`
-  mutation JobCreateDialogJobCreate($data: JobCreateInput!) {
-    jobCreate(data: $data) {
+const FIND_ORI_JOB = gql`
+  query JobReassignDialogJobFindOne($id: ID!) {
+    job(id: $id) {
       id
+      code
+      address
+      startDate
+      checkIn
+      checkOut
+      state
+      customer {
+        id
+        name
+      }
+      staffPrimary {
+        id
+      }
+      staffSecondary {
+        id
+      }
+      tasks {
+        id
+        type
+        remarks
+      }
+    }
+  }
+`;
+
+const REASSIGN_JOB = gql`
+  mutation JobReassignDialogJobReassign($id: ID!, $data: JobReassignInput!) {
+    jobReassign(id: $id, data: $data) {
+      oriJob {
+        id
+        state
+      }
+      newJob {
+        id
+      }
     }
   }
 `;
@@ -54,40 +88,56 @@ const useStyles = makeStyles({
   },
 });
 
-function JobCreateDialog(props: JobCreateDialogProps) {
+function JobReassignDialog(props: JobReassignDialogProps) {
   const {
-    defaultFormInput,
+    jobId,
     onClose,
     classes: propClasses,
     ...restProps
   } = props;
 
+  const { data, loading } = useQuery<FindQ, FindV>(FIND_ORI_JOB, {
+    variables: {
+      id: jobId,
+    },
+  });
+
+  const [reassignJob] = useMutation<ReassignM, ReassignV>(REASSIGN_JOB);
+
   const {
     handleSubmit,
     control,
     reset,
+    setValue,
     errors,
     formState,
-  } = useForm<FormInput>({
-    defaultValues: defaultFormInput,
-  });
-
-  const [createJob] = useMutation<CreateM, CreateV>(CREATE_JOB);
+  } = useForm<FormInput>();
 
   const pushSnack = useSnackbar();
   const classes = useStyles();
+
+  useEffect(() => {
+    if (!loading) {
+      setValue('address', data?.job.address);
+      setValue('staffPrimaryId', data?.job.staffPrimary.id);
+      setValue('staffSecondaryId', data?.job.staffSecondary?.id);
+      setValue('startDate', data?.job.startDate);
+      setValue('tasks', data?.job.tasks);
+    }
+  }, [loading]);
 
   const handleClose = () => {
     reset();
     onClose();
   };
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
-    createJob({
+  const onSubmit: SubmitHandler<FormInput> = (formData) => {
+    reassignJob({
       variables: {
+        id: jobId,
         data: {
-          ...data,
-          tasks: data.tasks.map((v) => ({
+          ...formData,
+          tasks: formData.tasks.map((v) => ({
             type: v.type,
             remarks: v.remarks,
           })),
@@ -96,7 +146,7 @@ function JobCreateDialog(props: JobCreateDialogProps) {
     }).catch(() => {
       pushSnack({
         severity: 'error',
-        message: 'Unable to create job',
+        message: 'Unable to reassign job',
       });
     });
 
@@ -108,36 +158,16 @@ function JobCreateDialog(props: JobCreateDialogProps) {
       {...restProps}
       disableBackdropClick={formState.isDirty}
       classes={{ ...propClasses, paper: classes.root }}
-      dialogTitle={defaultFormInput == null ? 'Create new job' : 'Follow up job'}
+      dialogTitle="Reassign job"
       onSubmit={handleSubmit(onSubmit)}
       onClose={handleClose}
     >
-      <Box mb={2}>
-        <Controller
-          name="customerId"
-          control={control}
-          rules={{
-            required: { value: true, message: 'Customer is required' },
-          }}
-          defaultValue={undefined}
-          render={({ onBlur, onChange }) => (
-            <CustomerAutocomplete
-              onBlur={onBlur}
-              onChange={(e, option) => onChange(option?.id)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Customer"
-                  variant="outlined"
-                  fullWidth
-                  autoFocus
-                  error={!!errors.customerId}
-                  helperText={errors.customerId?.message}
-                />
-              )}
-            />
-          )}
-        />
+      <Box>
+        <Typography>
+          Customer:
+          {' '}
+          {data?.job.customer.name}
+        </Typography>
       </Box>
       <Box mb={2}>
         <Grid container spacing={2}>
@@ -256,16 +286,15 @@ function JobCreateDialog(props: JobCreateDialogProps) {
   );
 }
 
-JobCreateDialog.propTypes = {
-  defaultFormInput: PropTypes.object,
+JobReassignDialog.propTypes = {
+  jobId: PropTypes.string.isRequired,
   onClose: PropTypes.func,
   classes: PropTypes.object,
 };
 
-JobCreateDialog.defaultProps = {
-  defaultFormInput: undefined,
+JobReassignDialog.defaultProps = {
   onClose: undefined,
   classes: undefined,
 };
 
-export default JobCreateDialog;
+export default JobReassignDialog;
