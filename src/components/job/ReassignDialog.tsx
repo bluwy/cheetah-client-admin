@@ -96,7 +96,7 @@ function JobReassignDialog(props: JobReassignDialogProps) {
     ...restProps
   } = props;
 
-  const { data, loading } = useQuery<FindQ, FindV>(FIND_ORI_JOB, {
+  const { data } = useQuery<FindQ, FindV>(FIND_ORI_JOB, {
     variables: {
       id: jobId,
     },
@@ -108,7 +108,6 @@ function JobReassignDialog(props: JobReassignDialogProps) {
     handleSubmit,
     control,
     reset,
-    setValue,
     errors,
     formState,
   } = useForm<FormInput>();
@@ -117,14 +116,16 @@ function JobReassignDialog(props: JobReassignDialogProps) {
   const classes = useStyles();
 
   useEffect(() => {
-    if (!loading) {
-      setValue('address', data?.job.address);
-      setValue('staffPrimaryId', data?.job.staffPrimary.id);
-      setValue('staffSecondaryId', data?.job.staffSecondary?.id);
-      setValue('startDate', data?.job.startDate);
-      setValue('tasks', data?.job.tasks);
+    if (data != null) {
+      reset({
+        address: data.job.address,
+        staffPrimaryId: data.job.staffPrimary.id,
+        staffSecondaryId: data.job.staffSecondary?.id,
+        startDate: data.job.startDate,
+        tasks: data.job.tasks,
+      });
     }
-  }, [loading]);
+  }, [data, reset]);
 
   const handleClose = () => {
     reset();
@@ -162,7 +163,7 @@ function JobReassignDialog(props: JobReassignDialogProps) {
       onSubmit={handleSubmit(onSubmit)}
       onClose={handleClose}
     >
-      <Box>
+      <Box mb={2}>
         <Typography>
           Customer:
           {' '}
@@ -178,12 +179,14 @@ function JobReassignDialog(props: JobReassignDialogProps) {
               rules={{
                 required: { value: true, message: 'Address is required' },
               }}
-              defaultValue={undefined}
-              render={({ onBlur, onChange }) => (
+              defaultValue={null}
+              render={({ value, onBlur, onChange }) => (
                 <CustomerAddressAutocomplete
-                  freeSolo
+                  value={value}
                   onBlur={onBlur}
-                  onChange={(e, option) => onChange(option)}
+                  onInputChange={(e, option) => onChange(option)}
+                  freeSolo
+                  customerId={data?.job.customer.id}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -231,11 +234,12 @@ function JobReassignDialog(props: JobReassignDialogProps) {
               rules={{
                 required: { value: true, message: 'Technician 1 is required' },
               }}
-              defaultValue={undefined}
-              render={({ onBlur, onChange }) => (
+              defaultValue={null}
+              render={({ value, onBlur, onChange }) => (
                 <StaffAutocomplete
+                  value={value}
                   onBlur={onBlur}
-                  onChange={(e, option) => onChange(option?.id)}
+                  onChange={(e, v) => onChange(v)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -254,11 +258,12 @@ function JobReassignDialog(props: JobReassignDialogProps) {
             <Controller
               name="staffSecondaryId"
               control={control}
-              defaultValue={undefined}
-              render={({ onBlur, onChange }) => (
+              defaultValue={null}
+              render={({ value, onBlur, onChange }) => (
                 <StaffAutocomplete
+                  value={value}
                   onBlur={onBlur}
-                  onChange={(e, option) => onChange(option?.id)}
+                  onChange={(e, v) => onChange(v)}
                   renderInput={(params) => (
                     <TextField
                       {...params}

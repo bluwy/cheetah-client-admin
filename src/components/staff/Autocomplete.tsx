@@ -6,14 +6,12 @@ import {
 } from '/@/schema';
 import { Autocomplete, AutocompleteProps } from '@material-ui/lab';
 
-export type StaffAutocompleteStaff = FindStaffsQ['staffs'][number];
-
 export type StaffAutocompleteProps<
   Multiple extends boolean | undefined = undefined,
   DisableClearable extends boolean | undefined = undefined,
   FreeSolo extends boolean | undefined = undefined
 > = Omit<
-AutocompleteProps<StaffAutocompleteStaff, Multiple, DisableClearable, FreeSolo>,
+AutocompleteProps<string, Multiple, DisableClearable, FreeSolo>,
 'loading' | 'getOptionLabel' | 'options'
 >;
 
@@ -33,12 +31,16 @@ function StaffAutocomplete<
 >(props: StaffAutocompleteProps<Multiple, DisableClearable, FreeSolo>) {
   const { loading, data } = useQuery<FindStaffsQ, FindStaffsV>(FIND_STAFFS);
 
+  const options = data?.staffs.map((v) => v.id) ?? [];
+
+  const getOptionLabel = (id: string) => data?.staffs.find((v) => v.id === id)?.fullName ?? 'Invalid ID';
+
   return (
     <Autocomplete
       {...props}
       loading={loading}
-      getOptionLabel={(v) => v.fullName}
-      options={data?.staffs ?? []}
+      getOptionLabel={getOptionLabel}
+      options={options}
     />
   );
 }

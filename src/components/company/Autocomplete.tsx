@@ -6,14 +6,12 @@ import {
 } from '/@/schema';
 import { Autocomplete, AutocompleteProps } from '@material-ui/lab';
 
-export type CompanyAutocompleteCompany = FindCompaniesQ['companies'][number];
-
 export type CompanyAutocompleteProps<
   Multiple extends boolean | undefined = undefined,
   DisableClearable extends boolean | undefined = undefined,
   FreeSolo extends boolean | undefined = undefined
 > = Omit<
-AutocompleteProps<CompanyAutocompleteCompany, Multiple, DisableClearable, FreeSolo>,
+AutocompleteProps<string, Multiple, DisableClearable, FreeSolo>,
 'loading' | 'getOptionLabel' | 'options'
 >;
 
@@ -33,12 +31,16 @@ function CompanyAutocomplete<
 >(props: CompanyAutocompleteProps<Multiple, DisableClearable, FreeSolo>) {
   const { loading, data } = useQuery<FindCompaniesQ, FindCompaniesV>(FIND_COMPANIES);
 
+  const options = data?.companies.map((v) => v.id) ?? [];
+
+  const getOptionLabel = (id: string) => data?.companies.find((v) => v.id === id)?.name ?? 'Invalid ID';
+
   return (
     <Autocomplete
       {...props}
       loading={loading}
-      getOptionLabel={(v) => v.name}
-      options={data?.companies ?? []}
+      getOptionLabel={getOptionLabel}
+      options={options}
     />
   );
 }

@@ -118,11 +118,12 @@ function CustomerCreateDialog(props: CustomerCreateDialogProps) {
       <Controller
         name="companyBelongId"
         control={control}
-        defaultValue={undefined}
-        render={({ onBlur, onChange }) => (
+        defaultValue={null}
+        render={({ value, onBlur, onChange }) => (
           <CompanyAutocomplete
+            value={value}
             onBlur={onBlur}
-            onChange={(e, option) => onChange(option?.id)}
+            onChange={(e, v) => onChange(v)}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -138,11 +139,12 @@ function CustomerCreateDialog(props: CustomerCreateDialogProps) {
         name="staffPrimaryId"
         control={control}
         rules={{ required: true }}
-        defaultValue={undefined}
-        render={({ onBlur, onChange }) => (
+        defaultValue={null}
+        render={({ value, onBlur, onChange }) => (
           <StaffAutocomplete
+            value={value}
             onBlur={onBlur}
-            onChange={(e, option) => onChange(option?.id)}
+            onChange={(e, v) => onChange(v)}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -157,11 +159,12 @@ function CustomerCreateDialog(props: CustomerCreateDialogProps) {
       <Controller
         name="staffSecondaryId"
         control={control}
-        defaultValue={undefined}
-        render={({ onBlur, onChange }) => (
+        defaultValue={null}
+        render={({ value, onBlur, onChange }) => (
           <StaffAutocomplete
+            value={value}
             onBlur={onBlur}
-            onChange={(e, option) => onChange(option?.id)}
+            onChange={(e, v) => onChange(v)}
             renderInput={(params) => (
               <TextField
                 {...params}

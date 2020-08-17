@@ -66,6 +66,7 @@ function JobCreateDialog(props: JobCreateDialogProps) {
     handleSubmit,
     control,
     reset,
+    watch,
     errors,
     formState,
   } = useForm<FormInput>({
@@ -76,6 +77,7 @@ function JobCreateDialog(props: JobCreateDialogProps) {
 
   const pushSnack = useSnackbar();
   const classes = useStyles();
+  const watchCustomerId = watch('customerId');
 
   const handleClose = () => {
     reset();
@@ -119,11 +121,12 @@ function JobCreateDialog(props: JobCreateDialogProps) {
           rules={{
             required: { value: true, message: 'Customer is required' },
           }}
-          defaultValue={undefined}
-          render={({ onBlur, onChange }) => (
+          defaultValue={null}
+          render={({ value, onBlur, onChange }) => (
             <CustomerAutocomplete
+              value={value}
               onBlur={onBlur}
-              onChange={(e, option) => onChange(option?.id)}
+              onChange={(e, v) => onChange(v)}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -148,12 +151,14 @@ function JobCreateDialog(props: JobCreateDialogProps) {
               rules={{
                 required: { value: true, message: 'Address is required' },
               }}
-              defaultValue={undefined}
-              render={({ onBlur, onChange }) => (
+              defaultValue={null}
+              render={({ value, onBlur, onChange }) => (
                 <CustomerAddressAutocomplete
-                  freeSolo
+                  value={value}
                   onBlur={onBlur}
-                  onChange={(e, option) => onChange(option)}
+                  onInputChange={(e, v) => onChange(v)}
+                  freeSolo
+                  customerId={watchCustomerId}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -201,11 +206,12 @@ function JobCreateDialog(props: JobCreateDialogProps) {
               rules={{
                 required: { value: true, message: 'Technician 1 is required' },
               }}
-              defaultValue={undefined}
-              render={({ onBlur, onChange }) => (
+              defaultValue={null}
+              render={({ value, onBlur, onChange }) => (
                 <StaffAutocomplete
+                  value={value}
                   onBlur={onBlur}
-                  onChange={(e, option) => onChange(option?.id)}
+                  onChange={(e, v) => onChange(v)}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -224,11 +230,12 @@ function JobCreateDialog(props: JobCreateDialogProps) {
             <Controller
               name="staffSecondaryId"
               control={control}
-              defaultValue={undefined}
-              render={({ onBlur, onChange }) => (
+              defaultValue={null}
+              render={({ value, onBlur, onChange }) => (
                 <StaffAutocomplete
+                  value={value}
                   onBlur={onBlur}
-                  onChange={(e, option) => onChange(option?.id)}
+                  onChange={(e, v) => onChange(v)}
                   renderInput={(params) => (
                     <TextField
                       {...params}

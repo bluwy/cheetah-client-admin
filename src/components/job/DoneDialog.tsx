@@ -60,7 +60,7 @@ const FINISH_JOB = gql`
 `;
 
 function DoneDialog(props: DoneDialogProps) {
-  const { jobId, ...restProps } = props;
+  const { jobId, onClose, ...restProps } = props;
 
   const { data } = useQuery<FindQ, FindV>(FIND_JOB, {
     variables: {
@@ -77,8 +77,8 @@ function DoneDialog(props: DoneDialogProps) {
   const [showFollowUpDialog, setShowFollowUpDialog] = useState(false);
 
   return (
-    <Dialog {...restProps}>
-      <DialogTitleClosable>
+    <Dialog {...restProps} onClose={onClose}>
+      <DialogTitleClosable onClose={onClose}>
         Review job
         {' '}
         {data?.job.code}
@@ -115,13 +115,12 @@ function DoneDialog(props: DoneDialogProps) {
       </DialogActions>
       <JobCreateDialog
         open={showFollowUpDialog}
-        onClose={() => setShowFollowUpDialog(true)}
+        onClose={() => setShowFollowUpDialog(false)}
         defaultFormInput={{
           address: data?.job.address,
           customerId: data?.job.customer.id,
           staffPrimaryId: data?.job.staffPrimary.id,
           staffSecondaryId: data?.job.staffSecondary?.id,
-          startDate: data?.job.startDate,
           tasks: data?.job.tasks.map((v) => ({
             id: v.id,
             type: v.type,
@@ -135,6 +134,11 @@ function DoneDialog(props: DoneDialogProps) {
 
 DoneDialog.propTypes = {
   jobId: PropTypes.string.isRequired,
+  onClose: PropTypes.func,
+};
+
+DoneDialog.defaultProps = {
+  onClose: undefined,
 };
 
 export default DoneDialog;

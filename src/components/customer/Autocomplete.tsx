@@ -7,15 +7,13 @@ import {
 import { debounce } from '/@/utils';
 import { Autocomplete, AutocompleteProps } from '@material-ui/lab';
 
-export type CustomerAutocompleteCustomer = FindCustomersQ['customers'][number];
-
 export type CustomerAutocompleteProps<
   Multiple extends boolean | undefined = undefined,
   DisableClearable extends boolean | undefined = undefined,
   FreeSolo extends boolean | undefined = undefined
 > = Omit<
-AutocompleteProps<CustomerAutocompleteCustomer, Multiple, DisableClearable, FreeSolo>,
-'loading' | 'getOptionSelected' | 'getOptionLabel' | 'options'
+AutocompleteProps<string, Multiple, DisableClearable, FreeSolo>,
+'loading' | 'getOptionLabel' | 'options'
 >;
 
 const FIND_CUSTOMERS = gql`
@@ -39,6 +37,10 @@ function CustomerAutocomplete<
     { loading, data },
   ] = useLazyQuery<FindCustomersQ, FindCustomersV>(FIND_CUSTOMERS);
 
+  const options = data?.customers.map((v) => v.id) ?? [];
+
+  const getOptionLabel = (id: string) => data?.customers.find((v) => v.id === id)?.name ?? 'Invalid ID';
+
   const debouncedFindCustomers = useCallback(debounce((query: string) => {
     findCustomers({
       variables: { query },
@@ -56,9 +58,8 @@ function CustomerAutocomplete<
     <Autocomplete
       {...restProps}
       loading={loading}
-      getOptionSelected={(option, value) => option.id === value.id}
-      getOptionLabel={(v) => v.name}
-      options={data?.customers ?? []}
+      getOptionLabel={getOptionLabel}
+      options={options}
       onInputChange={handleInputChange}
     />
   );
