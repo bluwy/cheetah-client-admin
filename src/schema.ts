@@ -715,14 +715,6 @@ export type GetAppThemeQuery = (
   & Pick<Query, 'appTheme'>
 );
 
-export type AuthGuardAdminIsInSessionQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AuthGuardAdminIsInSessionQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'adminIsInSession'>
-);
-
 export type ThemeSwitchGetAppThemeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1022,6 +1014,14 @@ export type JobKanbanFindDoneJobsQuery = (
     { __typename?: 'Job' }
     & KanbanCardJobFragment
   )> }
+);
+
+export type AuthRouteGuardAdminIsInSessionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AuthRouteGuardAdminIsInSessionQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'adminIsInSession'>
 );
 
 export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;
