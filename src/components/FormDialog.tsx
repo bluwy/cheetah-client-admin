@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import DialogTitleClosable from './DialogTitleClosable';
 
-export interface FormDialogProps extends Omit<DialogProps, 'onSubmit' | 'onClose'> {
+export interface FormDialogProps extends Omit<DialogProps, 'onSubmit'> {
   dialogTitle: string
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
   onClose: () => void

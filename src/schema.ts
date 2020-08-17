@@ -913,23 +913,8 @@ export type JobDoneDialogJobFinishMutation = (
   { __typename?: 'Mutation' }
   & { jobFinish: (
     { __typename?: 'Job' }
-    & Pick<Job, 'id'>
+    & Pick<Job, 'id' | 'state'>
   ) }
-);
-
-export type KanbanCardJobFragment = (
-  { __typename?: 'Job' }
-  & Pick<Job, 'id'>
-  & { customer: (
-    { __typename?: 'Customer' }
-    & Pick<Customer, 'id' | 'name'>
-  ), staffPrimary: (
-    { __typename?: 'Staff' }
-    & Pick<Staff, 'id' | 'username'>
-  ), staffSecondary?: Maybe<(
-    { __typename?: 'Staff' }
-    & Pick<Staff, 'id' | 'username'>
-  )> }
 );
 
 export type JobKanbanCardFindJobQueryVariables = Exact<{
@@ -943,39 +928,6 @@ export type JobKanbanCardFindJobQuery = (
     { __typename?: 'Job' }
     & KanbanCardJobFragment
   ) }
-);
-
-export type JobKanbanDoneFindJobsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type JobKanbanDoneFindJobsQuery = (
-  { __typename?: 'Query' }
-  & { jobs: Array<(
-    { __typename?: 'Job' }
-    & KanbanCardJobFragment
-  )> }
-);
-
-export type JobKanbanProgressFindJobsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type JobKanbanProgressFindJobsQuery = (
-  { __typename?: 'Query' }
-  & { jobs: Array<(
-    { __typename?: 'Job' }
-    & KanbanCardJobFragment
-  )> }
-);
-
-export type JobKanbanTodoFindJobsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type JobKanbanTodoFindJobsQuery = (
-  { __typename?: 'Query' }
-  & { jobs: Array<(
-    { __typename?: 'Job' }
-    & KanbanCardJobFragment
-  )> }
 );
 
 export type JobReassignDialogJobFindOneQueryVariables = Exact<{
@@ -1022,6 +974,54 @@ export type JobReassignDialogJobReassignMutation = (
       & Pick<Job, 'id'>
     ) }
   ) }
+);
+
+export type KanbanCardJobFragment = (
+  { __typename?: 'Job' }
+  & Pick<Job, 'id'>
+  & { customer: (
+    { __typename?: 'Customer' }
+    & Pick<Customer, 'id' | 'name'>
+  ), staffPrimary: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'username'>
+  ), staffSecondary?: Maybe<(
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'username'>
+  )> }
+);
+
+export type JobKanbanFindTodoJobsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobKanbanFindTodoJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  )> }
+);
+
+export type JobKanbanFindInProgressJobsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobKanbanFindInProgressJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  )> }
+);
+
+export type JobKanbanFindDoneJobsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type JobKanbanFindDoneJobsQuery = (
+  { __typename?: 'Query' }
+  & { jobs: Array<(
+    { __typename?: 'Job' }
+    & KanbanCardJobFragment
+  )> }
 );
 
 export type StaffAutocompleteFindStaffsQueryVariables = Exact<{ [key: string]: never; }>;

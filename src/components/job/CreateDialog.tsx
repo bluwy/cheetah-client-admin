@@ -95,6 +95,10 @@ function JobCreateDialog(props: JobCreateDialogProps) {
           })),
         },
       },
+      update(cache) {
+        cache.evict({ fieldName: 'jobs' });
+        cache.gc();
+      },
     }).catch(() => {
       pushSnack({
         severity: 'error',

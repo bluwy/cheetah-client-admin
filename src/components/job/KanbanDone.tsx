@@ -1,47 +1,17 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
-  JobKanbanDoneFindJobsQuery as FindQ,
-  JobKanbanDoneFindJobsQueryVariables as FindV,
+  JobKanbanFindDoneJobsQuery as FindQ,
+  JobKanbanFindDoneJobsQueryVariables as FindV,
 } from '/@/schema';
 import { List, ListItem, Typography } from '@material-ui/core';
 import JobDoneDialog from './DoneDialog';
-import JobKanbanCard, { JOB_FRAGMENT } from './KanbanCard';
+import JobKanbanCard from './KanbanCard';
+import { KANBAN_FIND_DONE_JOBS } from './kanban-gql';
 
 interface KanbanaProgressListItemProps {
   jobId: string
 }
-
-const FIND_DONE = gql`
-  query JobKanbanDoneFindJobs {
-    jobs(
-      first: 30,
-      where: {
-        checkIn: {
-          not: null
-        },
-        checkOut: {
-          not: null
-        },
-        OR: [
-          {
-            state: {
-              equals: DONE
-            }
-          },
-          {
-            state: {
-              equals: FOLLOW_UP
-            }
-          }
-        ]
-      }
-    ) {
-      ...KanbanCardJob
-    }
-  }
-  ${JOB_FRAGMENT}
-`;
 
 function KanbanProgressListItem({ jobId }: KanbanaProgressListItemProps) {
   const [open, setOpen] = useState(false);
@@ -59,7 +29,7 @@ function KanbanProgressListItem({ jobId }: KanbanaProgressListItemProps) {
 }
 
 function KanbanProgress() {
-  const { data } = useQuery<FindQ, FindV>(FIND_DONE);
+  const { data } = useQuery<FindQ, FindV>(KANBAN_FIND_DONE_JOBS);
 
   return (
     <>

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import {
-  JobDoneDialogJobFindOneQuery as FindQ,
-  JobDoneDialogJobFindOneQueryVariables as FindV,
+  JobDoneDialogJobFindOneQuery as FindOneQ,
+  JobDoneDialogJobFindOneQueryVariables as FindOneV,
   JobDoneDialogJobFinishMutation as FinishM,
   JobDoneDialogJobFinishMutationVariables as FinishV,
+  JobKanbanFindDoneJobsQuery as FindDoneQ,
+  JobKanbanFindDoneJobsQueryVariables as FindDoneV,
 } from '/@/schema';
 import {
   Button,
@@ -16,10 +18,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import DialogTitleClosable from '/@/components/DialogTitleClosable';
+import { useSnackbar } from '/@/components/SnackbarProvider';
 import JobCreateDialog from './CreateDialog';
+import { KANBAN_FIND_DONE_JOBS } from './kanban-gql';
 
 interface DoneDialogProps extends DialogProps {
   jobId: string
+  onClose: () => void
 }
 
 const FIND_JOB = gql`
@@ -55,6 +60,7 @@ const FINISH_JOB = gql`
   mutation JobDoneDialogJobFinish($id: ID!) {
     jobFinish(id: $id) {
       id
+      state
     }
   }
 `;
@@ -62,19 +68,46 @@ const FINISH_JOB = gql`
 function DoneDialog(props: DoneDialogProps) {
   const { jobId, onClose, ...restProps } = props;
 
-  const { data } = useQuery<FindQ, FindV>(FIND_JOB, {
+  const { data } = useQuery<FindOneQ, FindOneV>(FIND_JOB, {
     variables: {
       id: jobId,
     },
   });
 
-  const [finishJob] = useMutation<FinishM, FinishV>(FINISH_JOB, {
-    variables: {
-      id: jobId,
-    },
-  });
+  const [finishJob] = useMutation<FinishM, FinishV>(FINISH_JOB);
 
+  const pushSnack = useSnackbar();
   const [showFollowUpDialog, setShowFollowUpDialog] = useState(false);
+
+  const handleFinishClick = () => {
+    finishJob({
+      variables: {
+        id: jobId,
+      },
+      update(cache, result) {
+        // The following removes the current job in kanban done section
+        const queryData = cache.readQuery<FindDoneQ, FindDoneV>({ query: KANBAN_FIND_DONE_JOBS });
+
+        if (queryData != null) {
+          const targetJobId = result.data?.jobFinish.id;
+
+          cache.writeQuery<FindDoneQ, FindDoneV>({
+            query: FIND_JOB,
+            data: {
+              jobs: queryData.jobs.filter((v) => v.id !== targetJobId),
+            },
+          });
+        }
+      },
+    }).catch(() => {
+      pushSnack({
+        severity: 'error',
+        message: 'Unable to create staff',
+      });
+    });
+
+    onClose?.();
+  };
 
   return (
     <Dialog {...restProps} onClose={onClose}>
@@ -109,7 +142,7 @@ function DoneDialog(props: DoneDialogProps) {
         <Button color="primary" onClick={() => setShowFollowUpDialog(true)}>
           Follow up
         </Button>
-        <Button color="primary" onClick={() => finishJob()}>
+        <Button color="primary" onClick={() => handleFinishClick()}>
           Finish
         </Button>
       </DialogActions>

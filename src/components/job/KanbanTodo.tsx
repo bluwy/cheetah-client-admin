@@ -1,38 +1,17 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
-  JobKanbanTodoFindJobsQuery as FindQ,
-  JobKanbanTodoFindJobsQueryVariables as FindV,
+  JobKanbanFindTodoJobsQuery as FindQ,
+  JobKanbanFindTodoJobsQueryVariables as FindV,
 } from '/@/schema';
 import { List, ListItem, Typography } from '@material-ui/core';
-import JobKanbanCard, { JOB_FRAGMENT } from './KanbanCard';
+import JobKanbanCard from './KanbanCard';
 import JobReassignDialog from './ReassignDialog';
+import { KANBAN_FIND_TODO_JOBS } from './kanban-gql';
 
 interface KanbanaTodoListItemProps {
   jobId: string
 }
-
-const FIND_TODO_JOBS = gql`
-  query JobKanbanTodoFindJobs {
-    jobs(
-      first: 30,
-      where: {
-        checkIn: {
-          equals: null
-        },
-        checkOut: {
-          equals: null
-        },
-        state: {
-          equals: TODO
-        }
-      }
-    ) {
-      ...KanbanCardJob
-    }
-  }
-  ${JOB_FRAGMENT}
-`;
 
 function KanbanTodoListItem({ jobId }: KanbanaTodoListItemProps) {
   const [open, setOpen] = useState(false);
@@ -50,7 +29,7 @@ function KanbanTodoListItem({ jobId }: KanbanaTodoListItemProps) {
 }
 
 function KanbanTodo() {
-  const { data } = useQuery<FindQ, FindV>(FIND_TODO_JOBS);
+  const { data } = useQuery<FindQ, FindV>(KANBAN_FIND_TODO_JOBS);
 
   return (
     <>

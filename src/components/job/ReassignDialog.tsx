@@ -144,6 +144,12 @@ function JobReassignDialog(props: JobReassignDialogProps) {
           })),
         },
       },
+      update(cache) {
+        // Just evict cache since reassign not only updates the existing job,
+        // but also creates a new job. Job creation messes with pagination.
+        cache.evict({ fieldName: 'jobs' });
+        cache.gc();
+      },
     }).catch(() => {
       pushSnack({
         severity: 'error',

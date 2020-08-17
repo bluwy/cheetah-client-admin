@@ -12,29 +12,12 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
+import { KANBAN_JOB_FRAGMENT } from './kanban-gql';
 
 interface JobKanbanCardProps {
   jobId: string
   onClick?: () => void
 }
-
-export const JOB_FRAGMENT = gql`
-  fragment KanbanCardJob on Job {
-    id
-    customer {
-      id
-      name
-    }
-    staffPrimary {
-      id
-      username
-    }
-    staffSecondary {
-      id
-      username
-    }
-  }
-`;
 
 const FIND_JOB = gql`
   query JobKanbanCardFindJob($id: ID!) {
@@ -42,7 +25,7 @@ const FIND_JOB = gql`
       ...KanbanCardJob
     }
   }
-  ${JOB_FRAGMENT}
+  ${KANBAN_JOB_FRAGMENT}
 `;
 
 const useStyles = makeStyles({

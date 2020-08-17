@@ -1,36 +1,15 @@
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
-  JobKanbanProgressFindJobsQuery as FindQ,
-  JobKanbanProgressFindJobsQueryVariables as FindV,
+  JobKanbanFindInProgressJobsQuery as FindQ,
+  JobKanbanFindInProgressJobsQueryVariables as FindV,
 } from '/@/schema';
 import { List, ListItem, Typography } from '@material-ui/core';
-import JobKanbanCard, { JOB_FRAGMENT } from './KanbanCard';
-
-const FIND_IN_PROGRESS = gql`
-  query JobKanbanProgressFindJobs {
-    jobs(
-      first: 30,
-      where: {
-        checkIn: {
-          not: null
-        },
-        checkOut: {
-          equals: null
-        },
-        state: {
-          equals: TODO
-        }
-      }
-    ) {
-      ...KanbanCardJob
-    }
-  }
-  ${JOB_FRAGMENT}
-`;
+import JobKanbanCard from './KanbanCard';
+import { KANBAN_FIND_IN_PROGRESS_JOBS } from './kanban-gql';
 
 function KanbanProgress() {
-  const { data } = useQuery<FindQ, FindV>(FIND_IN_PROGRESS);
+  const { data } = useQuery<FindQ, FindV>(KANBAN_FIND_IN_PROGRESS_JOBS);
 
   return (
     <>
