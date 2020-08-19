@@ -4,11 +4,17 @@ import { useHistory } from 'react-router-dom';
 
 type Promisable<T> = T | Promise<T>;
 
+type GuardIfFn = string | (() => (string | void));
+
 export interface RouteGuardProps {
   children?: React.ReactNode
   guard: () => Promisable<boolean>
-  ifPass?: string
-  ifFail?: string
+  ifPass?: GuardIfFn
+  ifFail?: GuardIfFn
+}
+
+function handleIfFn(fn?: GuardIfFn) {
+  return typeof fn === 'function' ? fn() : fn;
 }
 
 function RouteGuard(props: RouteGuardProps) {
@@ -24,10 +30,11 @@ function RouteGuard(props: RouteGuardProps) {
 
   useEffect(() => {
     setAllow(false);
+
     const guardResult = guard();
 
     const handleGuardResult = (result: boolean) => {
-      const redirectPath = result ? ifFail : ifPass;
+      const redirectPath = result ? handleIfFn(ifFail) : handleIfFn(ifPass);
 
       if (redirectPath != null) {
         history.replace(redirectPath);
